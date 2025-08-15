@@ -1,4 +1,4 @@
-import vocab from "./vocab.js";
+import vocab from "../data/vocab.js";
 
 const MOTHER_TONGUE = "vi";
 
@@ -14,9 +14,8 @@ const practiceMode = document.getElementById("practiceMode");
 let currentIndex = 0;
 
 function render(index) {
+    // TODO: Refactor them
     wordEl.textContent = vocab[index].ko;
-
-    // Refactor them
     if (!practiceMode.checked || getLearnedWords().includes(vocab[index].ko)) {
         phoneticEl.textContent = vocab[index].rr;
         meaningEl.textContent = vocab[index][MOTHER_TONGUE];
@@ -84,7 +83,8 @@ function updateStats() {
 
 function getQuizWords() {
     const raw = [
-        ...JSON.parse(JSON.stringify(vocab))
+        ...vocab
+            .filter((_item, idx) => idx !== currentIndex)
             .sort(() => 0.5 - Math.random())
             .slice(0, 3),
         vocab[currentIndex],

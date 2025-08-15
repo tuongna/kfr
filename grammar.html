@@ -12,20 +12,37 @@
         <div id="app">
             <nav class="navbar">
                 <ul>
-                    <li><a class="active" href="index.html">Vocab</a></li>
-                    <li><a href="grammar.html">Grammar</a></li>
+                    <li><a href="index.html">Vocab</a></li>
+                    <li><a class="active" href="grammar.html">Grammar</a></li>
                 </ul>
             </nav>
-            <div id="card">
-                <div id="word">단어</div>
-                <div id="phonetic">Phonetic</div>
-                <div id="meaning">Meaning</div>
-                <div id="quiz">Meaning</div>
+            <div id="card" class="grammar-card">
+                <h2 data-card-header></h2>
+                <p>
+                    <em data-card-description></em>
+                </p>
 
-                <div class="practice-mode-container">
-                    <input type="checkbox" id="practiceMode" />
-                    <label for="practiceMode">Practice Mode</label>
+                <div>
+                    <strong>Points:</strong>
+                    <ul data-card-details></ul>
                 </div>
+
+                <div>
+                    <strong>Rules:</strong>
+                    <ul data-card-rules></ul>
+                </div>
+
+                <div>
+                    <strong>Irregulars:</strong>
+                    <ul data-card-irregulars></ul>
+                </div>
+
+                <div>
+                    <strong>Examples:</strong>
+                    <ul data-card-examples></ul>
+                </div>
+
+                <p class="tags" data-card-tags></p>
             </div>
             <div class="actions">
                 <button id="prevBtn">Prev</button>
@@ -46,7 +63,7 @@
                 <a href="https://www.koreanfromzero.com/" target="_blank">Korean From Zero</a>
             </p>
         </div>
-        <script type="module" src="js/app.js"></script>
+        <script type="module" src="js/grammar.js"></script>
         <script>
             if ("serviceWorker" in navigator) {
                 navigator.serviceWorker
