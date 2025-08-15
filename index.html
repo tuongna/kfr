@@ -20,19 +20,26 @@
                 <div id="word">단어</div>
                 <div id="phonetic">Phonetic</div>
                 <div id="meaning">Meaning</div>
+                <div id="quiz">Meaning</div>
+
+                <div class="practice-mode-container">
+                    <input type="checkbox" id="practiceMode" />
+                    <label for="practiceMode">Practice Mode</label>
+                </div>
             </div>
             <div class="actions">
                 <button id="prevBtn">Prev</button>
                 <button id="nextBtn">Next</button>
             </div>
-            <div class="exams">
-                <input id="inputKr" placeholder="Korean" />
-                <input id="inputEn" placeholder="English" />
-                <button id="learnedBtn">Check</button>
-            </div>
             <div id="stats"></div>
         </div>
-        <div data-info>Korean form Ryan - MIT license based v0.0.1</div>
+        <div data-info>
+            <p>Korean form Ryan - MIT license based v0.0.1</p>
+            <p>
+                Reference from Korean From Zero (Book 1) - Home page:
+                <a href="https://www.koreanfromzero.com/">Korean From Zero</a>
+            </p>
+        </div>
         <script type="module" src="app.js"></script>
         <script>
             if ("serviceWorker" in navigator) {
