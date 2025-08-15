@@ -35,24 +35,25 @@
         </div>
         <div data-info>
             <p>
-                Korean form Ryan - MIT license based v0.0.1 (<a
+                Korean from Ryan - Version 0.0.1, developed under the MIT
+                License. (<a
                     href="https://github.com/tuongna/tuongna.github.io"
                     target="_blank"
                     >Github</a
                 >)
             </p>
             <p>
-                Reference from Korean From Zero (Book 1) - Home page:
-                <a href="https://www.koreanfromzero.com/" target="_blank">Korean From Zero</a>
+                Content has been rewritten from various sources, including
+                <i>Korean From Zero (Book 1)</i>.
             </p>
         </div>
         <script type="module" src="js/app.js"></script>
         <script>
-            if ("serviceWorker" in navigator) {
+            if ('serviceWorker' in navigator) {
                 navigator.serviceWorker
-                    .register("sw.js")
-                    .then(() => console.log("Service Worker registered"))
-                    .catch((err) => console.log("Service Worker failed:", err));
+                    .register('sw.js')
+                    .then(() => console.log('Service Worker registered'))
+                    .catch((err) => console.log('Service Worker failed:', err));
             }
         </script>
     </body>

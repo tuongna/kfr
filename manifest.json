@@ -1,6 +1,6 @@
 {
-    "name": "Học Tiếng Hàn",
-    "short_name": "KoreanApp",
+    "name": "Korean from Ryan",
+    "short_name": "Korean",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#3498db",
