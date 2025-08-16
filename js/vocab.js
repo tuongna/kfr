@@ -1,5 +1,6 @@
 import vocab from '../data/vocab.js';
 import { speak } from './utils/speech.js';
+import { isIOS } from './utils/device.js';
 
 const MOTHER_TONGUE = 'vi';
 
@@ -117,6 +118,11 @@ function handleOnClickSpeak(e) {
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);
-speakBtn.addEventListener('click', handleOnClickSpeak);
+
+if (isIOS()) {
+    speakBtn.style.display = 'none';
+} else {
+    speakBtn.addEventListener('click', handleOnClickSpeak);
+}
 
 renderAndSave(currentIndex);
