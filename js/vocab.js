@@ -1,8 +1,10 @@
 import vocab from '../data/vocab.js';
+import { speak } from './utils/speech.js';
 
 const MOTHER_TONGUE = 'vi';
 
-const wordEl = document.getElementById('word');
+const wordEl = document.querySelector('#word > span');
+const speakEl = document.querySelector('#word > button');
 const phoneticEl = document.getElementById('phonetic');
 const meaningEl = document.getElementById('meaning');
 const quizEl = document.getElementById('quiz');
@@ -10,12 +12,14 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
 const practiceMode = document.getElementById('practiceMode');
+const speakBtn = document.querySelector('[data-speak]');
 
-let currentIndex = 0;
+let currentIndex = parseInt(localStorage.getItem('currentIndex'), 10) || 0;
 
 function render(index) {
-    // TODO: Refactor them
     wordEl.textContent = vocab[index].ko;
+    speakEl.dataset.speak = vocab[index].ko;
+
     if (!practiceMode.checked || getLearnedWords().includes(vocab[index].ko)) {
         phoneticEl.textContent = vocab[index].rr;
         meaningEl.textContent = vocab[index][MOTHER_TONGUE];
@@ -23,12 +27,12 @@ function render(index) {
     } else {
         phoneticEl.textContent = '----';
         meaningEl.textContent = '';
-        quizEl.innerHTML = `<div class="quiz-words">${getQuizWords()
+        quizEl.innerHTML = `${getQuizWords()
             .map(
                 (vocab) =>
-                    `<button data-word="${vocab.ko}">${vocab[MOTHER_TONGUE]}</button>`
+                    `<button class="btn-primary" data-word="${vocab.ko}">${vocab[MOTHER_TONGUE]}</button>`
             )
-            .join('')}</div>`;
+            .join('')}`;
 
         document.querySelectorAll('.quiz-words button').forEach((button) => {
             button.addEventListener('click', (e) => {
@@ -51,18 +55,23 @@ function render(index) {
     updateStats();
 }
 
+function renderAndSave(index) {
+    render(index);
+    localStorage.setItem('currentIndex', index);
+}
+
 const getLearnedWords = () => {
     return JSON.parse(localStorage.getItem('learned')) || [];
 };
 
 function prevCard() {
     currentIndex = (currentIndex - 1 + vocab.length) % vocab.length;
-    render(currentIndex);
+    renderAndSave(currentIndex);
 }
 
 function nextCard() {
     currentIndex = (currentIndex + 1) % vocab.length;
-    render(currentIndex);
+    renderAndSave(currentIndex);
 }
 
 function markLearned(ko) {
@@ -72,13 +81,13 @@ function markLearned(ko) {
                 'learned',
                 JSON.stringify([...getLearnedWords(), ko])
             );
-            render(currentIndex);
+            renderAndSave(currentIndex);
         }
     }
 }
 
 function activatePracticeMode() {
-    render(currentIndex);
+    renderAndSave(currentIndex);
 }
 
 function updateStats() {
@@ -99,9 +108,15 @@ function getQuizWords() {
     return raw.sort(() => 0.5 - Math.random());
 }
 
+function handleOnClickSpeak(e) {
+    if (e.target.matches('[data-speak]')) {
+        speak(e.target.dataset.speak);
+    }
+}
+
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);
+speakBtn.addEventListener('click', handleOnClickSpeak);
 
-// Initial display
-render(currentIndex);
+renderAndSave(currentIndex);

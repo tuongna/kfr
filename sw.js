@@ -1,11 +1,17 @@
-const CACHE_NAME = 'v0.0.1-dev49';
+importScripts('version.js');
+
+const CACHE_NAME = `pwa-cache-${APP_VERSION}`;
 
 const urlsToCache = [
     '/',
     '/index.html',
+    '/grammar.html',
+    '/feedback.html',
     '/style.css',
-    '/app.js',
+    '/vocab.js',
+    '/grammar.js',
     '/manifest.json',
+    '/favicon.ico',
     '/icons/icon-72.png',
     '/icons/icon-128.png',
     '/icons/icon-144.png',

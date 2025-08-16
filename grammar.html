@@ -14,9 +14,15 @@
     <div id="app">
         <nav class="navbar">
             <ul>
-                <li><a href="index.html">Vocab</a></li>
-                <li><a class="active" href="grammar.html">Grammar</a></li>
-                <li><a href="feedback.html">Feedback</a></li>
+                <li>
+                    <a href="index.html">Vocab</a>
+                </li>
+                <li>
+                    <a class="active" href="grammar.html">Grammar</a>
+                </li>
+                <li>
+                    <a href="feedback.html">Feedback</a>
+                </li>
             </ul>
         </nav>
         <div id="card" class="grammar-card">
@@ -48,21 +54,22 @@
             <p class="tags" data-card-tags></p>
         </div>
         <div class="actions">
-            <button id="prevBtn">Prev</button>
-            <button id="nextBtn">Next</button>
+            <button class="btn-primary" id="prevBtn">Prev</button>
+            <button class="btn-primary" id="nextBtn">Next</button>
         </div>
         <div id="stats"></div>
     </div>
-    <div data-info>
+    <div class="information">
         <p>
-            Korean from Ryan - Version v0.0.1-dev49, developed under the MIT
-            License. (<a href="https://github.com/tuongna/tuongna.github.io" target="_blank">Github</a>)
-        </p>
-        <p>
+            Korean from Ryan - Version <span id="app-version"></span>, developed under the MIT
+            License (<a href="https://github.com/tuongna/tuongna.github.io" target="_blank">Github</a>).
+            <br>
             Content has been rewritten from various sources, including
-            <i>Korean From Zero (Book 1)</i>.
+            <i>Korean From Zero (Book 1, 2, 3)</i>.
         </p>
     </div>
+    <script src="version.js"></script>
+    <script src="js/common.js"></script>
     <script type="module" src="js/grammar.js"></script>
     <script>
         if ('serviceWorker' in navigator) {

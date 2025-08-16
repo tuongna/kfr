@@ -11,7 +11,7 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
 
-let currentIndex = 0;
+let currentIndex = parseInt(localStorage.getItem('currentIndex'), 10) || 0;
 
 function render(index) {
     const { title, summary, points, rules, irregulars, examples, tags } =
@@ -74,18 +74,22 @@ function render(index) {
     statsEl.textContent = `Current: ${index + 1}/${grammar.length}`;
 }
 
+function renderAndSave(index) {
+    render(index);
+    localStorage.setItem('currentIndex', index);
+}
+
 function prevCard() {
     currentIndex = (currentIndex - 1 + grammar.length) % grammar.length;
-    render(currentIndex);
+    renderAndSave(currentIndex);
 }
 
 function nextCard() {
     currentIndex = (currentIndex + 1) % grammar.length;
-    render(currentIndex);
+    renderAndSave(currentIndex);
 }
 
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 
-// Initial display
-render(currentIndex);
+renderAndSave(currentIndex);
