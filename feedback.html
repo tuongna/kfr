@@ -14,22 +14,27 @@
     <div id="app">
         <nav class="navbar">
             <ul>
-                <li><a class="active" href="index.html">Vocab</a></li>
+                <li><a href="index.html">Vocab</a></li>
                 <li><a href="grammar.html">Grammar</a></li>
-                <li><a href="feedback.html">Feedback</a></li>
+                <li><a class="active" href="feedback.html">Feedback</a></li>
             </ul>
         </nav>
-        <div id="card">
-            <div id="word">단어</div>
-            <div id="phonetic">Phonetic</div>
-            <div id="meaning">Meaning</div>
-            <div id="quiz">Meaning</div>
+        <div class="feedback-container">
+            <h2>Send Feedback</h2>
+            <form action="https://formspree.io/f/xzzvwqpd" method="POST">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name">
 
-            <div class="practice-mode-container">
-                <input type="checkbox" id="practiceMode" />
-                <label for="practiceMode">Practice Mode</label>
-            </div>
+                <label for="email">Your Email</label>
+                <input type="email" id="email" name="_replyto" placeholder="Optional">
+
+                <label for="message">Your Feedback</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+
+                <button type="submit">Send</button>
+            </form>
         </div>
+
         <div class="actions">
             <button id="prevBtn">Prev</button>
             <button id="nextBtn">Next</button>
@@ -46,7 +51,7 @@
             <i>Korean From Zero (Book 1)</i>.
         </p>
     </div>
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/grammar.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker

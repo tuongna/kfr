@@ -1,78 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>KFR</title>
-        <link rel="stylesheet" href="style.css" />
-        <link rel="manifest" href="manifest.json" />
-    </head>
-    <body>
-        <h1>라이언의 한국어</h1>
-        <div id="app">
-            <nav class="navbar">
-                <ul>
-                    <li><a href="index.html">Vocab</a></li>
-                    <li><a class="active" href="grammar.html">Grammar</a></li>
-                </ul>
-            </nav>
-            <div id="card" class="grammar-card">
-                <h2 data-card-header></h2>
-                <p>
-                    <em data-card-description></em>
-                </p>
 
-                <div>
-                    <strong>Points:</strong>
-                    <ul data-card-details></ul>
-                </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KFR</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+</head>
 
-                <div>
-                    <strong>Rules:</strong>
-                    <ul data-card-rules></ul>
-                </div>
-
-                <div>
-                    <strong>Irregulars:</strong>
-                    <ul data-card-irregulars></ul>
-                </div>
-
-                <div>
-                    <strong>Examples:</strong>
-                    <ul data-card-examples></ul>
-                </div>
-
-                <p class="tags" data-card-tags></p>
-            </div>
-            <div class="actions">
-                <button id="prevBtn">Prev</button>
-                <button id="nextBtn">Next</button>
-            </div>
-            <div id="stats"></div>
-        </div>
-        <div data-info>
+<body>
+    <h1>라이언의 한국어</h1>
+    <div id="app">
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">Vocab</a></li>
+                <li><a class="active" href="grammar.html">Grammar</a></li>
+                <li><a href="feedback.html">Feedback</a></li>
+            </ul>
+        </nav>
+        <div id="card" class="grammar-card">
+            <h2 data-card-header></h2>
             <p>
-                Korean from Ryan - MIT license based v0.0.1 (<a
-                    href="https://github.com/tuongna/tuongna.github.io"
-                    target="_blank"
-                    >Github</a
-                >)
+                <em data-card-description></em>
             </p>
-            <p>
-                Reference from Korean From Zero (Book 1) - Home page:
-                <a href="https://www.koreanfromzero.com/" target="_blank"
-                    >Korean From Zero</a
-                >
-            </p>
+
+            <div>
+                <strong>Points:</strong>
+                <ul data-card-details></ul>
+            </div>
+
+            <div>
+                <strong>Rules:</strong>
+                <ul data-card-rules></ul>
+            </div>
+
+            <div>
+                <strong>Irregulars:</strong>
+                <ul data-card-irregulars></ul>
+            </div>
+
+            <div>
+                <strong>Examples:</strong>
+                <ul data-card-examples></ul>
+            </div>
+
+            <p class="tags" data-card-tags></p>
         </div>
-        <script type="module" src="js/grammar.js"></script>
-        <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker
-                    .register('sw.js')
-                    .then(() => console.log('Service Worker registered'))
-                    .catch((err) => console.log('Service Worker failed:', err));
-            }
-        </script>
-    </body>
+        <div class="actions">
+            <button id="prevBtn">Prev</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        <div id="stats"></div>
+    </div>
+    <div data-info>
+        <p>
+            Korean from Ryan - Version v0.0.1-dev49, developed under the MIT
+            License. (<a href="https://github.com/tuongna/tuongna.github.io" target="_blank">Github</a>)
+        </p>
+        <p>
+            Content has been rewritten from various sources, including
+            <i>Korean From Zero (Book 1)</i>.
+        </p>
+    </div>
+    <script type="module" src="js/grammar.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('sw.js')
+                .then(() => console.log('Service Worker registered'))
+                .catch((err) => console.log('Service Worker failed:', err));
+        }
+    </script>
+</body>
+
 </html>

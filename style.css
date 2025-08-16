@@ -36,7 +36,6 @@ h1 {
 
 #word {
     font-size: 32px;
-    user-select: none;
 }
 
 #word.learned {
@@ -47,13 +46,11 @@ h1 {
     font-style: italic;
     margin-bottom: 8px;
     color: #999;
-    user-select: none;
 }
 
 #meaning {
     font-size: 20px;
     color: #555;
-    user-select: none;
 }
 
 button {
@@ -170,4 +167,60 @@ button:hover {
 #card.grammar-card strong {
     display: inline-block;
     margin: 12px 0 8px 0;
+}
+
+/* Feedback Page */
+.feedback-container {
+    border: 1px solid #ccc;
+    padding: 32px;
+    margin: 20px auto;
+    max-width: 400px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.feedback-container h2 {
+    color: #3498db;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.feedback-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+}
+
+.feedback-container input[type="text"],
+.feedback-container input[type="email"],
+.feedback-container textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+
+.feedback-container textarea {
+    resize: vertical;
+}
+
+.feedback-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.feedback-container button:hover {
+    background-color: #2980b9;
 }
