@@ -1,5 +1,4 @@
 import { playAudio } from './utils/speech.js';
-import { isIOS } from './utils/device.js';
 
 const MOTHER_TONGUE = 'vi';
 
