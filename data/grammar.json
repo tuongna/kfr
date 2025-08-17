@@ -19,7 +19,7 @@
         "title": "Số đếm Thuần Hàn vs Hán-Hàn",
         "summary": "Hai hệ số; cách dùng theo ngữ cảnh, tiền tệ, thời gian.",
         "rules": [
-            { "form": "Thuần Hàn 1–99", "use": "tuổi, giờ, một số bộ đếm" },
+            { "form": "Thuần Hàn 1-99", "use": "tuổi, giờ, một số bộ đếm" },
             {
                 "form": "Hán-Hàn 1+",
                 "use": "tiền, phút, ngày/tháng/năm, số lớn"

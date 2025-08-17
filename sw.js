@@ -2,16 +2,21 @@ importScripts('version.js');
 
 const CACHE_NAME = `pwa-cache-${APP_VERSION}`;
 
-const urlsToCache = [
+const coreFiles = [
     '/',
     '/index.html',
     '/grammar.html',
     '/feedback.html',
     '/style.css',
-    '/vocab.js',
-    '/grammar.js',
+    '/js/utils/speech.js',
+    '/js/vocab.js',
+    '/js/grammar.js',
+    '/js/feedback.js',
     '/manifest.json',
     '/favicon.ico',
+];
+
+const icons = [
     '/icons/icon-72.png',
     '/icons/icon-128.png',
     '/icons/icon-144.png',
@@ -19,9 +24,19 @@ const urlsToCache = [
     '/icons/icon-512.png',
 ];
 
+const urlsToCache = [...coreFiles, ...icons];
+
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+        caches.open(CACHE_NAME).then(async (cache) => {
+            for (const url of urlsToCache) {
+                try {
+                    await cache.add(url);
+                } catch (err) {
+                    console.warn('Failed to cache', url, err);
+                }
+            }
+        })
     );
     self.skipWaiting();
 });
@@ -31,6 +46,7 @@ self.addEventListener('fetch', (event) => {
         caches
             .match(event.request)
             .then((response) => response || fetch(event.request))
+            .catch(() => caches.match('/index.html'))
     );
 });
 
@@ -46,6 +62,5 @@ self.addEventListener('activate', (event) => {
                 )
             )
     );
-
-    return self.clients.claim();
+    self.clients.claim();
 });

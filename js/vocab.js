@@ -98,13 +98,28 @@ function updateStats() {
 }
 
 function getQuizWords() {
-    const raw = [
-        ...vocab
-            .filter((_item, idx) => idx !== currentIndex)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 3),
-        vocab[currentIndex],
-    ];
+    const total = vocab.length;
+
+    const seeds = [29, 11, 19, 95];
+
+    let distractors = [];
+    for (let s of seeds) {
+        let idx = (s * 3 + currentIndex * 7) % total;
+
+        if (idx === currentIndex || distractors.includes(idx)) {
+            idx = (95 * 3 + currentIndex * 7) % total;
+        }
+
+        if (!distractors.includes(idx) && distractors.length < 3) {
+            distractors.push(idx);
+        }
+
+        if (distractors.length === 3) break;
+    }
+
+    const raw = [...distractors.map((i) => vocab[i]), vocab[currentIndex]];
+
+    console.log('raw', raw);
 
     return raw.sort(() => 0.5 - Math.random());
 }
