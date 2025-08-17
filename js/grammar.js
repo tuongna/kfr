@@ -1,5 +1,4 @@
-import grammar from '../data/grammar.js';
-
+let grammar = [];
 const cardHeader = document.querySelector('[data-card-header]');
 const cardDescription = document.querySelector('[data-card-description]');
 const cardDetails = document.querySelector('[data-card-details]');
@@ -89,7 +88,14 @@ function nextCard() {
     renderAndSave(currentIndex);
 }
 
+async function loadGrammar() {
+    const res = await fetch('../data/grammar.json');
+    grammar = await res.json();
+    renderAndSave(currentIndex);
+}
+
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 
+await loadGrammar();
 renderAndSave(currentIndex);

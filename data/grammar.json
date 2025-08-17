@@ -1,0 +1,409 @@
+[
+    {
+        "id": "hangeul-phonology",
+        "title": "Hangeul & phát âm",
+        "summary": "Batchim, biến âm, quy tắc ㅎ, ㄹ, T-stop, liên kết âm tiết.",
+        "points": [
+            "T-stop: ㄷ ㅅ ㅈ ㅊ ㅌ ở cuối → âm t.",
+            "Liên kết: batchim + ㅇ đầu sau → chuyển sang đầu âm tiết sau.",
+            "ㅅ trước i/ya/yeo/yo/yu → ‘sh’.",
+            "ㄹ: đầu ~ r; cuối/kép ~ l; ㄹ+ㄹ → ll.",
+            "ㅂ+ㄴ → ㅁㄴ (seum-ni-da).",
+            "Ảnh hưởng ㅎ: phụ âm kề cứng hóa/biến âm."
+        ],
+        "examples": [],
+        "tags": ["phonetics", "beginner"]
+    },
+    {
+        "id": "numbers-sino-native",
+        "title": "Số đếm Thuần Hàn vs Hán-Hàn",
+        "summary": "Hai hệ số; cách dùng theo ngữ cảnh, tiền tệ, thời gian.",
+        "rules": [
+            { "form": "Thuần Hàn 1–99", "use": "tuổi, giờ, một số bộ đếm" },
+            {
+                "form": "Hán-Hàn 1+",
+                "use": "tiền, phút, ngày/tháng/năm, số lớn"
+            }
+        ],
+        "examples": [
+            { "ko": "스물두 살", "vi": "22 tuổi (Thuần Hàn + 살)" },
+            {
+                "ko": "오후 세 시 삼십 분",
+                "vi": "3:30 chiều (giờ Thuần Hàn, phút Hán-Hàn)"
+            },
+            { "ko": "만원", "vi": "10.000 won (Hán-Hàn)" }
+        ],
+        "tags": ["numbers", "counters"]
+    },
+    {
+        "id": "copula-ida-anida",
+        "title": "Cấu trúc với 이다/아니다",
+        "rules": [
+            { "form": "N + 입니다/이에요/예요", "note": "khẳng định" },
+            { "form": "N + 입니까?/이에요?/예요?", "note": "nghi vấn" },
+            { "form": "N(이/가) 아닙니다/아니에요", "note": "phủ định" }
+        ],
+        "examples": [
+            { "ko": "학생입니다.", "vi": "Là học sinh." },
+            { "ko": "학생이 아닙니다.", "vi": "Không phải học sinh." }
+        ],
+        "notes": ["은/는 = chủ đề; 이/가 = chủ ngữ"],
+        "tags": ["copula", "beginner"]
+    },
+    {
+        "id": "demonstratives",
+        "title": "Chỉ định từ: this/that",
+        "rules": [
+            { "form": "이/그/저 + N", "note": "đặt trước danh từ" },
+            { "form": "이것/그것/저것", "note": "đại từ" }
+        ],
+        "examples": [
+            { "ko": "이 책", "vi": "quyển sách này" },
+            { "ko": "그것은 뭐예요?", "vi": "Cái đó là gì?" }
+        ],
+        "tags": ["determiners", "beginner"]
+    },
+    {
+        "id": "particles-core",
+        "title": "Tiểu từ cơ bản",
+        "rules": [
+            { "form": "은/는", "use": "chủ đề/đối lập" },
+            { "form": "이/가", "use": "chủ ngữ/giới thiệu thông tin" },
+            { "form": "을/를", "use": "tân ngữ" },
+            { "form": "에", "use": "thời gian/điểm/đến; tồn tại" },
+            { "form": "에서", "use": "nơi xảy ra hành động/sự kiện" },
+            { "form": "부터/까지", "use": "từ/đến" },
+            { "form": "의", "use": "sở hữu (thường đọc ‘에’)" },
+            { "form": "도", "use": "cũng" },
+            { "form": "(으)로", "use": "phương tiện/cách thức/hướng" },
+            { "form": "들", "use": "số nhiều (thường lược)" },
+            { "form": "랑/이랑, 하고, 와/과", "use": "với" }
+        ],
+        "examples": [
+            { "ko": "학교에서 공부해요.", "vi": "Học ở trường." },
+            { "ko": "버스로 가요.", "vi": "Đi bằng xe buýt." }
+        ],
+        "tags": ["particles", "syntax"]
+    },
+    {
+        "id": "verb-adj-basics",
+        "title": "Động từ, tính từ: chia cơ bản",
+        "summary": "Stem + 아/어/여요; quá khứ, tương lai, tiếp diễn; phủ định và khả năng.",
+        "rules": [
+            {
+                "form": "ㅏ/ㅗ → 아요; khác → 어요; 하다 → 해요",
+                "note": "hiện tại lịch sự"
+            },
+            { "form": "… + 았/었/했어요", "note": "quá khứ" },
+            {
+                "form": "STEM + (으)ㄹ 거예요",
+                "note": "tương lai/dự định/suy đoán"
+            },
+            { "form": "STEM + 고 있어요", "note": "hiện tại tiếp diễn" },
+            {
+                "form": "STEM + (으)ㄹ 수 있어요/없어요",
+                "note": "có thể/không thể (khả năng)"
+            },
+            { "form": "안 V / V-지 않아요", "note": "không (chủ ý/phủ định)" },
+            {
+                "form": "못 V / V-지 못해요",
+                "note": "không thể (khách quan/kỹ năng)"
+            },
+            { "form": "V-지 마세요", "note": "xin đừng" },
+            { "form": "V-고 싶어요", "note": "muốn làm" },
+            { "form": "BASIC + 봐요", "note": "thử làm" }
+        ],
+        "irregulars": [
+            { "type": "ㅂ", "ex": "덥다 → 더워요; 돕다 → 도와요" },
+            { "type": "르", "ex": "모르다 → 몰라요" },
+            { "type": "ㄷ", "ex": "걷다 → 걸어요; 듣다 → 들어요" },
+            { "type": "ㅅ", "ex": "짓다 → 지어요; 낫다 → 나아요" },
+            { "type": "하다", "ex": "해요/했어요/할 거예요" }
+        ],
+        "examples": [
+            {
+                "ko": "먹어요 / 먹었어요 / 먹을 거예요",
+                "vi": "ăn / đã ăn / sẽ ăn"
+            },
+            { "ko": "공부하고 있어요", "vi": "đang học" },
+            { "ko": "수영할 수 있어요", "vi": "có thể bơi" },
+            { "ko": "가지 마세요", "vi": "xin đừng đi" },
+            { "ko": "한국어를 배우고 싶어요", "vi": "muốn học tiếng Hàn" }
+        ],
+        "tags": ["conjugation", "tense-aspect", "politeness"]
+    },
+    {
+        "id": "attributive-adj",
+        "title": "Định ngữ tính từ (bổ nghĩa danh từ)",
+        "rules": [
+            { "form": "Adj STEM + (으)ㄴ + N", "note": "tính từ hiện tại" },
+            {
+                "form": "ㅂ/르 bất quy tắc áp dụng trước khi gắn ㄴ",
+                "note": "차갑다 → 차가운"
+            },
+            {
+                "form": "ㅎ-dropping/ㄹ biến thể",
+                "note": "좋다 → 좋은; 길다 → 긴"
+            }
+        ],
+        "examples": [
+            { "ko": "맛있는 음식", "vi": "món ăn ngon" },
+            { "ko": "큰 집", "vi": "ngôi nhà lớn" },
+            { "ko": "차가운 물", "vi": "nước lạnh" }
+        ],
+        "tags": ["modifiers", "syntax"]
+    },
+    {
+        "id": "pronouns-address",
+        "title": "Đại từ & xưng hô",
+        "points": [
+            "저/나 (tôi), 제/내 (của tôi), 네(니) (của bạn).",
+            "Bạn: hạn chế ‘너’; ưu tiên tên + 씨, chức danh.",
+            "Anh/chị/em: 형/오빠/누나/언니/동생; 선생님."
+        ],
+        "examples": [{ "ko": "민수 씨", "vi": "anh/chị Min-su" }],
+        "tags": ["pragmatics", "politeness"]
+    },
+    {
+        "id": "time-date",
+        "title": "Thời gian, ngày tháng",
+        "rules": [
+            {
+                "form": "요일: 일/월/화/수/목/금/토요일",
+                "note": "thứ/ngày trong tuần"
+            },
+            { "form": "Hán-Hàn + 월", "note": "tháng; 10월 đọc 시월" },
+            {
+                "form": "giờ: Thuần Hàn + 시; phút: Hán-Hàn + 분; rưỡi: 반",
+                "note": ""
+            },
+            { "form": "매일/매주/매월/매년", "note": "mỗi ~" },
+            { "form": "지난/이번/다음 + 주/달/년; 작년/올해/내년", "note": "" },
+            { "form": "‘에’ không dùng với 오늘/어제/내일", "note": "" }
+        ],
+        "examples": [
+            { "ko": "오전 다섯 시 반", "vi": "5 giờ rưỡi sáng" },
+            { "ko": "다음 주에 만나요", "vi": "Hẹn gặp tuần sau" }
+        ],
+        "tags": ["time", "calendar"]
+    },
+    {
+        "id": "location-events",
+        "title": "Nơi chốn & sự kiện",
+        "rules": [
+            { "form": "에", "use": "điểm/đến/tồn tại" },
+            { "form": "에서", "use": "nơi diễn ra hành động/sự kiện" },
+            {
+                "form": "에서/부터 ~ 까지",
+                "use": "từ ~ đến (không gian/thời gian)"
+            }
+        ],
+        "examples": [
+            { "ko": "도서관에 있어요.", "vi": "Ở thư viện." },
+            { "ko": "공원에서 축제가 있어요.", "vi": "Có lễ hội ở công viên." }
+        ],
+        "tags": ["location", "events"]
+    },
+    {
+        "id": "existence-possession",
+        "title": "Tồn tại, sở hữu: 있다/없다",
+        "rules": [
+            { "form": "있다/없다", "note": "có/không có; ở/không ở" },
+            { "form": "… 있었어요/없었어요", "note": "quá khứ" },
+            {
+                "form": "N1에게/한테 N2이/가 있어요",
+                "note": "cấu trúc ‘N1 có N2’"
+            }
+        ],
+        "examples": [
+            { "ko": "시간이 없었어요.", "vi": "Đã không có thời gian." },
+            { "ko": "저에게 돈이 있어요.", "vi": "Tôi có tiền." }
+        ],
+        "tags": ["existence", "possession"]
+    },
+    {
+        "id": "degree-quantity",
+        "title": "Mức độ & số lượng",
+        "rules": [
+            { "form": "아주/정말/진짜/매우", "note": "rất" },
+            {
+                "form": "그다지/별로 + (부정)",
+                "note": "không đến mức/không… lắm"
+            },
+            { "form": "더 + V/Adj", "note": "hơn/thêm" },
+            { "form": "많이/조금", "note": "nhiều/ít" }
+        ],
+        "examples": [
+            { "ko": "더 주세요.", "vi": "Cho thêm." },
+            { "ko": "별로 안 비싸요.", "vi": "Không đắt lắm." }
+        ],
+        "tags": ["adverbs", "degree"]
+    },
+    {
+        "id": "counters",
+        "title": "Bộ đếm (counters)",
+        "rules": [
+            {
+                "form": "개, 명/분, 마리, 권, 잔, 병, 대, 장, 벌, 살",
+                "note": "cơ bản"
+            },
+            { "form": "몇 + counter", "note": "hỏi ‘bao nhiêu’" }
+        ],
+        "examples": [
+            { "ko": "책 세 권", "vi": "3 quyển sách" },
+            { "ko": "물 두 병 주세요.", "vi": "Cho 2 chai nước." }
+        ],
+        "tags": ["numbers", "counters"]
+    },
+    {
+        "id": "give-receive-call",
+        "title": "Cho – nhận – gọi điện",
+        "rules": [
+            { "form": "주다/받다", "note": "cho/nhận" },
+            {
+                "form": "에게/한테; 한테서/에게서",
+                "note": "người nhận/nguồn nhận"
+            },
+            { "form": "전화하다; 전화번호", "note": "gọi điện; số điện thoại" }
+        ],
+        "examples": [
+            { "ko": "친구에게 선물을 줬어요.", "vi": "Đã tặng quà cho bạn." },
+            {
+                "ko": "선생님한테서 편지를 받았어요.",
+                "vi": "Nhận thư từ thầy/cô."
+            }
+        ],
+        "tags": ["datives", "communication"]
+    },
+    {
+        "id": "desire",
+        "title": "Muốn/không muốn",
+        "rules": [
+            {
+                "form": "V-고 싶어요 / V-고 싶지 않아요",
+                "note": "muốn/không muốn làm"
+            },
+            {
+                "form": "원하다",
+                "note": "muốn (N) – văn viết, mạnh; hội thoại ưu tiên V-고 싶다"
+            }
+        ],
+        "examples": [
+            { "ko": "쉬고 싶어요.", "vi": "Muốn nghỉ." },
+            {
+                "ko": "물을 원해요 (ít dùng khẩu ngữ).",
+                "vi": "Muốn (nước) — văn viết."
+            }
+        ],
+        "tags": ["modality", "desire"]
+    },
+    {
+        "id": "prohibition-negation",
+        "title": "Cấm đoán & phủ định",
+        "rules": [
+            { "form": "V-지 마세요/마", "note": "đừng/xin đừng" },
+            { "form": "못 V / V-지 못해요", "note": "không thể (khách quan)" },
+            {
+                "form": "V-(으)ㄹ 수가 없어요",
+                "note": "không thể (nhấn mạnh bất khả)"
+            },
+            { "form": "안 V / V-지 않아요", "note": "không làm (phủ định)" }
+        ],
+        "examples": [
+            { "ko": "사진 찍지 마세요.", "vi": "Xin đừng chụp ảnh." },
+            {
+                "ko": "지금은 갈 수가 없어요.",
+                "vi": "Bây giờ thì không thể đi được."
+            }
+        ],
+        "tags": ["negation", "imperative"]
+    },
+    {
+        "id": "feelings-states",
+        "title": "Cảm xúc & trạng thái",
+        "points": [
+            "아프다: chủ thể + 이/가 + 아파요/아팠어요.",
+            "배고프다/배부르다: đói/no (르-bất quy tắc).",
+            "슬프다/기쁘다/행복하다: nói về người khác → dùng ‘~해 보여요/~인 것 같아요’ ở bậc cao hơn."
+        ],
+        "examples": [
+            { "ko": "머리가 아파요.", "vi": "Đau đầu." },
+            { "ko": "배가 고파요.", "vi": "Đói bụng." }
+        ],
+        "tags": ["adjectives", "semantics"]
+    },
+    {
+        "id": "colors",
+        "title": "Màu sắc",
+        "rules": [
+            {
+                "form": "Danh từ màu + 색",
+                "note": "빨간색/파란색/노란색/검은색/하얀색…"
+            },
+            {
+                "form": "Dạng rút gọn bổ nghĩa: 빨간/파란/노란/검은/하얀 + N",
+                "note": ""
+            }
+        ],
+        "examples": [
+            { "ko": "파란색 차", "vi": "xe màu xanh dương" },
+            { "ko": "빨간 꽃", "vi": "bông hoa đỏ" }
+        ],
+        "tags": ["vocabulary", "modifiers"]
+    },
+    {
+        "id": "connectors",
+        "title": "Từ nối & diễn đạt hội thoại",
+        "rules": [
+            { "form": "그리고", "note": "và" },
+            { "form": "그런데/하지만", "note": "nhưng" },
+            { "form": "그래서", "note": "nên" },
+            { "form": "그러면/그럼", "note": "vậy thì" },
+            { "form": "혹시", "note": "liệu/không biết…" },
+            { "form": "아직/벌써", "note": "vẫn/chưa – đã rồi" }
+        ],
+        "examples": [
+            { "ko": "그래서 늦었어요.", "vi": "Vì vậy nên tôi đến muộn." }
+        ],
+        "tags": ["discourse", "connectors"]
+    },
+    {
+        "id": "wh-questions",
+        "title": "Câu hỏi WH",
+        "rules": [
+            { "form": "언제/어디/누구/무엇(뭐)/어떻게/왜/어떤/몇", "note": "" },
+            { "form": "어느/어떤 + N; 어느 것", "note": "cái/loại nào" },
+            { "form": "이거/그거/저거", "note": "cái này/đó/kia" }
+        ],
+        "examples": [
+            { "ko": "어디에 가요?", "vi": "Bạn đi đâu?" },
+            { "ko": "어떤 책을 좋아해요?", "vi": "Bạn thích loại sách nào?" }
+        ],
+        "tags": ["questions", "syntax"]
+    },
+    {
+        "id": "aspect-special",
+        "title": "Các mẫu thời – thể đặc biệt",
+        "rules": [
+            { "form": "V-고 있었어요", "note": "đang (ở quá khứ)" },
+            { "form": "방금/금방 + V", "note": "vừa mới" },
+            {
+                "form": "처음(으로) V; 처음에/처음부터",
+                "note": "lần đầu; ban đầu/từ đầu"
+            },
+            { "form": "다시", "note": "lại/lần nữa" },
+            {
+                "form": "(으)로 với công cụ",
+                "note": "카드로/젓가락으로/연필로/눈으로/휴대폰으로"
+            }
+        ],
+        "examples": [
+            { "ko": "방금 도착했어요.", "vi": "Vừa mới đến." },
+            {
+                "ko": "어제도 공부하고 있었어요.",
+                "vi": "Hôm qua cũng đang học."
+            }
+        ],
+        "tags": ["aspect", "adverbs"]
+    }
+]

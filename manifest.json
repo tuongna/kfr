@@ -1,6 +1,6 @@
 {
     "name": "Korean from Ryan",
-    "short_name": "KR",
+    "short_name": "KfR",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#3498db",

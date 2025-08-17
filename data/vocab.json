@@ -1,0 +1,335 @@
+[
+    { "ko": "사과", "vi": "Táo", "en": "apple", "rr": "sagwa" },
+    { "ko": "바나나", "vi": "Chuối", "en": "banana", "rr": "banana" },
+    {
+        "ko": "귤",
+        "vi": "Quýt, quýt mandarin",
+        "en": "tangerine; mandarin orange",
+        "rr": "gyul"
+    },
+    { "ko": "오이", "vi": "Dưa leo", "en": "cucumber", "rr": "oi" },
+    { "ko": "버섯", "vi": "Nấm", "en": "mushroom", "rr": "beoseot" },
+    { "ko": "고기", "vi": "Thịt", "en": "meat", "rr": "gogi" },
+    { "ko": "음식", "vi": "Thức ăn", "en": "food", "rr": "eumsik" },
+    {
+        "ko": "라면",
+        "vi": "Mì ramen",
+        "en": "ramen (instant noodles)",
+        "rr": "ramyeon"
+    },
+    {
+        "ko": "김밥",
+        "vi": "Cơm cuộn rong biển",
+        "en": "gimbap (seaweed rice roll)",
+        "rr": "gimbap"
+    },
+    { "ko": "국", "vi": "Canh, súp", "en": "soup", "rr": "guk" },
+    { "ko": "과일", "vi": "Trái cây", "en": "fruit", "rr": "gwail" },
+    { "ko": "야채", "vi": "Rau củ", "en": "vegetables", "rr": "yachae" },
+    { "ko": "물", "vi": "Nước (uống)", "en": "water (drinking)", "rr": "mul" },
+    { "ko": "주스", "vi": "Nước ép", "en": "juice", "rr": "juseu" },
+    {
+        "ko": "차",
+        "vi": "Trà; Xe (ngữ cảnh quyết định)",
+        "en": "tea; car/vehicle (context-dependent)",
+        "rr": "cha"
+    },
+    { "ko": "커피", "vi": "Cà phê", "en": "coffee", "rr": "keopi" },
+    { "ko": "우유", "vi": "Sữa", "en": "milk", "rr": "uyu" },
+    {
+        "ko": "콜라",
+        "vi": "Coca (nước ngọt có ga)",
+        "en": "cola (soda)",
+        "rr": "kolla"
+    },
+    { "ko": "케이크", "vi": "Bánh kem", "en": "cake", "rr": "keikeu" },
+    { "ko": "빵", "vi": "Bánh mì", "en": "bread", "rr": "ppang" },
+    { "ko": "계란", "vi": "Trứng", "en": "egg", "rr": "gyeran" },
+    { "ko": "떡", "vi": "Bánh gạo", "en": "rice cake (tteok)", "rr": "tteok" },
+    { "ko": "초콜릿", "vi": "Sô-cô-la", "en": "chocolate", "rr": "chokollit" },
+    { "ko": "설탕", "vi": "Đường", "en": "sugar", "rr": "seoltang" },
+    { "ko": "소금", "vi": "Muối", "en": "salt", "rr": "sogeum" },
+    { "ko": "학교", "vi": "Trường học", "en": "school", "rr": "hakgyo" },
+    { "ko": "교실", "vi": "Lớp học", "en": "classroom", "rr": "gyosil" },
+    { "ko": "도서관", "vi": "Thư viện", "en": "library", "rr": "doseogwan" },
+    { "ko": "회사", "vi": "Công ty", "en": "company", "rr": "hoesa" },
+    { "ko": "공항", "vi": "Sân bay", "en": "airport", "rr": "gonghang" },
+    { "ko": "병원", "vi": "Bệnh viện", "en": "hospital", "rr": "byeongwon" },
+    {
+        "ko": "식당",
+        "vi": "Nhà hàng, quán ăn",
+        "en": "restaurant",
+        "rr": "sikdang"
+    },
+    { "ko": "가게", "vi": "Cửa hàng", "en": "shop; store", "rr": "gage" },
+    { "ko": "은행", "vi": "Ngân hàng", "en": "bank", "rr": "eunhaeng" },
+    { "ko": "서점", "vi": "Nhà sách", "en": "bookstore", "rr": "seojeom" },
+    {
+        "ko": "약국",
+        "vi": "Hiệu thuốc",
+        "en": "pharmacy; drugstore",
+        "rr": "yakkuk"
+    },
+    {
+        "ko": "편의점",
+        "vi": "Cửa hàng tiện lợi",
+        "en": "convenience store",
+        "rr": "pyeonuijeom"
+    },
+    {
+        "ko": "영화관",
+        "vi": "Rạp chiếu phim",
+        "en": "cinema; movie theater",
+        "rr": "yeonghwagwan"
+    },
+    {
+        "ko": "화장실",
+        "vi": "Nhà vệ sinh",
+        "en": "restroom; toilet",
+        "rr": "hwajangsil"
+    },
+    { "ko": "책", "vi": "Sách", "en": "book", "rr": "chaek" },
+    { "ko": "잡지", "vi": "Tạp chí", "en": "magazine", "rr": "japji" },
+    { "ko": "편지", "vi": "Thư", "en": "letter", "rr": "pyeonji" },
+    { "ko": "연필", "vi": "Bút chì", "en": "pencil", "rr": "yeonpil" },
+    { "ko": "펜", "vi": "Bút mực", "en": "pen", "rr": "pen" },
+    { "ko": "지우개", "vi": "Cục tẩy", "en": "eraser", "rr": "jiugae" },
+    { "ko": "종이", "vi": "Giấy", "en": "paper", "rr": "jongi" },
+    { "ko": "가위", "vi": "Kéo", "en": "scissors", "rr": "gawi" },
+    { "ko": "테이프", "vi": "Băng dính", "en": "tape", "rr": "teipeu" },
+    { "ko": "자", "vi": "Thước", "en": "ruler", "rr": "ja" },
+    { "ko": "노트북", "vi": "Laptop", "en": "laptop", "rr": "noteubuk" },
+    {
+        "ko": "계산기",
+        "vi": "Máy tính cầm tay",
+        "en": "calculator",
+        "rr": "gyesangi"
+    },
+    { "ko": "남자", "vi": "Nam, con trai", "en": "man; male", "rr": "namja" },
+    { "ko": "여자", "vi": "Nữ, con gái", "en": "woman; female", "rr": "yeoja" },
+    {
+        "ko": "학생",
+        "vi": "Học sinh, sinh viên",
+        "en": "student",
+        "rr": "haksaeng"
+    },
+    {
+        "ko": "대학생",
+        "vi": "Sinh viên đại học",
+        "en": "university student",
+        "rr": "daehaksaeng"
+    },
+    {
+        "ko": "선생님",
+        "vi": "Giáo viên",
+        "en": "teacher",
+        "rr": "seonsaengnim"
+    },
+    { "ko": "아버지", "vi": "Bố", "en": "father", "rr": "abeoji" },
+    { "ko": "어머니", "vi": "Mẹ", "en": "mother", "rr": "eomeoni" },
+    {
+        "ko": "형",
+        "vi": "Anh trai (nam gọi)",
+        "en": "older brother (for male speaker)",
+        "rr": "hyeong"
+    },
+    {
+        "ko": "오빠",
+        "vi": "Anh trai (nữ gọi)",
+        "en": "older brother (for female speaker)",
+        "rr": "oppa"
+    },
+    {
+        "ko": "누나",
+        "vi": "Chị gái (nam gọi)",
+        "en": "older sister (for male speaker)",
+        "rr": "nuna"
+    },
+    {
+        "ko": "언니",
+        "vi": "Chị gái (nữ gọi)",
+        "en": "older sister (for female speaker)",
+        "rr": "eonni"
+    },
+    {
+        "ko": "남동생",
+        "vi": "Em trai",
+        "en": "younger brother",
+        "rr": "namdongsaeng"
+    },
+    {
+        "ko": "여동생",
+        "vi": "Em gái",
+        "en": "younger sister",
+        "rr": "yeodongsaeng"
+    },
+    { "ko": "친구", "vi": "Bạn bè", "en": "friend", "rr": "chingu" },
+    { "ko": "강아지", "vi": "Chó con (cún)", "en": "puppy", "rr": "gangaji" },
+    { "ko": "개", "vi": "Chó", "en": "dog", "rr": "gae" },
+    { "ko": "고양이", "vi": "Mèo", "en": "cat", "rr": "goyangi" },
+    { "ko": "쥐", "vi": "Chuột", "en": "mouse; rat", "rr": "jwi" },
+    { "ko": "곰", "vi": "Gấu", "en": "bear", "rr": "gom" },
+    { "ko": "하마", "vi": "Hà mã", "en": "hippopotamus", "rr": "hama" },
+    { "ko": "기린", "vi": "Hươu cao cổ", "en": "giraffe", "rr": "girin" },
+    { "ko": "코끼리", "vi": "Voi", "en": "elephant", "rr": "kokkiri" },
+    { "ko": "펭귄", "vi": "Chim cánh cụt", "en": "penguin", "rr": "penggwin" },
+    { "ko": "물고기", "vi": "Cá", "en": "fish", "rr": "mulgogi" },
+    { "ko": "차", "vi": "Xe", "en": "car; vehicle", "rr": "cha" },
+    { "ko": "버스", "vi": "Xe buýt", "en": "bus", "rr": "beoseu" },
+    { "ko": "자전거", "vi": "Xe đạp", "en": "bicycle", "rr": "jajeongeo" },
+    {
+        "ko": "지하철",
+        "vi": "Tàu điện ngầm",
+        "en": "subway; metro",
+        "rr": "jihacheol"
+    },
+    { "ko": "비행기", "vi": "Máy bay", "en": "airplane", "rr": "bihaenggi" },
+    { "ko": "택시", "vi": "Taxi", "en": "taxi", "rr": "taegsi" },
+    { "ko": "날씨", "vi": "Thời tiết", "en": "weather", "rr": "nalssi" },
+    {
+        "ko": "덥다",
+        "vi": "Nóng (thời tiết)",
+        "en": "to be hot (weather)",
+        "rr": "deoptta"
+    },
+    {
+        "ko": "춥다",
+        "vi": "Lạnh (thời tiết)",
+        "en": "to be cold (weather)",
+        "rr": "chuptta"
+    },
+    { "ko": "맵다", "vi": "Cay", "en": "spicy", "rr": "maeppda" },
+    { "ko": "쉽다", "vi": "Dễ", "en": "easy", "rr": "swiptta" },
+    { "ko": "어렵다", "vi": "Khó", "en": "difficult", "rr": "eoryeoptta" },
+    { "ko": "싸다", "vi": "Rẻ", "en": "cheap", "rr": "ssada" },
+    { "ko": "비싸다", "vi": "Đắt", "en": "expensive", "rr": "bissada" },
+    { "ko": "크다", "vi": "To, lớn", "en": "big; large", "rr": "keuda" },
+    { "ko": "작다", "vi": "Nhỏ", "en": "small", "rr": "jaktta" },
+    {
+        "ko": "좋다",
+        "vi": "Tốt, thích",
+        "en": "good; nice; to like (adjectival)",
+        "rr": "jota"
+    },
+    { "ko": "나쁘다", "vi": "Xấu", "en": "bad", "rr": "nappeuda" },
+    { "ko": "예쁘다", "vi": "Đẹp (xinh)", "en": "pretty", "rr": "yeppeuda" },
+    {
+        "ko": "친절하다",
+        "vi": "Tử tế, thân thiện",
+        "en": "kind; friendly",
+        "rr": "chinjeolhada"
+    },
+    {
+        "ko": "재미있다",
+        "vi": "Thú vị",
+        "en": "interesting; fun",
+        "rr": "jaemiitda"
+    },
+    {
+        "ko": "재미없다",
+        "vi": "Không thú vị",
+        "en": "not interesting; boring",
+        "rr": "jaemieoptta"
+    },
+    { "ko": "맛있다", "vi": "Ngon", "en": "delicious; tasty", "rr": "masitda" },
+    {
+        "ko": "맛없다",
+        "vi": "Dở, không ngon",
+        "en": "tasteless; not delicious",
+        "rr": "madeoptta"
+    },
+    { "ko": "달다", "vi": "Ngọt", "en": "sweet", "rr": "dalda" },
+    {
+        "ko": "쓰다",
+        "vi": "Đắng; Viết; Dùng (ngữ cảnh quyết định)",
+        "en": "bitter; to write; to use (context-dependent)",
+        "rr": "sseuda"
+    },
+    { "ko": "짜다", "vi": "Mặn", "en": "salty", "rr": "jjada" },
+    { "ko": "가다", "vi": "Đi", "en": "to go", "rr": "gada" },
+    { "ko": "오다", "vi": "Đến", "en": "to come", "rr": "oda" },
+    { "ko": "먹다", "vi": "Ăn", "en": "to eat", "rr": "meoktta" },
+    { "ko": "마시다", "vi": "Uống", "en": "to drink", "rr": "masida" },
+    {
+        "ko": "보다",
+        "vi": "Xem, nhìn",
+        "en": "to see; to watch; to look",
+        "rr": "boda"
+    },
+    { "ko": "사다", "vi": "Mua", "en": "to buy", "rr": "sada" },
+    { "ko": "주다", "vi": "Cho, đưa", "en": "to give", "rr": "juda" },
+    { "ko": "받다", "vi": "Nhận", "en": "to receive", "rr": "battta" },
+    { "ko": "읽다", "vi": "Đọc", "en": "to read", "rr": "iktta" },
+    {
+        "ko": "배우다",
+        "vi": "Học (tiếp thu từ ai đó)",
+        "en": "to learn",
+        "rr": "baeuda"
+    },
+    { "ko": "하다", "vi": "Làm", "en": "to do", "rr": "hada" },
+    {
+        "ko": "공부하다",
+        "vi": "Học (tự học, học hành)",
+        "en": "to study",
+        "rr": "gongbuhada"
+    },
+    {
+        "ko": "전화하다",
+        "vi": "Gọi điện thoại",
+        "en": "to make a phone call",
+        "rr": "jeonhwahada"
+    },
+    {
+        "ko": "이야기하다",
+        "vi": "Nói chuyện, kể",
+        "en": "to talk; to chat; to tell",
+        "rr": "iyagihada"
+    },
+    { "ko": "말하다", "vi": "Nói", "en": "to speak; to say", "rr": "malhada" },
+    { "ko": "가르치다", "vi": "Dạy", "en": "to teach", "rr": "gareuchida" },
+    {
+        "ko": "있다",
+        "vi": "Có; Tồn tại; Ở",
+        "en": "to have; to exist; to be (at/in)",
+        "rr": "ittta"
+    },
+    {
+        "ko": "없다",
+        "vi": "Không có; Không tồn tại",
+        "en": "to not have; to not exist",
+        "rr": "eoptta"
+    },
+    {
+        "ko": "한국",
+        "vi": "Hàn Quốc",
+        "en": "Korea (South Korea)",
+        "rr": "Hanguk"
+    },
+    {
+        "ko": "한국어",
+        "vi": "Tiếng Hàn",
+        "en": "Korean (language)",
+        "rr": "Hangugeo"
+    },
+    { "ko": "미국", "vi": "Mỹ", "en": "United States", "rr": "Miguk" },
+    {
+        "ko": "영국",
+        "vi": "Anh (UK)",
+        "en": "United Kingdom",
+        "rr": "Yeongguk"
+    },
+    { "ko": "일본", "vi": "Nhật Bản", "en": "Japan", "rr": "Ilbon" },
+    { "ko": "중국", "vi": "Trung Quốc", "en": "China", "rr": "Jungguk" },
+    { "ko": "호주", "vi": "Úc", "en": "Australia", "rr": "Hoju" },
+    { "ko": "캐나다", "vi": "Canada", "en": "Canada", "rr": "Kaenada" },
+    { "ko": "태국", "vi": "Thái Lan", "en": "Thailand", "rr": "Taeguk" },
+    { "ko": "독일", "vi": "Đức", "en": "Germany", "rr": "Dogil" },
+    { "ko": "프랑스", "vi": "Pháp", "en": "France", "rr": "Peurangseu" },
+    {
+        "ko": "필리핀",
+        "vi": "Philippines",
+        "en": "Philippines",
+        "rr": "Pillipin"
+    },
+    { "ko": "인도", "vi": "Ấn Độ", "en": "India", "rr": "Indo" }
+]
