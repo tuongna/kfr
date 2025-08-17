@@ -21,7 +21,12 @@ let currentIndex = parseInt(localStorage.getItem('currentIndex'), 10) || 0;
 function render(index) {
     wordLabelEl.textContent = vocab[index].ko;
     speakEl.dataset.speak = vocab[index].ko;
-    speakEl.style.display = practiceMode.checked ? 'none' : '';
+
+    if (isIOS()) {
+        speakEl.style.display = 'none';
+    } else {
+        speakEl.style.display = practiceMode.checked ? 'none' : '';
+    }
 
     if (!practiceMode.checked || getLearnedWords().includes(vocab[index].ko)) {
         phoneticEl.textContent = vocab[index].rr;
@@ -120,11 +125,6 @@ function handleOnClickSpeak(e) {
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);
-
-if (isIOS()) {
-    speakBtn.style.display = 'none';
-} else {
-    speakBtn.addEventListener('click', handleOnClickSpeak);
-}
+speakBtn.addEventListener('click', handleOnClickSpeak);
 
 renderAndSave(currentIndex);
