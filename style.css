@@ -97,7 +97,7 @@ p {
 #word > span {
     font-size: 3.2rem;
 }
-#word.learned {
+#word.learned > span {
     color: var(--success);
 }
 

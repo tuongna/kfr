@@ -4,7 +4,8 @@ import { isIOS } from './utils/device.js';
 
 const MOTHER_TONGUE = 'vi';
 
-const wordEl = document.querySelector('#word > span');
+const wordEl = document.querySelector('#word');
+const wordLabelEl = document.querySelector('#word > span');
 const speakEl = document.querySelector('#word > button');
 const phoneticEl = document.getElementById('phonetic');
 const meaningEl = document.getElementById('meaning');
@@ -18,8 +19,9 @@ const speakBtn = document.querySelector('[data-speak]');
 let currentIndex = parseInt(localStorage.getItem('currentIndex'), 10) || 0;
 
 function render(index) {
-    wordEl.textContent = vocab[index].ko;
+    wordLabelEl.textContent = vocab[index].ko;
     speakEl.dataset.speak = vocab[index].ko;
+    speakEl.style.display = practiceMode.checked ? 'none' : '';
 
     if (!practiceMode.checked || getLearnedWords().includes(vocab[index].ko)) {
         phoneticEl.textContent = vocab[index].rr;
