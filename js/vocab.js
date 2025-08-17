@@ -14,7 +14,7 @@ const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
 const practiceMode = document.getElementById('practiceMode');
 
-let currentIndex = parseInt(localStorage.getItem('currentIndex'), 10) || 0;
+let currentIndex = parseInt(localStorage.getItem('vocabPage'), 10) || 0;
 
 function render(index) {
     wordLabelEl.textContent = vocab[index].ko;
@@ -58,7 +58,7 @@ function render(index) {
 
 function renderAndSave(index) {
     render(index);
-    localStorage.setItem('currentIndex', index);
+    localStorage.setItem('vocabPage', index);
 }
 
 const getLearnedWords = () => {

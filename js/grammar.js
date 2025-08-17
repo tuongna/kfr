@@ -10,7 +10,7 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
 
-let currentIndex = parseInt(localStorage.getItem('currentIndex'), 10) || 0;
+let currentIndex = parseInt(localStorage.getItem('grammarPage'), 10) || 0;
 
 function render(index) {
     const { title, summary, points, rules, irregulars, examples, tags } =
@@ -75,7 +75,7 @@ function render(index) {
 
 function renderAndSave(index) {
     render(index);
-    localStorage.setItem('currentIndex', index);
+    localStorage.setItem('grammarPage', index);
 }
 
 function prevCard() {
