@@ -1,4 +1,4 @@
-import { playAudio } from './utils/speech.js';
+import { playAudio, genIdFromRR } from './utils.js';
 
 const MOTHER_TONGUE = 'vi';
 
@@ -18,16 +18,17 @@ let currentIndex = parseInt(localStorage.getItem('vocabPage'), 10) || 0;
 
 function render(index) {
     const item = vocab[index];
+    const audioFileName = genIdFromRR(item.rr);
     wordLabelEl.textContent = item.ko;
-    speakBtn.dataset.speak = item.rr; // use rr for audio filename
+    speakBtn.dataset.speak = audioFileName; // use rr for audio filename
     speakBtn.style.display = practiceMode.checked ? 'none' : '';
 
     // --- Check if audio exists ---
-    const audioPath = `../audio/${item.rr}.mp3`;
+    const audioPath = `../audio/${audioFileName}.mp3`;
     fetch(audioPath, { method: 'HEAD' })
         .then((res) => {
             speakBtn.disabled = !res.ok;
-            if (!res.ok) console.warn(`Audio missing for vocab rr ${item.rr}`);
+            if (!res.ok) console.warn(`Audio missing for vocab ${item.ko}`);
         })
         .catch((err) => {
             speakBtn.disabled = true;
@@ -90,7 +91,10 @@ function nextCard() {
 function markLearned(ko) {
     if (vocab.find((i) => i.ko === ko)) {
         if (!getLearnedWords().includes(ko)) {
-            localStorage.setItem('learned', JSON.stringify([...getLearnedWords(), ko]));
+            localStorage.setItem(
+                'learned',
+                JSON.stringify([...getLearnedWords(), ko])
+            );
             renderAndSave(currentIndex);
         }
     }
@@ -114,7 +118,8 @@ function getQuizWords() {
         let idx = (s * 3 + currentIndex * 7) % total;
         if (idx === currentIndex || distractors.includes(idx))
             idx = (95 * 3 + currentIndex * 7) % total;
-        if (!distractors.includes(idx) && distractors.length < 3) distractors.push(idx);
+        if (!distractors.includes(idx) && distractors.length < 3)
+            distractors.push(idx);
         if (distractors.length === 3) break;
     }
     const raw = [...distractors.map((i) => vocab[i]), vocab[currentIndex]];

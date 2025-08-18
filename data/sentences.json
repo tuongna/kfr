@@ -1,594 +1,162 @@
 [
   {
-    "id": 5393,
-    "ko": "나는 꿈이 있어.",
-    "en": [
-      "I have a dream."
-    ],
-    "vi": [
-      "Tôi có ước mơ."
-    ],
-    "audio": "audio/5393.mp3",
-    "level": "",
-    "tags": []
+    "ko": "천천히 말해 주세요.",
+    "rr": "cheoncheonhi malhae juseyo",
+    "en": ["Please speak slowly."],
+    "vi": ["Làm ơn nói chậm lại."],
+    "level": "A1",
+    "tags": ["communication", "request"]
   },
   {
-    "id": 727741,
-    "ko": "나는 사나이다.",
-    "en": [
-      "I am a man."
-    ],
-    "vi": [],
-    "audio": "audio/727741.mp3",
-    "level": "",
-    "tags": []
+    "ko": "다시 한번 말해 주세요.",
+    "rr": "dasi hanbeon malhae juseyo",
+    "en": ["Please say it again once more."],
+    "vi": ["Làm ơn nói lại một lần nữa."],
+    "level": "A1",
+    "tags": ["communication", "request"]
   },
   {
-    "id": 2652667,
-    "ko": "모릅니다.",
-    "en": [
-      "I don't know."
-    ],
-    "vi": [],
-    "audio": "audio/2652667.mp3",
-    "level": "",
-    "tags": []
+    "ko": "영어로 뭐예요?",
+    "rr": "yeongeoro mwoyeyo",
+    "en": ["What is it in English?"],
+    "vi": ["Cái này bằng tiếng Anh là gì?"],
+    "level": "A1",
+    "tags": ["communication", "question"]
   },
   {
-    "id": 3189871,
-    "ko": "아닙니다.",
-    "en": [
-      "No."
-    ],
-    "vi": [],
-    "audio": "audio/3189871.mp3",
-    "level": "",
-    "tags": []
+    "ko": "한국어로 뭐예요?",
+    "rr": "hangugeoro mwoyeyo",
+    "en": ["What is it in Korean?"],
+    "vi": ["Cái này bằng tiếng Hàn là gì?"],
+    "level": "A1",
+    "tags": ["communication", "question"]
   },
   {
-    "id": 3781096,
-    "ko": "없다.",
-    "en": [
-      "There aren't any.",
-      "I don't have any.",
-      "There are none."
-    ],
-    "vi": [],
-    "audio": "audio/3781096.mp3",
-    "level": "",
-    "tags": []
+    "ko": "한국어를 잘 못해요.",
+    "rr": "hangugeoreul jal mothaeyo",
+    "en": ["I can't understand Korean well."],
+    "vi": ["Tôi không giỏi tiếng Hàn."],
+    "level": "A1",
+    "tags": ["communication", "ability"]
   },
   {
-    "id": 5269341,
-    "ko": "나는 발이 차다.",
-    "en": [
-      "My feet are cold."
-    ],
-    "vi": [],
-    "audio": "audio/5269341.mp3",
-    "level": "",
-    "tags": []
+    "ko": "안녕하세요.",
+    "rr": "annyeonghaseyo",
+    "en": ["Hello.", "Good morning.", "Good afternoon.", "Good evening."],
+    "vi": ["Xin chào.", "Chào buổi sáng.", "Chào buổi trưa.", "Chào buổi tối."],
+    "level": "A1",
+    "tags": ["greeting"]
   },
   {
-    "id": 6304883,
-    "ko": "그는 자살했다.",
-    "en": [
-      "He committed suicide."
-    ],
-    "vi": [],
-    "audio": "audio/6304883.mp3",
-    "level": "",
-    "tags": []
+    "ko": "잘 지냈어요?",
+    "rr": "jal jinaesseoyo",
+    "en": ["How have you been?"],
+    "vi": ["Bạn có khỏe không?"],
+    "level": "A1",
+    "tags": ["greeting", "question"]
   },
   {
-    "id": 6304941,
-    "ko": "피가 있었다.",
-    "en": [
-      "There was blood."
-    ],
-    "vi": [],
-    "audio": "audio/6304941.mp3",
-    "level": "",
-    "tags": []
+    "ko": "오랜만이에요!",
+    "rr": "oraenmanieyo",
+    "en": ["Long time no see!"],
+    "vi": ["Lâu rồi không gặp!"],
+    "level": "A1",
+    "tags": ["greeting"]
   },
   {
-    "id": 6304943,
-    "ko": "피는 붉다.",
-    "en": [
-      "Blood is red."
-    ],
-    "vi": [],
-    "audio": "audio/6304943.mp3",
-    "level": "",
-    "tags": []
+    "ko": "안녕히 계세요.",
+    "rr": "annyeonghi gyeseyo",
+    "en": ["Goodbye (said by the person leaving)."],
+    "vi": ["Tạm biệt (nói khi mình rời đi)."],
+    "level": "A1",
+    "tags": ["farewell"]
   },
   {
-    "id": 6305401,
-    "ko": "섹스는 좋다.",
-    "en": [
-      "Sex is good."
-    ],
-    "vi": [],
-    "audio": "audio/6305401.mp3",
-    "level": "",
-    "tags": []
+    "ko": "안녕히 가세요.",
+    "rr": "annyeonghi gaseyo",
+    "en": ["Goodbye (said by the person staying)."],
+    "vi": ["Tạm biệt (nói khi người khác rời đi)."],
+    "level": "A1",
+    "tags": ["farewell"]
   },
   {
-    "id": 8408621,
-    "ko": "그는 바빴다.",
-    "en": [
-      "She was busy."
-    ],
-    "vi": [],
-    "audio": "audio/8408621.mp3",
-    "level": "",
-    "tags": []
+    "ko": "안녕!",
+    "rr": "annyeong",
+    "en": ["Hi!", "Bye! (informal)"],
+    "vi": ["Chào!", "Tạm biệt! (thân mật)"],
+    "level": "A1",
+    "tags": ["greeting", "farewell", "informal"]
   },
   {
-    "id": 8408622,
-    "ko": "그는 어렸다.",
-    "en": [
-      "She was young."
-    ],
-    "vi": [],
-    "audio": "audio/8408622.mp3",
-    "level": "",
-    "tags": []
+    "ko": "네.",
+    "rr": "ne",
+    "en": ["Yes."],
+    "vi": ["Vâng.", "Đúng."],
+    "level": "A1",
+    "tags": ["answer"]
   },
   {
-    "id": 10585668,
-    "ko": "우리는 안다.",
-    "en": [
-      "We know."
-    ],
-    "vi": [],
-    "audio": "audio/10585668.mp3",
-    "level": "",
-    "tags": []
+    "ko": "아니요.",
+    "rr": "aniyo",
+    "en": ["No."],
+    "vi": ["Không."],
+    "level": "A1",
+    "tags": ["answer"]
   },
   {
-    "id": 11104716,
-    "ko": "그는 달렸다.",
-    "en": [
-      "He ran."
-    ],
-    "vi": [],
-    "audio": "audio/11104716.mp3",
-    "level": "",
-    "tags": []
+    "ko": "아마도.",
+    "rr": "amado",
+    "en": ["Maybe."],
+    "vi": ["Có lẽ."],
+    "level": "A1",
+    "tags": ["answer", "uncertainty"]
   },
   {
-    "id": 11105124,
-    "ko": "나는 감옥에 있다.",
-    "en": [
-      "I'm in jail."
-    ],
-    "vi": [],
-    "audio": "audio/11105124.mp3",
-    "level": "",
-    "tags": []
+    "ko": "괜찮아요.",
+    "rr": "gwaenchanhayo",
+    "en": ["It's okay.", "I'm okay."],
+    "vi": ["Ổn mà.", "Tôi ổn."],
+    "level": "A1",
+    "tags": ["response"]
   },
   {
-    "id": 11105161,
-    "ko": "톰은 굶고 있다.",
-    "en": [
-      "Tom is starving."
-    ],
-    "vi": [],
-    "audio": "audio/11105161.mp3",
-    "level": "",
-    "tags": []
+    "ko": "안 돼요!",
+    "rr": "an dwaeyo",
+    "en": ["No!", "I can't!"],
+    "vi": ["Không được!", "Tôi không thể!"],
+    "level": "A1",
+    "tags": ["negative", "strong"]
   },
   {
-    "id": 11105163,
-    "ko": "톰은 바에 있다.",
-    "en": [
-      "Tom is at the bar."
-    ],
-    "vi": [],
-    "audio": "audio/11105163.mp3",
-    "level": "",
-    "tags": []
+    "ko": "감사합니다.",
+    "rr": "gamsahamnida",
+    "en": ["Thank you."],
+    "vi": ["Xin cảm ơn."],
+    "level": "A1",
+    "tags": ["manners", "formal"]
   },
   {
-    "id": 11105239,
-    "ko": "나는 집에 있다.",
-    "en": [
-      "I am at home.",
-      "I'm at home."
-    ],
-    "vi": [],
-    "audio": "audio/11105239.mp3",
-    "level": "",
-    "tags": []
+    "ko": "고맙습니다.",
+    "rr": "gomapseumnida",
+    "en": ["Thank you."],
+    "vi": ["Cảm ơn."],
+    "level": "A1",
+    "tags": ["manners", "formal"]
   },
   {
-    "id": 11105254,
-    "ko": "나는 내 방이 있다.",
-    "en": [
-      "I have my own room."
-    ],
-    "vi": [],
-    "audio": "audio/11105254.mp3",
-    "level": "",
-    "tags": []
+    "ko": "고마워.",
+    "rr": "gomawo",
+    "en": ["Thanks."],
+    "vi": ["Cảm ơn (thân mật)."],
+    "level": "A1",
+    "tags": ["manners", "informal"]
   },
   {
-    "id": 11105373,
-    "ko": "톰은 웃고 있다.",
-    "en": [
-      "Tom's smiling.",
-      "Tom is smiling."
-    ],
-    "vi": [],
-    "audio": "audio/11105373.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105447,
-    "ko": "나는 사람이다.",
-    "en": [
-      "I'm a human."
-    ],
-    "vi": [],
-    "audio": "audio/11105447.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105448,
-    "ko": "나는 남자다.",
-    "en": [
-      "I'm a man."
-    ],
-    "vi": [],
-    "audio": "audio/11105448.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105455,
-    "ko": "나는 위험하다.",
-    "en": [
-      "I'm dangerous."
-    ],
-    "vi": [],
-    "audio": "audio/11105455.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105493,
-    "ko": "그는 두통이 있다.",
-    "en": [
-      "He had a headache."
-    ],
-    "vi": [],
-    "audio": "audio/11105493.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105504,
-    "ko": "나는 그를 돕고 있다.",
-    "en": [
-      "I help him."
-    ],
-    "vi": [],
-    "audio": "audio/11105504.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105551,
-    "ko": "나는 꽃을 샀다.",
-    "en": [
-      "I bought flowers."
-    ],
-    "vi": [],
-    "audio": "audio/11105551.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105610,
-    "ko": "톰은 일하고 있다.",
-    "en": [
-      "Tom is working."
-    ],
-    "vi": [],
-    "audio": "audio/11105610.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105614,
-    "ko": "손님이 있다.",
-    "en": [
-      "We've got a visitor."
-    ],
-    "vi": [],
-    "audio": "audio/11105614.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105632,
-    "ko": "나는 록이 좋다.",
-    "en": [
-      "I like rock."
-    ],
-    "vi": [],
-    "audio": "audio/11105632.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105681,
-    "ko": "나는 일하는 것이 좋다.",
-    "en": [
-      "I like working."
-    ],
-    "vi": [],
-    "audio": "audio/11105681.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105688,
-    "ko": "톰이 지고 있다.",
-    "en": [
-      "Tom is losing."
-    ],
-    "vi": [],
-    "audio": "audio/11105688.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105878,
-    "ko": "나는 딸이 셋 있다.",
-    "en": [
-      "I have three daughters."
-    ],
-    "vi": [],
-    "audio": "audio/11105878.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11105881,
-    "ko": "톰은 쉬고 있다.",
-    "en": [
-      "Tom is taking a rest."
-    ],
-    "vi": [],
-    "audio": "audio/11105881.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106445,
-    "ko": "나는 자원했다.",
-    "en": [
-      "I volunteered."
-    ],
-    "vi": [],
-    "audio": "audio/11106445.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106456,
-    "ko": "우리는 아프다.",
-    "en": [
-      "We are sick."
-    ],
-    "vi": [],
-    "audio": "audio/11106456.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106530,
-    "ko": "나는 불을 켰다.",
-    "en": [
-      "I turned on the lights."
-    ],
-    "vi": [],
-    "audio": "audio/11106530.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106731,
-    "ko": "나는 아름답다.",
-    "en": [
-      "I'm beautiful."
-    ],
-    "vi": [],
-    "audio": "audio/11106731.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106737,
-    "ko": "톰은 재능이 있다.",
-    "en": [
-      "Tom has talent."
-    ],
-    "vi": [],
-    "audio": "audio/11106737.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106751,
-    "ko": "나는 명단에 있다.",
-    "en": [
-      "I'm on the list."
-    ],
-    "vi": [],
-    "audio": "audio/11106751.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106780,
-    "ko": "나는 이 일이 좋다.",
-    "en": [
-      "I love this job.",
-      "I like this job."
-    ],
-    "vi": [],
-    "audio": "audio/11106780.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106885,
-    "ko": "질문이 있다.",
-    "en": [
-      "I've got a question."
-    ],
-    "vi": [],
-    "audio": "audio/11106885.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106903,
-    "ko": "나는 속는 것이 싫다.",
-    "en": [
-      "I don't like being cheated."
-    ],
-    "vi": [],
-    "audio": "audio/11106903.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106951,
-    "ko": "그는 웃었다.",
-    "en": [
-      "He laughed."
-    ],
-    "vi": [],
-    "audio": "audio/11106951.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11106963,
-    "ko": "나는 전화했다.",
-    "en": [
-      "I phoned."
-    ],
-    "vi": [],
-    "audio": "audio/11106963.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11107036,
-    "ko": "톰은 자랐다.",
-    "en": [
-      "Tom has grown."
-    ],
-    "vi": [],
-    "audio": "audio/11107036.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11597111,
-    "ko": "좁다.",
-    "en": [
-      "It's narrow."
-    ],
-    "vi": [],
-    "audio": "audio/11597111.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 11597195,
-    "ko": "나는 달린다.",
-    "en": [
-      "I run."
-    ],
-    "vi": [],
-    "audio": "audio/11597195.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 13170262,
-    "ko": "바쁩니다.",
-    "en": [
-      "I'm busy."
-    ],
-    "vi": [],
-    "audio": "audio/13170262.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 13177675,
-    "ko": "나는 질문이 있다.",
-    "en": [
-      "I have a question."
-    ],
-    "vi": [],
-    "audio": "audio/13177675.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 13195762,
-    "ko": "맞습니다.",
-    "en": [
-      "You're right.",
-      "That's right."
-    ],
-    "vi": [],
-    "audio": "audio/13195762.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 13248379,
-    "ko": "저항이 있다.",
-    "en": [
-      "There is resistance."
-    ],
-    "vi": [],
-    "audio": "audio/13248379.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 13252697,
-    "ko": "춥습니다.",
-    "en": [
-      "It's cold.",
-      "The weather is cold."
-    ],
-    "vi": [],
-    "audio": "audio/13252697.mp3",
-    "level": "",
-    "tags": []
-  },
-  {
-    "id": 13252721,
-    "ko": "덥습니다.",
-    "en": [
-      "It's hot."
-    ],
-    "vi": [],
-    "audio": "audio/13252721.mp3",
-    "level": "",
-    "tags": []
+    "ko": "천만에요.",
+    "rr": "cheonmaneyo",
+    "en": ["You're welcome."],
+    "vi": ["Không có gì."],
+    "level": "A1",
+    "tags": ["manners", "reply"]
   }
 ]

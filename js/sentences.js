@@ -1,7 +1,6 @@
-import { playAudio } from './utils/speech.js';
+import { playAudio, genIdFromRR } from './utils.js';
 
 const MOTHER_TONGUE = 'vi';
-const SECOND_LANGUAGE = 'en';
 
 let sentences = [];
 const wordEl = document.querySelector('#word');
@@ -19,16 +18,17 @@ let currentIndex = parseInt(localStorage.getItem('sentencesPage'), 10) || 0;
 
 function render(index) {
     const item = sentences[index];
+    const audioFileName = genIdFromRR(item.rr);
     wordLabelEl.textContent = item.ko;
-    speakBtn.dataset.speak = item.id; // use id for audio filename
+    speakBtn.dataset.speak = audioFileName; // use rr for audio filename
     speakBtn.style.display = practiceMode.checked ? 'none' : '';
 
     // --- Check if audio exists ---
-    const audioPath = `../audio/${item.id}.mp3`;
+    const audioPath = `../audio/${audioFileName}.mp3`;
     fetch(audioPath, { method: 'HEAD' })
         .then((res) => {
             speakBtn.disabled = !res.ok;
-            if (!res.ok) console.warn(`Audio missing for sentence id ${item.id}`);
+            if (!res.ok) console.warn(`Audio missing for sentences ${item.ko}`);
         })
         .catch((err) => {
             speakBtn.disabled = true;
@@ -38,8 +38,7 @@ function render(index) {
     // --- Render phonetic, meaning, quiz ---
     if (!practiceMode.checked || getLearnedWords().includes(item.ko)) {
         phoneticEl.textContent = item.rr || '';
-        meaningEl.textContent = item[MOTHER_TONGUE][0] || item[SECOND_LANGUAGE][0] || '';
-
+        meaningEl.textContent = item[MOTHER_TONGUE] || '';
         quizEl.innerHTML = '';
     } else {
         phoneticEl.textContent = '----';
@@ -47,9 +46,7 @@ function render(index) {
         quizEl.innerHTML = `${getQuizWords()
             .map(
                 (v) =>
-                    `<button class="btn-secondary" data-word="${v.ko}">${
-                        v[MOTHER_TONGUE][0] || v[SECOND_LANGUAGE][0]
-                    }</button>`
+                    `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`
             )
             .join('')}`;
 
@@ -79,7 +76,7 @@ function renderAndSave(index) {
     localStorage.setItem('sentencesPage', index);
 }
 
-const getLearnedWords = () => JSON.parse(localStorage.getItem('sentencesLearned')) || [];
+const getLearnedWords = () => JSON.parse(localStorage.getItem('learned')) || [];
 
 function prevCard() {
     currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
@@ -94,7 +91,10 @@ function nextCard() {
 function markLearned(ko) {
     if (sentences.find((i) => i.ko === ko)) {
         if (!getLearnedWords().includes(ko)) {
-            localStorage.setItem('sentencesLearned', JSON.stringify([...getLearnedWords(), ko]));
+            localStorage.setItem(
+                'learned',
+                JSON.stringify([...getLearnedWords(), ko])
+            );
             renderAndSave(currentIndex);
         }
     }
@@ -118,16 +118,14 @@ function getQuizWords() {
         let idx = (s * 3 + currentIndex * 7) % total;
         if (idx === currentIndex || distractors.includes(idx))
             idx = (95 * 3 + currentIndex * 7) % total;
-        if (!distractors.includes(idx) && distractors.length < 3) distractors.push(idx);
+        if (!distractors.includes(idx) && distractors.length < 3)
+            distractors.push(idx);
         if (distractors.length === 3) break;
     }
     const raw = [
-        ...distractors.map((i) => sentences[i] || sentences[i]),
-        sentences[currentIndex] || sentences[currentIndex],
+        ...distractors.map((i) => sentences[i]),
+        sentences[currentIndex],
     ];
-
-    console.log('raw', raw);
-
     return raw.sort(() => 0.5 - Math.random());
 }
 

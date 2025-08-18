@@ -9,35 +9,18 @@ Developed under the MIT License.
 
 Korean from Ryan is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
 
-## Data (raw)
-
--   Raw TSV/CSV files from Tatoeba (Korean, English, Vietnamese, links) **are not included** in this repo due to size constraints.
--   Files include:
-    -   `kor_sentences.tsv`
-    -   `eng_sentences.tsv`
-    -   `vie_sentences.tsv`
-    -   `links.csv`
--   You can obtain these from [Tatoeba](https://tatoeba.org) and prepare JSON/audio using the provided scripts.
-
-> Note: Only processed JSON (`data/sentences.json`) and audio files (hosted externally) are included in this repo.
-
-⚠ **Content Notice**:  
-The MIT License applies **only** to the source code authored for this project.  
-Data in the `data` folder are **extracted from public sources like Tatoeba**.  
-Use of these data is at your own discretion and risk.  
-Proper attribution to Tatoeba contributors is maintained.
-
 ## Content and Audio License
 
--   **Text data (Korean, English, Vietnamese sentences):** from [Tatoeba](https://tatoeba.org), licensed under **CC BY 2.0**.
--   **Audio files:** generated using **gTTS**, licensed under **MIT License**.
--   **Source code:** MIT License
+- **Text data (Korean, English, Vietnamese sentences):** aggregated from multiple public sources and AI; no specific license applies.  
+- **Audio files:** generated using **gTTS**, licensed under **MIT License**.  
+- **Source code:** MIT License
 
-> Note: The JSON files in `data/` do **not include license fields**; all license information is described here in the documentation.
+> ⚠ **Important:** Use of the data is at your own discretion. Attribution is encouraged when possible, but data files in `data/` do not include explicit license fields.
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE.md](LICENSE.md) file for details.
+This project’s **source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.  
+Data in `data/` are **not covered by MIT** and have no formal license.
 
 ## How to Contribute
 
