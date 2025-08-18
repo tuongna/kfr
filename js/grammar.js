@@ -13,7 +13,8 @@ const statsEl = document.getElementById('stats');
 let currentIndex = parseInt(localStorage.getItem('grammarPage'), 10) || 0;
 
 function render(index) {
-    const { title, summary, points, rules, irregulars, examples, tags } = grammar[index];
+    const { title, summary, points, rules, irregulars, examples, tags } =
+        grammar[index];
 
     if (title) {
         cardHeader.textContent = title;
@@ -25,7 +26,9 @@ function render(index) {
 
     if (!!points?.length) {
         cardDetails.closest('div').style.display = '';
-        cardDetails.innerHTML = points.map((detail) => `<li>${detail}</li>`).join('');
+        cardDetails.innerHTML = points
+            .map((detail) => `<li>${detail}</li>`)
+            .join('');
     } else {
         cardDetails.closest('div').style.display = 'none';
     }
@@ -33,7 +36,10 @@ function render(index) {
     if (!!rules?.length) {
         cardRules.closest('div').style.display = '';
         cardRules.innerHTML = rules
-            .map((rule) => `<li>${rule.form}: <i>${rule.use || rule.note}</i></li>`)
+            .map(
+                (rule) =>
+                    `<li>${rule.form}: <i>${rule.use || rule.note}</i></li>`
+            )
             .join('');
     } else {
         cardRules.closest('div').style.display = 'none';
@@ -42,7 +48,10 @@ function render(index) {
     if (!!irregulars?.length) {
         cardIrregulars.closest('div').style.display = '';
         cardIrregulars.innerHTML = irregulars
-            .map((irregular) => `<li>${irregular.type} <i>${irregular.ex}</i></li>`)
+            .map(
+                (irregular) =>
+                    `<li>${irregular.type} <i>${irregular.ex}</i></li>`
+            )
             .join('');
     } else {
         cardIrregulars.closest('div').style.display = 'none';
@@ -82,6 +91,11 @@ function nextCard() {
 async function loadGrammar() {
     const res = await fetch('../data/grammar.json');
     grammar = await res.json();
+
+    if (currentIndex >= grammar.length) {
+        currentIndex = 0;
+    }
+
     renderAndSave(currentIndex);
 }
 

@@ -139,6 +139,11 @@ function handleOnClickSpeak(e) {
 async function loadSentences() {
     const res = await fetch('../data/sentences.json');
     sentences = await res.json();
+
+    if (currentIndex >= sentences.length) {
+        currentIndex = 0;
+    }
+
     renderAndSave(currentIndex);
 }
 

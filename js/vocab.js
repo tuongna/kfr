@@ -136,6 +136,11 @@ function handleOnClickSpeak(e) {
 async function loadVocab() {
     const res = await fetch('../data/vocab.json');
     vocab = await res.json();
+
+    if (currentIndex >= vocab.length) {
+        currentIndex = 0;
+    }
+
     renderAndSave(currentIndex);
 }
 
