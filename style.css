@@ -13,11 +13,6 @@ html {
     font-size: 62.5%; /* 1rem = 10px */
 }
 
-html,
-body {
-    height: 100%;
-}
-
 body {
     background-color: var(--gray-light);
     color: var(--text-color);
@@ -198,10 +193,10 @@ p {
 }
 
 .actions {
-    background-color: #fff;
+    background-color: #ffffffaa;
     border-radius: var(--radius-md);
     bottom: 1.6rem;
-    box-shadow: 0 0 0.8rem 0.8rem #fff;
+    box-shadow: 0 0 0.8rem 0.8rem #ffffffaa;
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
