@@ -28,6 +28,10 @@
                 </ul>
             </nav>
             <div id="card" class="sentence-card">
+                <div class="practice-mode-container">
+                    <input type="checkbox" id="practiceMode" />
+                    <label for="practiceMode">Practice Mode</label>
+                </div>
                 <div id="word">
                     <span>단어</span>
                     <button class="btn-icon" data-speak="단어">🔊</button>
@@ -35,11 +39,6 @@
                 <div id="phonetic">Phonetic</div>
                 <div id="meaning">Meaning</div>
                 <div id="quiz" class="quiz-words"></div>
-
-                <div class="practice-mode-container">
-                    <input type="checkbox" id="practiceMode" />
-                    <label for="practiceMode">Practice Mode</label>
-                </div>
             </div>
             <div class="actions">
                 <button class="btn-primary" id="prevBtn">Prev</button>
@@ -47,6 +46,15 @@
             </div>
             <div id="stats"></div>
         </div>
+        <footer class="footer">
+            <a
+                href="https://github.com/tuongna/tuongna.github.io"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                View on GitHub
+            </a>
+        </footer>
         <script src="version.js"></script>
         <script type="module" src="js/sentences.js"></script>
         <script>

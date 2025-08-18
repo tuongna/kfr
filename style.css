@@ -19,27 +19,48 @@ body {
 }
 
 body {
-    background-color: #fefefe;
+    background-color: var(--gray-light);
     color: var(--text-color);
-    font-family: Arial, sans-serif;
+    font-family: var(--font-base);
     font-size: 1.4rem;
-    line-height: 1.5;
-    padding: 3.2rem 2rem;
+    line-height: var(--line-height-base);
+    padding: calc(var(--gap-md) * 2.5) var(--gap-md);
 }
 
 /* =============================
     VARIABLES
 ============================= */
 :root {
+    /* Colors */
     --primary: #3498db;
     --primary-dark: #2980b9;
+    --secondary: #d3d3d3;
+    --secondary-dark: #bfbfbf;
     --success: #2ecc71;
     --error: #e74c3c;
+    --warning: #f39c12;
+    --info: #3498db;
     --gray-light: #f7f7f7;
     --gray: #ccc;
     --text-color: #333;
-    --text-light: #555;
-    --text-muted: #777;
+    --text-light: #444;
+    --text-muted: #555;
+
+    /* Typography */
+    --font-base: Arial, sans-serif;
+    --line-height-base: 1.5;
+
+    /* Spacing */
+    --gap-xs: 0.4rem;
+    --gap-sm: 0.8rem;
+    --gap-md: 1.2rem;
+
+    /* Border radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.8rem;
+    --radius-lg: 1rem;
+
+    /* Width */
     --w-sm: 32rem; /* 320px */
     --w-md: 50rem; /* 500px */
 }
@@ -62,10 +83,10 @@ p {
 #card {
     background-color: var(--gray-light);
     border: 0.1rem solid var(--gray);
-    border-radius: 1rem;
-    margin: 1.2rem auto;
+    border-radius: var(--radius-lg);
+    margin: var(--gap-md) auto;
     max-width: var(--w-sm);
-    padding: 3.2rem;
+    padding: calc(var(--gap-md) * 2.5);
     position: relative;
     text-align: center;
 }
@@ -74,7 +95,7 @@ p {
     align-items: center;
     display: flex;
     font-size: 1.2rem;
-    gap: 0.4rem;
+    gap: var(--gap-xs);
     left: 0.6rem;
     position: absolute;
     top: 0.4rem;
@@ -82,7 +103,7 @@ p {
 
 #word {
     align-items: center;
-    column-gap: 0.8rem;
+    column-gap: var(--gap-sm);
     display: inline-flex;
 }
 
@@ -96,7 +117,7 @@ p {
 #phonetic {
     color: var(--text-muted);
     font-style: italic;
-    margin-bottom: 0.8rem;
+    margin-bottom: var(--gap-sm);
 }
 
 #meaning {
@@ -107,19 +128,29 @@ p {
 /* =============================
     BUTTONS
 ============================= */
-.btn-primary {
-    background-color: var(--primary);
+.btn-primary,
+.btn-secondary {
     border: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
     color: #fff;
     cursor: pointer;
     font-size: 1.4rem;
-    padding: 0.8rem 1.6rem;
+    padding: var(--gap-sm) calc(var(--gap-sm) * 2);
     transition: background-color 0.2s ease;
 }
 
+.btn-primary {
+    background-color: var(--primary);
+}
 .btn-primary:hover {
     background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+}
+.btn-secondary:hover {
+    background-color: var(--secondary-dark);
 }
 
 .btn-icon {
@@ -127,19 +158,24 @@ p {
     border: 0;
     cursor: pointer;
     display: inline-flex;
+    flex-shrink: 0;
     font-size: 2.4rem;
+    height: 3.6rem;
+    justify-content: center;
     padding: 0 0 0.4rem 0;
+    width: 3.6rem;
 }
 
 .quiz-words {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: var(--gap-xs);
 }
 
 .quiz-words button {
     background-color: var(--gray);
     color: var(--text-color);
+    text-align: left;
 }
 .quiz-words button.correct {
     background-color: var(--success);
@@ -157,29 +193,29 @@ p {
 #stats {
     color: var(--text-color);
     font-size: 1.4rem;
-    margin-top: 2rem;
+    padding: var(--gap-md) 0;
     text-align: center;
 }
 
 .actions {
     background-color: #fff;
-    border-radius: 0.8rem;
+    border-radius: var(--radius-md);
     bottom: 1.6rem;
     box-shadow: 0 0 0.8rem 0.8rem #fff;
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
-    max-width: calc(var(--w-sm) + 1.6rem);
-    padding: 0.8rem;
+    max-width: calc(var(--w-sm) + var(--gap-md) * 2);
+    padding: var(--gap-sm);
     position: sticky;
 }
 
 .navbar {
-    padding: 1rem 0;
+    padding: var(--gap-md) 0;
 }
 .navbar ul {
     display: flex;
-    gap: 3rem;
+    gap: calc(var(--gap-md) * 2.5);
     justify-content: center;
     list-style: none;
 }
@@ -197,10 +233,16 @@ p {
 /* =============================
     SENTENCE CARD
 ============================= */
-
 #card.sentence-card {
-    font-size: 2.4rem;
     max-width: var(--w-md);
+}
+
+#card.sentence-card #word > span {
+    font-size: 2.4rem;
+}
+
+#card.sentence-card #meaning {
+    font-size: 1.6rem;
 }
 
 /* =============================
@@ -210,7 +252,7 @@ p {
     max-width: var(--w-md);
 }
 #card.grammar-card h2 {
-    margin: 0 0 1.2rem 0;
+    margin: 0 0 var(--gap-md) 0;
 }
 #card.grammar-card ul {
     padding-left: 2rem;
@@ -219,11 +261,11 @@ p {
 #card.grammar-card .tags {
     color: var(--text-muted);
     font-size: 1.3rem;
-    margin-top: 1.2rem;
+    margin-top: var(--gap-md);
 }
 #card.grammar-card strong {
     display: inline-block;
-    margin: 1.2rem 0 0.8rem;
+    margin: var(--gap-md) 0 var(--gap-sm) 0;
 }
 
 /* =============================
@@ -232,31 +274,31 @@ p {
 .feedback-container {
     background-color: var(--gray-light);
     border: 0.1rem solid var(--gray);
-    border-radius: 1rem;
+    border-radius: var(--radius-lg);
     box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.05);
-    margin: 2rem auto;
+    margin: calc(var(--gap-md) * 2) auto;
     max-width: var(--w-md);
-    padding: 3.2rem;
+    padding: calc(var(--gap-md) * 2.5);
 }
 .feedback-container h2 {
     color: var(--primary);
-    margin-bottom: 2rem;
+    margin-bottom: calc(var(--gap-md) * 1.5);
     text-align: center;
 }
 .feedback-container label {
     color: var(--text-light);
     display: block;
     font-weight: bold;
-    margin-bottom: 0.8rem;
+    margin-bottom: var(--gap-xs);
 }
 .feedback-container input,
 .feedback-container textarea {
     border: 0.1rem solid var(--gray);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
     box-sizing: border-box;
     font-size: 1.4rem;
-    margin-bottom: 1.6rem;
-    padding: 1rem;
+    margin-bottom: var(--gap-md);
+    padding: var(--gap-sm);
     width: 100%;
 }
 .feedback-container textarea {
@@ -264,6 +306,24 @@ p {
 }
 .feedback-container button {
     font-size: 1.6rem;
-    padding: 1rem;
+    padding: var(--gap-sm);
     width: 100%;
+}
+
+/* =============================
+    ACCESSIBILITY
+============================= */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* =============================
+    FOOTER
+============================= */
+.footer {
+    background-color: var(--gray-light);
+    padding: var(--gap-xs) 0;
+    text-align: center;
 }

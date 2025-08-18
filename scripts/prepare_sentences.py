@@ -40,10 +40,15 @@ links_kor = links_kor.merge(vie_sentences[['id','text']], left_on='to_sentence_i
 links_kor = links_kor.rename(columns={'text':'vi'}).drop(columns=['id'])
 
 # --- Group translations by Korean sentence ---
-print("Grouping translations...")
+print("Grouping translations (only Korean sentences with at least one translation)...")
 data_dict = {}
 for _, row in tqdm(links_kor.iterrows(), total=len(links_kor), desc="Grouping"):
     kor_id = row['from_sentence_id']
+
+    # Skip Korean sentence if neither English nor Vietnamese exists
+    if pd.isna(row['en']) and pd.isna(row['vi']):
+        continue
+
     if kor_id not in data_dict:
         data_dict[kor_id] = {
             "id": int(kor_id),
@@ -54,6 +59,7 @@ for _, row in tqdm(links_kor.iterrows(), total=len(links_kor), desc="Grouping"):
             "level": "",
             "tags": []
         }
+
     # Append translations if exist and not duplicate
     if pd.notna(row['en']) and row['en'] not in data_dict[kor_id]['en']:
         data_dict[kor_id]['en'].append(row['en'])

@@ -47,7 +47,9 @@ function render(index) {
         quizEl.innerHTML = `${getQuizWords()
             .map(
                 (v) =>
-                    `<button class="btn-primary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`
+                    `<button class="btn-secondary" data-word="${v.ko}">${
+                        v[MOTHER_TONGUE][0] || v[SECOND_LANGUAGE][0]
+                    }</button>`
             )
             .join('')}`;
 
@@ -77,7 +79,7 @@ function renderAndSave(index) {
     localStorage.setItem('sentencesPage', index);
 }
 
-const getLearnedWords = () => JSON.parse(localStorage.getItem('learned')) || [];
+const getLearnedWords = () => JSON.parse(localStorage.getItem('sentencesLearned')) || [];
 
 function prevCard() {
     currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
@@ -92,7 +94,7 @@ function nextCard() {
 function markLearned(ko) {
     if (sentences.find((i) => i.ko === ko)) {
         if (!getLearnedWords().includes(ko)) {
-            localStorage.setItem('learned', JSON.stringify([...getLearnedWords(), ko]));
+            localStorage.setItem('sentencesLearned', JSON.stringify([...getLearnedWords(), ko]));
             renderAndSave(currentIndex);
         }
     }
@@ -119,7 +121,13 @@ function getQuizWords() {
         if (!distractors.includes(idx) && distractors.length < 3) distractors.push(idx);
         if (distractors.length === 3) break;
     }
-    const raw = [...distractors.map((i) => sentences[i]), sentences[currentIndex]];
+    const raw = [
+        ...distractors.map((i) => sentences[i] || sentences[i]),
+        sentences[currentIndex] || sentences[currentIndex],
+    ];
+
+    console.log('raw', raw);
+
     return raw.sort(() => 0.5 - Math.random());
 }
 

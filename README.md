@@ -19,7 +19,7 @@ Korean from Ryan is a Progressive Web App (PWA) for learning Korean grammar and 
     -   `links.csv`
 -   You can obtain these from [Tatoeba](https://tatoeba.org) and prepare JSON/audio using the provided scripts.
 
-> Note: Only processed JSON (`data/korean_sentences.json`) and audio files (hosted externally) are included in this repo.
+> Note: Only processed JSON (`data/sentences.json`) and audio files (hosted externally) are included in this repo.
 
 ⚠ **Content Notice**:  
 The MIT License applies **only** to the source code authored for this project.  

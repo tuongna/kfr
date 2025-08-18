@@ -45,7 +45,7 @@ function render(index) {
         quizEl.innerHTML = `${getQuizWords()
             .map(
                 (v) =>
-                    `<button class="btn-primary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`
+                    `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`
             )
             .join('')}`;
 
