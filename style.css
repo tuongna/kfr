@@ -205,8 +205,8 @@ p {
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
-    max-width: calc(var(--w-sm) + var(--gap-md) * 2);
-    padding: var(--gap-sm);
+    max-width: var(--w-sm);
+    padding: var(--gap-sm) 0;
     position: sticky;
 }
 
