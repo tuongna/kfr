@@ -195,6 +195,15 @@ p {
 }
 
 /* =============================
+    SENTENCE CARD
+============================= */
+
+#card.sentence-card {
+    font-size: 2.4rem;
+    max-width: var(--w-md);
+}
+
+/* =============================
     GRAMMAR CARD
 ============================= */
 #card.grammar-card {

@@ -17,29 +17,43 @@ const practiceMode = document.getElementById('practiceMode');
 let currentIndex = parseInt(localStorage.getItem('vocabPage'), 10) || 0;
 
 function render(index) {
-    wordLabelEl.textContent = vocab[index].ko;
-    speakBtn.dataset.speak = vocab[index].rr;
+    const item = vocab[index];
+    wordLabelEl.textContent = item.ko;
+    speakBtn.dataset.speak = item.rr; // use rr for audio filename
     speakBtn.style.display = practiceMode.checked ? 'none' : '';
 
-    if (!practiceMode.checked || getLearnedWords().includes(vocab[index].ko)) {
-        phoneticEl.textContent = vocab[index].rr;
-        meaningEl.textContent = vocab[index][MOTHER_TONGUE];
+    // --- Check if audio exists ---
+    const audioPath = `../audio/${item.rr}.mp3`;
+    fetch(audioPath, { method: 'HEAD' })
+        .then((res) => {
+            speakBtn.disabled = !res.ok;
+            if (!res.ok) console.warn(`Audio missing for vocab rr ${item.rr}`);
+        })
+        .catch((err) => {
+            speakBtn.disabled = true;
+            console.error(`Error checking audio file: ${audioPath}`, err);
+        });
+
+    // --- Render phonetic, meaning, quiz ---
+    if (!practiceMode.checked || getLearnedWords().includes(item.ko)) {
+        phoneticEl.textContent = item.rr || '';
+        meaningEl.textContent = item[MOTHER_TONGUE] || '';
         quizEl.innerHTML = '';
     } else {
         phoneticEl.textContent = '----';
         meaningEl.textContent = '';
         quizEl.innerHTML = `${getQuizWords()
             .map(
-                (vocab) =>
-                    `<button class="btn-primary" data-word="${vocab.ko}">${vocab[MOTHER_TONGUE]}</button>`
+                (v) =>
+                    `<button class="btn-primary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`
             )
             .join('')}`;
 
         document.querySelectorAll('.quiz-words button').forEach((button) => {
             button.addEventListener('click', (e) => {
-                if (e.target.dataset.word === vocab[currentIndex].ko) {
+                if (e.target.dataset.word === item.ko) {
                     e.target.classList.add('correct');
-                    markLearned(vocab[currentIndex].ko);
+                    markLearned(item.ko);
                 } else {
                     e.target.classList.add('incorrect');
                 }
@@ -47,7 +61,7 @@ function render(index) {
         });
     }
 
-    if (getLearnedWords().includes(vocab[index].ko)) {
+    if (getLearnedWords().includes(item.ko)) {
         wordEl.classList.add('learned');
     } else {
         wordEl.classList.remove('learned');
@@ -61,9 +75,7 @@ function renderAndSave(index) {
     localStorage.setItem('vocabPage', index);
 }
 
-const getLearnedWords = () => {
-    return JSON.parse(localStorage.getItem('learned')) || [];
-};
+const getLearnedWords = () => JSON.parse(localStorage.getItem('learned')) || [];
 
 function prevCard() {
     currentIndex = (currentIndex - 1 + vocab.length) % vocab.length;
@@ -76,12 +88,9 @@ function nextCard() {
 }
 
 function markLearned(ko) {
-    if (vocab.find((item) => item.ko === ko)) {
-        if (!getLearnedWords().some((item) => item === ko)) {
-            localStorage.setItem(
-                'learned',
-                JSON.stringify([...getLearnedWords(), ko])
-            );
+    if (vocab.find((i) => i.ko === ko)) {
+        if (!getLearnedWords().includes(ko)) {
+            localStorage.setItem('learned', JSON.stringify([...getLearnedWords(), ko]));
             renderAndSave(currentIndex);
         }
     }
@@ -99,35 +108,22 @@ function updateStats() {
 
 function getQuizWords() {
     const total = vocab.length;
-
     const seeds = [29, 11, 19, 95];
-
     let distractors = [];
     for (let s of seeds) {
         let idx = (s * 3 + currentIndex * 7) % total;
-
-        if (idx === currentIndex || distractors.includes(idx)) {
+        if (idx === currentIndex || distractors.includes(idx))
             idx = (95 * 3 + currentIndex * 7) % total;
-        }
-
-        if (!distractors.includes(idx) && distractors.length < 3) {
-            distractors.push(idx);
-        }
-
+        if (!distractors.includes(idx) && distractors.length < 3) distractors.push(idx);
         if (distractors.length === 3) break;
     }
-
     const raw = [...distractors.map((i) => vocab[i]), vocab[currentIndex]];
-
-    console.log('raw', raw);
-
     return raw.sort(() => 0.5 - Math.random());
 }
 
 function handleOnClickSpeak(e) {
-    if (e.target.matches('[data-speak]')) {
-        const filename =
-            e.target.dataset.speak.replace(/\s+/g, '_').toLowerCase() + '.mp3';
+    if (e.target.matches('[data-speak]') && !e.target.disabled) {
+        const filename = `${e.target.dataset.speak}.mp3`;
         playAudio(filename);
     }
 }
@@ -138,6 +134,7 @@ async function loadVocab() {
     renderAndSave(currentIndex);
 }
 
+// --- Event listeners ---
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);

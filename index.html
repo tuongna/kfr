@@ -1,60 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>KfR</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="manifest" href="manifest.json" />
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KfR</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="manifest" href="manifest.json" />
-</head>
+    <body>
+        <h1>라이언의 한국어</h1>
+        <div id="app">
+            <nav class="navbar">
+                <ul>
+                    <li>
+                        <a class="active" href="index.html">Vocab</a>
+                    </li>
+                    <li>
+                        <a href="sentences.html">Sentences</a>
+                    </li>
+                    <li>
+                        <a href="grammar.html">Grammar</a>
+                    </li>
+                    <li>
+                        <a href="feedback.html">Feedback</a>
+                    </li>
+                </ul>
+            </nav>
+            <div id="card">
+                <div id="word">
+                    <span>단어</span>
+                    <button class="btn-icon" data-speak="단어">🔊</button>
+                </div>
+                <div id="phonetic">Phonetic</div>
+                <div id="meaning">Meaning</div>
+                <div id="quiz" class="quiz-words"></div>
 
-<body>
-    <h1>라이언의 한국어</h1>
-    <div id="app">
-        <nav class="navbar">
-            <ul>
-                <li>
-                    <a class="active" href="index.html">Vocab</a>
-                </li>
-                <li>
-                    <a href="grammar.html">Grammar</a>
-                </li>
-                <li>
-                    <a href="feedback.html">Feedback</a>
-                </li>
-            </ul>
-        </nav>
-        <div id="card">
-            <div id="word">
-                <span>단어</span>
-                <button class="btn-icon" data-speak="단어">🔊</button>
+                <div class="practice-mode-container">
+                    <input type="checkbox" id="practiceMode" />
+                    <label for="practiceMode">Practice Mode</label>
+                </div>
             </div>
-            <div id="phonetic">Phonetic</div>
-            <div id="meaning">Meaning</div>
-            <div id="quiz" class="quiz-words"></div>
-
-            <div class="practice-mode-container">
-                <input type="checkbox" id="practiceMode" />
-                <label for="practiceMode">Practice Mode</label>
+            <div class="actions">
+                <button class="btn-primary" id="prevBtn">Prev</button>
+                <button class="btn-primary" id="nextBtn">Next</button>
             </div>
+            <div id="stats"></div>
         </div>
-        <div class="actions">
-            <button class="btn-primary" id="prevBtn">Prev</button>
-            <button class="btn-primary" id="nextBtn">Next</button>
-        </div>
-        <div id="stats"></div>
-    </div>
-    <script src="version.js"></script>
-    <script type="module" src="js/vocab.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker
-                .register('sw.js')
-                .then(() => console.log('Service Worker registered'))
-                .catch((err) => console.log('Service Worker failed:', err));
-        }
-    </script>
-</body>
-
+        <script src="version.js"></script>
+        <script type="module" src="js/vocab.js"></script>
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker
+                    .register('sw.js')
+                    .then(() => console.log('Service Worker registered'))
+                    .catch((err) => console.log('Service Worker failed:', err));
+            }
+        </script>
+    </body>
 </html>

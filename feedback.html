@@ -1,56 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>KfR</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="manifest" href="manifest.json" />
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KfR</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="manifest" href="manifest.json" />
-</head>
+    <body>
+        <h1>라이언의 한국어</h1>
+        <div id="app">
+            <nav class="navbar">
+                <ul>
+                    <li>
+                        <a href="index.html">Vocab</a>
+                    </li>
+                    <li>
+                        <a href="sentences.html">Sentences</a>
+                    </li>
+                    <li>
+                        <a href="grammar.html">Grammar</a>
+                    </li>
+                    <li>
+                        <a class="active" href="feedback.html">Feedback</a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="feedback-container">
+                <h2>Send Feedback</h2>
+                <form action="https://formspree.io/f/xzzvwqpd" method="POST">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" />
 
-<body>
-    <h1>라이언의 한국어</h1>
-    <div id="app">
-        <nav class="navbar">
-            <ul>
-                <li>
-                    <a href="index.html">Vocab</a>
-                </li>
-                <li>
-                    <a href="grammar.html">Grammar</a>
-                </li>
-                <li>
-                    <a class="active" href="feedback.html">Feedback</a>
-                </li>
-            </ul>
-        </nav>
-        <div class="feedback-container">
-            <h2>Send Feedback</h2>
-            <form action="https://formspree.io/f/xzzvwqpd" method="POST">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" name="name">
+                    <label for="email">Your Email</label>
+                    <input type="email" id="email" name="_replyto" placeholder="Optional" />
 
-                <label for="email">Your Email</label>
-                <input type="email" id="email" name="_replyto" placeholder="Optional">
+                    <label for="message">Your Feedback</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
 
-                <label for="message">Your Feedback</label>
-                <textarea id="message" name="message" rows="5" required></textarea>
-
-                <button class="btn-primary" type="submit">Send</button>
-            </form>
+                    <button class="btn-primary" type="submit">Send</button>
+                </form>
+            </div>
         </div>
-    </div>
-    <script src="version.js"></script>
-    <script type="module" src="js/feedback.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker
-                .register('sw.js')
-                .then(() => console.log('Service Worker registered'))
-                .catch((err) => console.log('Service Worker failed:', err));
-        }
-    </script>
-</body>
-
+        <script src="version.js"></script>
+        <script type="module" src="js/feedback.js"></script>
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker
+                    .register('sw.js')
+                    .then(() => console.log('Service Worker registered'))
+                    .catch((err) => console.log('Service Worker failed:', err));
+            }
+        </script>
+    </body>
 </html>

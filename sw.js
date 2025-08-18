@@ -7,11 +7,13 @@ const coreFiles = [
     '/index.html',
     '/grammar.html',
     '/feedback.html',
+    '/sentences.html',
     '/style.css',
     '/js/utils/speech.js',
     '/js/vocab.js',
     '/js/grammar.js',
     '/js/feedback.js',
+    '/js/sentences.js',
     '/manifest.json',
     '/favicon.ico',
 ];
@@ -55,11 +57,7 @@ self.addEventListener('activate', (event) => {
         caches
             .keys()
             .then((keys) =>
-                Promise.all(
-                    keys
-                        .filter((k) => k !== CACHE_NAME)
-                        .map((k) => caches.delete(k))
-                )
+                Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
             )
     );
     self.clients.claim();
