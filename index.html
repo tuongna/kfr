@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>KfR | Vocab</title>
+        <title>KfR | Từ vựng</title>
         <link rel="stylesheet" href="style.css" />
         <link rel="manifest" href="manifest.json" />
     </head>
@@ -14,23 +14,27 @@
             <nav class="navbar">
                 <ul>
                     <li>
-                        <a class="active" href="index.html">Vocab</a>
+                        <a class="active" href="index.html">Từ vựng</a>
                     </li>
                     <li>
-                        <a href="sentences.html">Sentences</a>
+                        <a href="sentences.html">Câu mẫu</a>
                     </li>
                     <li>
-                        <a href="lessons.html">Lessons</a>
+                        <a href="lessons.html">Bài học</a>
                     </li>
                     <li>
-                        <a href="feedback.html">Feedback</a>
+                        <a href="feedback.html">Góp ý</a>
                     </li>
                 </ul>
             </nav>
+            <div class="actions">
+                <button class="btn-primary" id="prevBtn">Trước</button>
+                <button class="btn-primary" id="nextBtn">Tiếp</button>
+            </div>
             <div id="card">
                 <div class="practice-container">
                     <input type="checkbox" id="practice-mode" />
-                    <label for="practice-mode">Practice</label>
+                    <label for="practice-mode">Luyện tập</label>
                 </div>
                 <div id="word">
                     <span>----</span>
@@ -39,10 +43,6 @@
                 <div id="phonetic">----</div>
                 <div id="meaning">----</div>
                 <div id="quiz" class="quiz-words"></div>
-            </div>
-            <div class="actions">
-                <button class="btn-primary" id="prevBtn">Prev</button>
-                <button class="btn-primary" id="nextBtn">Next</button>
             </div>
             <div id="stats"></div>
         </div>

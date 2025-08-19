@@ -131,7 +131,7 @@ p {
 .btn-primary,
 .btn-secondary {
     border: none;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-lg);
     color: #fff;
     cursor: pointer;
     font-size: 1.4rem;
@@ -198,16 +198,19 @@ p {
 }
 
 .actions {
-    background-color: #ffffffaa;
     border-radius: var(--radius-sm);
-    bottom: 1.6rem;
-    box-shadow: 0 0 0.8rem 0.8rem #ffffffaa;
     display: flex;
     justify-content: space-between;
     margin: 0 auto;
     max-width: var(--w-sm);
     padding: var(--gap-sm) 0;
     position: sticky;
+    top: 1.6rem;
+    z-index: 1;
+}
+
+.actions > button {
+    box-shadow: 0 0 1.2rem 1.2rem #ffffffaa;
 }
 
 .navbar {

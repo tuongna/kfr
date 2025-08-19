@@ -20,10 +20,9 @@ function render(index) {
     const item = sentences[index];
     const audioFileName = genIdFromRR(item.rr);
     wordLabelEl.textContent = item.ko;
-    speakBtn.dataset.speak = audioFileName; // use rr for audio filename
+    speakBtn.dataset.speak = audioFileName;
     speakBtn.style.display = practiceMode.checked ? 'none' : '';
 
-    // --- Check if audio exists ---
     const audioPath = `../audio/${audioFileName}.mp3`;
     fetch(audioPath, { method: 'HEAD' })
         .then((res) => {
@@ -35,7 +34,6 @@ function render(index) {
             console.error(`Error checking audio file: ${audioPath}`, err);
         });
 
-    // --- Render phonetic, meaning, quiz ---
     if (!practiceMode.checked || getLearnedWords().includes(item.ko)) {
         phoneticEl.textContent = item.rr || '';
         meaningEl.textContent = item[MOTHER_TONGUE] || '';
@@ -55,6 +53,7 @@ function render(index) {
                 if (e.target.dataset.word === item.ko) {
                     e.target.classList.add('correct');
                     markLearned(item.ko);
+                    nextCard();
                 } else {
                     e.target.classList.add('incorrect');
                 }
@@ -76,28 +75,52 @@ function renderAndSave(index) {
     localStorage.setItem('sentencesPage', index);
 }
 
-const getLearnedWords = () => JSON.parse(localStorage.getItem('learned')) || [];
+const getLearnedWords = () => JSON.parse(localStorage.getItem('sentencesLearned')) || [];
 
 function prevCard() {
-    currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
+    if (practiceMode.checked) {
+        do {
+            currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
+        } while (
+            getLearnedWords().includes(sentences[currentIndex].ko) &&
+            getLearnedWords().length < sentences.length
+        );
+    } else {
+        currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
+    }
+
     renderAndSave(currentIndex);
 }
 
 function nextCard() {
-    currentIndex = (currentIndex + 1) % sentences.length;
+    if (practiceMode.checked) {
+        do {
+            currentIndex = (currentIndex + 1) % sentences.length;
+        } while (
+            getLearnedWords().includes(sentences[currentIndex].ko) &&
+            getLearnedWords().length < sentences.length
+        );
+    } else {
+        currentIndex = (currentIndex + 1) % sentences.length;
+    }
+
     renderAndSave(currentIndex);
 }
 
 function markLearned(ko) {
     if (sentences.find((i) => i.ko === ko)) {
         if (!getLearnedWords().includes(ko)) {
-            localStorage.setItem('learned', JSON.stringify([...getLearnedWords(), ko]));
+            localStorage.setItem('sentencesLearned', JSON.stringify([...getLearnedWords(), ko]));
             renderAndSave(currentIndex);
         }
     }
 }
 
 function activatePracticeMode() {
+    if (practiceMode.checked && getLearnedWords().includes(sentences[currentIndex].ko)) {
+        nextCard();
+    }
+
     renderAndSave(currentIndex);
 }
 
@@ -140,7 +163,6 @@ async function loadSentences() {
     renderAndSave(currentIndex);
 }
 
-// --- Event listeners ---
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);

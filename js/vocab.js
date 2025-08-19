@@ -20,10 +20,9 @@ function render(index) {
     const item = vocab[index];
     const audioFileName = genIdFromRR(item.rr);
     wordLabelEl.textContent = item.ko;
-    speakBtn.dataset.speak = audioFileName; // use rr for audio filename
+    speakBtn.dataset.speak = audioFileName;
     speakBtn.style.display = practiceMode.checked ? 'none' : '';
 
-    // --- Check if audio exists ---
     const audioPath = `../audio/${audioFileName}.mp3`;
     fetch(audioPath, { method: 'HEAD' })
         .then((res) => {
@@ -35,7 +34,6 @@ function render(index) {
             console.error(`Error checking audio file: ${audioPath}`, err);
         });
 
-    // --- Render phonetic, meaning, quiz ---
     if (!practiceMode.checked || getLearnedWords().includes(item.ko)) {
         phoneticEl.textContent = item.rr || '';
         meaningEl.textContent = item[MOTHER_TONGUE] || '';
@@ -55,6 +53,7 @@ function render(index) {
                 if (e.target.dataset.word === item.ko) {
                     e.target.classList.add('correct');
                     markLearned(item.ko);
+                    nextCard();
                 } else {
                     e.target.classList.add('incorrect');
                 }
@@ -79,12 +78,32 @@ function renderAndSave(index) {
 const getLearnedWords = () => JSON.parse(localStorage.getItem('learned')) || [];
 
 function prevCard() {
-    currentIndex = (currentIndex - 1 + vocab.length) % vocab.length;
+    if (practiceMode.checked) {
+        do {
+            currentIndex = (currentIndex - 1 + vocab.length) % vocab.length;
+        } while (
+            getLearnedWords().includes(vocab[currentIndex].ko) &&
+            getLearnedWords().length < vocab.length
+        );
+    } else {
+        currentIndex = (currentIndex - 1 + vocab.length) % vocab.length;
+    }
+
     renderAndSave(currentIndex);
 }
 
 function nextCard() {
-    currentIndex = (currentIndex + 1) % vocab.length;
+    if (practiceMode.checked) {
+        do {
+            currentIndex = (currentIndex + 1) % vocab.length;
+        } while (
+            getLearnedWords().includes(vocab[currentIndex].ko) &&
+            getLearnedWords().length < vocab.length
+        );
+    } else {
+        currentIndex = (currentIndex - 1 + vocab.length) % vocab.length;
+    }
+
     renderAndSave(currentIndex);
 }
 
@@ -98,6 +117,10 @@ function markLearned(ko) {
 }
 
 function activatePracticeMode() {
+    if (practiceMode.checked && getLearnedWords().includes(vocab[currentIndex].ko)) {
+        nextCard();
+    }
+
     renderAndSave(currentIndex);
 }
 
@@ -140,7 +163,6 @@ async function loadVocab() {
     renderAndSave(currentIndex);
 }
 
-// --- Event listeners ---
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);
