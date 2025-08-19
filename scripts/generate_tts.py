@@ -17,7 +17,7 @@ def load_json(path):
 
 def shorten_rr(rr: str) -> str:
     """
-    Shorten the romanized word (RR) if it's longer than 20 characters.
+    Shorten the romanized word (Phiên âm) if it's longer than 20 characters.
     Follows a similar logic to the JavaScript genIdFromRR function.
     """
     rr = rr.replace(" ", "_")  # replace spaces with underscores

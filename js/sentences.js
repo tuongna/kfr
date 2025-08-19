@@ -125,9 +125,9 @@ function activatePracticeMode() {
 }
 
 function updateStats() {
-    statsEl.textContent = `Learned: ${getLearnedWords().length} / Current: ${
+    statsEl.textContent = `Đã học: ${getLearnedWords().length} / Hiện tại: ${
         currentIndex + 1
-    } / Total: ${sentences.length}`;
+    } / Tổng: ${sentences.length}`;
 }
 
 function getQuizWords() {
