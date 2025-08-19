@@ -250,28 +250,22 @@ p {
 /* =============================
     FEEDBACK
 ============================= */
-.feedback-container {
-    background-color: var(--gray-light);
-    border: 0.1rem solid var(--gray);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.05);
-    margin: calc(var(--gap-md) * 2) auto;
+#card.feedback-card {
     max-width: var(--w-md);
-    padding: calc(var(--gap-md) * 2.5);
 }
-.feedback-container h2 {
+#card.feedback-card h2 {
     color: var(--primary);
     margin-bottom: calc(var(--gap-md) * 1.5);
     text-align: center;
 }
-.feedback-container label {
+#card.feedback-card label {
     color: var(--text-light);
     display: block;
     font-weight: bold;
     margin-bottom: var(--gap-xs);
 }
-.feedback-container input,
-.feedback-container textarea {
+#card.feedback-card input,
+#card.feedback-card textarea {
     border: 0.1rem solid var(--gray);
     border-radius: var(--radius-sm);
     box-sizing: border-box;
@@ -280,10 +274,10 @@ p {
     padding: var(--gap-sm);
     width: 100%;
 }
-.feedback-container textarea {
+#card.feedback-card textarea {
     resize: vertical;
 }
-.feedback-container button {
+#card.feedback-card button {
     font-size: 1.6rem;
     padding: var(--gap-sm);
     width: 100%;
@@ -311,9 +305,8 @@ button:focus-visible {
     MARKDOWN STYLES
 ============================= */
 .marked table {
-    width: 100%;
     border-collapse: collapse;
-    margin-bottom: 2rem;
+    width: 100%;
 }
 
 .marked th {
@@ -334,14 +327,14 @@ button:focus-visible {
 }
 
 .marked td.type {
-    font-weight: bold;
     color: var(--accent);
+    font-weight: bold;
 }
 
 .marked td.hangul {
+    color: var(--primary);
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--primary);
 }
 
 .marked {
