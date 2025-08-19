@@ -12,7 +12,7 @@ const quizEl = document.getElementById('quiz');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
-const practiceMode = document.getElementById('practiceMode');
+const practiceMode = document.getElementById('practice-mode');
 
 let currentIndex = parseInt(localStorage.getItem('vocabPage'), 10) || 0;
 
@@ -91,10 +91,7 @@ function nextCard() {
 function markLearned(ko) {
     if (vocab.find((i) => i.ko === ko)) {
         if (!getLearnedWords().includes(ko)) {
-            localStorage.setItem(
-                'learned',
-                JSON.stringify([...getLearnedWords(), ko])
-            );
+            localStorage.setItem('learned', JSON.stringify([...getLearnedWords(), ko]));
             renderAndSave(currentIndex);
         }
     }
@@ -118,8 +115,7 @@ function getQuizWords() {
         let idx = (s * 3 + currentIndex * 7) % total;
         if (idx === currentIndex || distractors.includes(idx))
             idx = (95 * 3 + currentIndex * 7) % total;
-        if (!distractors.includes(idx) && distractors.length < 3)
-            distractors.push(idx);
+        if (!distractors.includes(idx) && distractors.length < 3) distractors.push(idx);
         if (distractors.length === 3) break;
     }
     const raw = [...distractors.map((i) => vocab[i]), vocab[currentIndex]];

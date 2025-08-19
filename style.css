@@ -19,7 +19,7 @@ body {
     font-family: var(--font-base);
     font-size: 1.4rem;
     line-height: var(--line-height-base);
-    padding: calc(var(--gap-md) * 2.5) var(--gap-md);
+    padding: var(--gap-lg) var(--gap-md);
 }
 
 /* =============================
@@ -49,11 +49,13 @@ body {
     --gap-xs: 0.4rem;
     --gap-sm: 0.8rem;
     --gap-md: 1.2rem;
+    --gap-lg: 2.4rem;
 
     /* Border radius */
-    --radius-sm: 0.5rem;
-    --radius-md: 0.8rem;
-    --radius-lg: 1rem;
+    --radius-xs: 0.4rem;
+    --radius-sm: 0.8rem;
+    --radius-md: 1.2rem;
+    --radius-lg: 2.4rem;
 
     /* Width */
     --w-sm: 32rem; /* 320px */
@@ -81,19 +83,22 @@ p {
     border-radius: var(--radius-lg);
     margin: var(--gap-md) auto;
     max-width: var(--w-sm);
-    padding: calc(var(--gap-md) * 2.5);
+    padding: var(--gap-lg);
     position: relative;
     text-align: center;
 }
 
-.practice-mode-container {
+.practice-container {
     align-items: center;
+    background-color: var(--gray-light);
+    box-shadow: 0 0 0.2rem 0.2rem var(--gray-light);
     display: flex;
     font-size: 1.2rem;
     gap: var(--gap-xs);
-    left: 0.6rem;
+    left: var(--gap-md);
+    padding: 0 0.2rem;
     position: absolute;
-    top: 0.4rem;
+    top: var(--gap-md);
 }
 
 #word {
@@ -126,11 +131,11 @@ p {
 .btn-primary,
 .btn-secondary {
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
     color: #fff;
     cursor: pointer;
     font-size: 1.4rem;
-    padding: var(--gap-sm) calc(var(--gap-sm) * 2);
+    padding: var(--gap-sm) var(--gap-lg);
     transition: background-color 0.2s ease;
 }
 
@@ -194,7 +199,7 @@ p {
 
 .actions {
     background-color: #ffffffaa;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     bottom: 1.6rem;
     box-shadow: 0 0 0.8rem 0.8rem #ffffffaa;
     display: flex;
@@ -210,7 +215,7 @@ p {
 }
 .navbar ul {
     display: flex;
-    gap: calc(var(--gap-md) * 2.5);
+    gap: var(--gap-lg);
     justify-content: center;
     list-style: none;
 }
@@ -255,7 +260,7 @@ p {
 }
 #card.feedback-card h2 {
     color: var(--primary);
-    margin-bottom: calc(var(--gap-md) * 1.5);
+    margin-bottom: var(--gap-lg);
     text-align: center;
 }
 #card.feedback-card label {
@@ -267,7 +272,7 @@ p {
 #card.feedback-card input,
 #card.feedback-card textarea {
     border: 0.1rem solid var(--gray);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
     box-sizing: border-box;
     font-size: 1.4rem;
     margin-bottom: var(--gap-md);
