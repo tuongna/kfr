@@ -241,26 +241,10 @@ p {
 }
 
 /* =============================
-    GRAMMAR CARD
+    LESSON CARD
 ============================= */
-#card.grammar-card {
+#card.lesson-card {
     max-width: var(--w-md);
-}
-#card.grammar-card h2 {
-    margin: 0 0 var(--gap-md) 0;
-}
-#card.grammar-card ul {
-    padding-left: 2rem;
-    text-align: left;
-}
-#card.grammar-card .tags {
-    color: var(--text-muted);
-    font-size: 1.3rem;
-    margin-top: var(--gap-md);
-}
-#card.grammar-card strong {
-    display: inline-block;
-    margin: var(--gap-md) 0 var(--gap-sm) 0;
 }
 
 /* =============================
@@ -321,4 +305,85 @@ button:focus-visible {
     background-color: var(--gray-light);
     padding: var(--gap-xs) 0;
     text-align: center;
+}
+
+/* =============================
+    MARKDOWN STYLES
+============================= */
+.marked table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.marked th {
+    background-color: var(--primary);
+    color: #fff;
+    padding: 0.6rem;
+    text-align: center;
+}
+
+.marked td {
+    border: 1px solid var(--gray);
+    padding: 0.6rem;
+    text-align: center;
+}
+
+.marked tr:hover {
+    background-color: var(--gray-light);
+}
+
+.marked td.type {
+    font-weight: bold;
+    color: var(--accent);
+}
+
+.marked td.hangul {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.marked {
+    overflow-x: auto;
+}
+
+.marked h1,
+.marked h2,
+.marked h3,
+.marked h4,
+.marked h5,
+.marked h6 {
+    color: var(--primary);
+}
+
+.marked h1 {
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+}
+
+.marked h2 {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+}
+
+.marked h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.6rem;
+}
+
+.marked h4 {
+    font-size: 1.6rem;
+    margin-bottom: 0.4rem;
+}
+
+.marked h5,
+.marked h6 {
+    color: var(--primary);
+}
+
+.marked hr {
+    border: 0;
+    border-top: 1px solid var(--gray);
+    margin: 2rem 0;
 }

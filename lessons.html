@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>KfR | Grammar</title>
+        <title>KfR | Lessons</title>
         <link rel="stylesheet" href="style.css" />
         <link rel="manifest" href="manifest.json" />
     </head>
@@ -20,46 +20,14 @@
                         <a href="sentences.html">Sentences</a>
                     </li>
                     <li>
-                        <a class="active" href="grammar.html">Grammar</a>
+                        <a class="active" href="lessons.html">Lessons</a>
                     </li>
                     <li>
                         <a href="feedback.html">Feedback</a>
                     </li>
                 </ul>
             </nav>
-            <div id="card" class="grammar-card">
-                <h2 data-card-header>Lesson</h2>
-                <p>
-                    <em data-card-description></em>
-                </p>
-
-                <div>
-                    <strong>Points:</strong>
-                    <ul data-card-details></ul>
-                </div>
-
-                <div>
-                    <strong>Rules:</strong>
-                    <ul data-card-rules></ul>
-                </div>
-
-                <div>
-                    <strong>Irregulars:</strong>
-                    <ul data-card-irregulars></ul>
-                </div>
-
-                <div>
-                    <strong>Examples:</strong>
-                    <ul data-card-examples></ul>
-                </div>
-
-                <p class="tags" data-card-tags></p>
-            </div>
-            <div class="actions">
-                <button class="btn-primary" id="prevBtn">Prev</button>
-                <button class="btn-primary" id="nextBtn">Next</button>
-            </div>
-            <div id="stats"></div>
+            <div id="card" class="lesson-card marked"></div>
         </div>
         <footer class="footer">
             <a
@@ -71,7 +39,7 @@
             </a>
         </footer>
         <script src="version.js"></script>
-        <script type="module" src="js/grammar.js"></script>
+        <script type="module" src="js/lessons.js"></script>
         <script>
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker
