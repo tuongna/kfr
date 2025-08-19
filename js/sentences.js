@@ -1,6 +1,10 @@
-import { playAudio, genIdFromRR } from './utils.js';
+import { playAudio, genIdFromRR, cloneDeep } from './utils.js';
 
 const MOTHER_TONGUE = 'vi';
+const DAY = 24 * 60 * 60 * 1000;
+const SRS_INTERVALS = [DAY, 3 * DAY, 10 * DAY, 30 * DAY];
+const XPS = [10, 30, 100, 300];
+const BADGES = ['🥉', '🥈', '🥇', '🏆', '💎'];
 
 let sentences = [];
 const wordEl = document.querySelector('#word');
@@ -13,6 +17,7 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
 const practiceMode = document.getElementById('practice-mode');
+const cardBadge = document.getElementById('card-badge');
 
 let currentIndex = parseInt(localStorage.getItem('sentencesPage'), 10) || 0;
 
@@ -34,7 +39,7 @@ function render(index) {
             console.error(`Error checking audio file: ${audioPath}`, err);
         });
 
-    if (!practiceMode.checked || getLearnedWords().includes(item.ko)) {
+    if (!practiceMode.checked) {
         phoneticEl.textContent = item.rr || '';
         meaningEl.textContent = item[MOTHER_TONGUE] || '';
         quizEl.innerHTML = '';
@@ -52,7 +57,7 @@ function render(index) {
             button.addEventListener('click', (e) => {
                 if (e.target.dataset.word === item.ko) {
                     e.target.classList.add('correct');
-                    markLearned(item.ko);
+                    improveLearned(item.ko);
                     nextCard();
                 } else {
                     e.target.classList.add('incorrect');
@@ -61,12 +66,9 @@ function render(index) {
         });
     }
 
-    if (getLearnedWords().includes(item.ko)) {
-        wordEl.classList.add('learned');
-    } else {
-        wordEl.classList.remove('learned');
-    }
-
+    const meta = getLearnedWords()[item.ko];
+    wordEl.classList.toggle('learned', !!meta);
+    cardBadge.textContent = meta ? BADGES[meta.level] ?? '' : '';
     updateStats();
 }
 
@@ -75,18 +77,56 @@ function renderAndSave(index) {
     localStorage.setItem('sentencesPage', index);
 }
 
-const getLearnedWords = () => JSON.parse(localStorage.getItem('sentencesLearned')) || [];
+const getLearnedWords = () => {
+    const learned = JSON.parse(localStorage.getItem('sentencesLearned'));
+
+    // Migrate old learned words format
+    if (Array.isArray(learned)) {
+        return Object.fromEntries(
+            arr.map((key) => [
+                key,
+                {
+                    level: 0,
+                    xp: XPS[0],
+                    nextReview: new Date(Date.now() + SRS_INTERVALS[0]),
+                },
+            ])
+        );
+    }
+
+    return learned || {};
+};
+
+function decreaseIndex() {
+    currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
+}
+
+function increaseIndex() {
+    currentIndex = (currentIndex + 1) % sentences.length;
+}
+
+function canPractice(word) {
+    const { nextReview } = getLearnedWords()[word] || {};
+
+    return !nextReview || new Date(nextReview) <= new Date();
+}
+
+function hasPractice() {
+    return sentences.some((item) => canPractice(item.ko));
+}
 
 function prevCard() {
     if (practiceMode.checked) {
-        do {
-            currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
-        } while (
-            getLearnedWords().includes(sentences[currentIndex].ko) &&
-            getLearnedWords().length < sentences.length
-        );
+        if (hasPractice()) {
+            do {
+                decreaseIndex();
+            } while (
+                !canPractice(sentences[currentIndex].ko) &&
+                Object.keys(getLearnedWords()).length
+            );
+        }
     } else {
-        currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
+        decreaseIndex();
     }
 
     renderAndSave(currentIndex);
@@ -95,29 +135,41 @@ function prevCard() {
 function nextCard() {
     if (practiceMode.checked) {
         do {
-            currentIndex = (currentIndex + 1) % sentences.length;
+            increaseIndex();
         } while (
-            getLearnedWords().includes(sentences[currentIndex].ko) &&
-            getLearnedWords().length < sentences.length
+            !canPractice(sentences[currentIndex].ko) &&
+            Object.keys(getLearnedWords()).length
         );
     } else {
-        currentIndex = (currentIndex + 1) % sentences.length;
+        increaseIndex();
     }
 
     renderAndSave(currentIndex);
 }
 
-function markLearned(ko) {
-    if (sentences.find((i) => i.ko === ko)) {
-        if (!getLearnedWords().includes(ko)) {
-            localStorage.setItem('sentencesLearned', JSON.stringify([...getLearnedWords(), ko]));
-            renderAndSave(currentIndex);
-        }
+function improveLearned(ko) {
+    const learned = getLearnedWords();
+    let meta = cloneDeep(learned[ko]);
+
+    if (!meta) {
+        meta = {
+            level: 0,
+            xp: XPS[0],
+            nextReview: new Date(Date.now() + SRS_INTERVALS[0]),
+        };
+    } else if (meta.level < SRS_INTERVALS.length - 1) {
+        meta.level++;
+        meta.xp += XPS[meta.level];
+        meta.nextReview = new Date(Date.now() + SRS_INTERVALS[meta.level]);
     }
+
+    learned[ko] = meta;
+    localStorage.setItem('sentencesLearned', JSON.stringify(learned));
+    renderAndSave(currentIndex);
 }
 
 function activatePracticeMode() {
-    if (practiceMode.checked && getLearnedWords().includes(sentences[currentIndex].ko)) {
+    if (practiceMode.checked && !canPractice(sentences[currentIndex].ko)) {
         nextCard();
     }
 
@@ -125,9 +177,16 @@ function activatePracticeMode() {
 }
 
 function updateStats() {
-    statsEl.textContent = `Đã học: ${getLearnedWords().length} / Hiện tại: ${
-        currentIndex + 1
-    } / Tổng: ${sentences.length}`;
+    const learned = Object.values(getLearnedWords());
+    const totalXP = learned.reduce((sum, { xp }) => sum + xp, 0);
+    const levels = [0, 1, 2, 3, 4];
+    const counts = levels.map(
+        (l) => learned.filter((item) => item.level === l).length
+    );
+
+    statsEl.innerHTML =
+        `<span>${totalXP} XP</span>` +
+        counts.map((count, i) => `<span>${count}${BADGES[i]}</span>`).join('');
 }
 
 function getQuizWords() {
@@ -138,10 +197,14 @@ function getQuizWords() {
         let idx = (s * 3 + currentIndex * 7) % total;
         if (idx === currentIndex || distractors.includes(idx))
             idx = (95 * 3 + currentIndex * 7) % total;
-        if (!distractors.includes(idx) && distractors.length < 3) distractors.push(idx);
+        if (!distractors.includes(idx) && distractors.length < 3)
+            distractors.push(idx);
         if (distractors.length === 3) break;
     }
-    const raw = [...distractors.map((i) => sentences[i]), sentences[currentIndex]];
+    const raw = [
+        ...distractors.map((i) => sentences[i]),
+        sentences[currentIndex],
+    ];
     return raw.sort(() => 0.5 - Math.random());
 }
 

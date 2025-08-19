@@ -109,6 +109,13 @@ p {
     top: var(--gap-md);
 }
 
+#card-badge {
+    font-size: 2rem;
+    position: absolute;
+    right: var(--gap-md);
+    top: var(--gap-md);
+}
+
 #word {
     align-items: center;
     column-gap: var(--gap-sm);
@@ -199,10 +206,15 @@ p {
     LAYOUT
 ============================= */
 #stats {
+    align-items: center;
     color: var(--text-color);
+    color: var(--primary);
+    display: flex;
     font-size: 1.4rem;
-    padding: var(--gap-md) 0;
-    text-align: center;
+    font-weight: bold;
+    gap: var(--gap-md);
+    justify-content: center;
+    padding: 0 0 var(--gap-md) 0;
 }
 
 .actions {
