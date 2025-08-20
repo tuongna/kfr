@@ -23,6 +23,8 @@ const practiceMode = document.getElementById('practice-mode');
 const cardBadge = document.getElementById('card-badge');
 const vocabLink = document.getElementById('vocab-link');
 const sentencesLink = document.getElementById('sentences-link');
+const learnProgress = document.getElementById('learn-progress');
+const reviewMessage = document.getElementById('review-message');
 
 let dataSource = { [VOCAB_KEY]: [], [SENTENCES_KEY]: [] };
 let currentIndex = {
@@ -33,11 +35,20 @@ let wrong = false;
 
 function render(index) {
     const data = getData();
+    const learneds = Object.keys(getLearnedWords());
+
+    const dataCount = data.length;
+    const learnedCount = learneds.length;
+
     const item = data[index];
     const audioFileName = genIdFromRR(item.rr);
     wordLabelEl.textContent = item.ko;
     speakBtn.dataset.speak = audioFileName;
     speakBtn.style.display = practiceMode.checked ? 'none' : '';
+    learnProgress.style.display = 'none';
+    reviewMessage.style.display = 'none';
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
 
     const audioPath = `../audio/${audioFileName}.mp3`;
     fetch(audioPath, { method: 'HEAD' })
@@ -57,6 +68,8 @@ function render(index) {
     } else {
         phoneticEl.textContent = '----';
         meaningEl.textContent = '';
+        learnProgress.style.display = '';
+        learnProgress.value = ((learnedCount || 0) / (dataCount || 1)) * 100;
         quizEl.innerHTML = `${getQuizWords()
             .map(
                 (v) =>
@@ -76,11 +89,27 @@ function render(index) {
                 }
             });
         });
+
+        if (dataCount - learnedCount <= 1) {
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+        }
+    }
+
+    if (!hasPractice()) {
+        practiceMode.disabled = true;
+        practiceMode.checked = false;
+
+        learnProgress.style.display = '';
+        learnProgress.value = 100;
+        reviewMessage.style.display = '';
+    } else {
+        practiceMode.disabled = false;
     }
 
     const meta = getLearnedWords()[item.ko];
     wordEl.classList.toggle('learned', !!meta);
-    cardBadge.textContent = meta ? BADGES[meta.level] ?? '' : '';
+    cardBadge.textContent = meta ? BADGES.slice(0, meta.level + 1).join('') : '';
     updateStats();
 }
 
@@ -144,14 +173,12 @@ function setIndex(index) {
     if (!key || key === VOCAB_KEY) {
         const idx = Math.max(0, Math.min(index, data.length - 1));
         currentIndex[VOCAB_KEY] = idx;
-        localStorage.setItem('vocabPage', idx);
     } else if (key === SENTENCES_KEY) {
         const idx = Math.max(0, Math.min(index, data.length - 1));
         currentIndex[SENTENCES_KEY] = idx;
-        localStorage.setItem('sentencesPage', idx);
+    } else {
+        console.warn('No valid URL params found');
     }
-
-    console.warn('No valid URL params found');
 }
 
 function getData() {
@@ -175,27 +202,8 @@ const getLearnedWords = () => {
     let learned = {};
     if (!key || key === VOCAB_KEY) {
         learned = JSON.parse(localStorage.getItem('learnedVocab')) || {};
-
-        // TODO: REMOVE - Migrate old learned words format
-        if (learned && Object.keys(learned).length === 0) {
-            learned = JSON.parse(localStorage.getItem('learned')) || {};
-        }
     } else if (key === SENTENCES_KEY) {
         learned = JSON.parse(localStorage.getItem('learnedSentences')) || {};
-    }
-
-    // TODO: REMOVE - Migrate old learned words format
-    if (Array.isArray(learned)) {
-        return Object.fromEntries(
-            learned.map((key) => [
-                key,
-                {
-                    level: 0,
-                    xp: XPS[0],
-                    nextReview: new Date(Date.now() + SRS_INTERVALS[0]),
-                },
-            ])
-        );
     }
 
     return learned || {};
@@ -220,12 +228,12 @@ function hasPractice() {
 }
 
 function prevCard() {
-    const d = getData();
+    const data = getData();
 
     if (practiceMode.checked) {
         if (hasPractice()) {
-            for (let i = d.length - 1; i >= 0; i--) {
-                if (canPractice(d[i].ko)) {
+            for (let i = data.length - 1; i >= 0; i--) {
+                if (canPractice(data[i].ko)) {
                     setIndex(i);
                     break;
                 }
@@ -296,16 +304,16 @@ function activatePracticeMode() {
 
     if (practiceMode.checked && !canPractice(data[index].ko)) {
         nextCard();
+    } else {
+        renderAndSave(index);
     }
-
-    renderAndSave(index);
 }
 
 function updateStats() {
     const learned = Object.values(getLearnedWords());
     const totalXP = learned.reduce((sum, { xp }) => sum + xp, 0);
     const levels = [0, 1, 2, 3, 4];
-    const counts = levels.map((l) => learned.filter((item) => item.level === l).length);
+    const counts = levels.map((l) => learned.filter((item) => item.level >= l).length);
 
     statsEl.innerHTML =
         `<span>${totalXP} XP</span>` +
@@ -351,6 +359,53 @@ async function loadData() {
     renderAndSave(index);
 }
 
+// TODO: REMOVE after August 27, 2025 - Migrate old learned words format
+function migrate() {
+    // Get old learned words
+    const learned = JSON.parse(localStorage.getItem('learned')) || [];
+    const learnedVocab = JSON.parse(localStorage.getItem('learnedVocab')) || {};
+    const learnedSentences = JSON.parse(localStorage.getItem('learnedSentences')) || {};
+
+    // Migrate to new format for learnedVocab
+    if (learned.length) {
+        const oldLearnedVocab = Object.fromEntries(
+            learned.map((key) => [
+                key,
+                {
+                    level: 0,
+                    xp: XPS[0],
+                    nextReview: new Date(Date.now()),
+                },
+            ])
+        );
+
+        if (learnedVocab && Object.keys(learnedVocab).length > 0) {
+            const mergedLearnedVocab = { ...oldLearnedVocab, ...learnedVocab };
+            localStorage.setItem('learnedVocab', JSON.stringify(mergedLearnedVocab));
+        } else {
+            localStorage.setItem('learnedVocab', JSON.stringify(oldLearnedVocab));
+        }
+
+        // Remove old learned words
+        localStorage.removeItem('learned');
+    }
+
+    // Migrate to new format for learnedSentences
+    if (learnedSentences && Array.isArray(learnedSentences)) {
+        const oldLearnedSentences = Object.fromEntries(
+            learnedSentences.map((key) => [
+                key,
+                {
+                    level: 0,
+                    xp: XPS[0],
+                    nextReview: new Date(Date.now()),
+                },
+            ])
+        );
+        localStorage.setItem('learnedSentences', JSON.stringify(oldLearnedSentences));
+    }
+}
+
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);
@@ -359,5 +414,9 @@ vocabLink.addEventListener('click', () => handleLinkClick('vocab'));
 sentencesLink.addEventListener('click', () => handleLinkClick('sentences'));
 
 await loadData();
+
+// TODO: REMOVE after August 27, 2025 - Migrate old learned words format
+migrate();
+
 renderAndSave(getIndex());
 activateLinks();

@@ -79,6 +79,10 @@ p {
     margin-bottom: 1em;
 }
 
+input[disabled] + label {
+    color: var(--gray);
+}
+
 /* =============================
     CARD
 ============================= */
@@ -88,15 +92,32 @@ p {
     border-radius: var(--radius-lg);
     margin: var(--gap-md) auto;
     max-width: var(--w-sm);
-    padding: calc(var(--gap-lg) * 1.25) var(--gap-lg);
+    padding: calc(var(--gap-lg) * 1.5) var(--gap-lg) var(--gap-lg) var(--gap-lg);
     position: relative;
     text-align: center;
+}
+
+.progress-container {
+    left: 50%;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    width: calc(100% - 2 * var(--gap-lg));
+}
+
+.progress-container > progress {
+    display: inherit;
+    width: 100%;
+}
+
+.progress-container > span {
+    color: var(--primary);
+    font-size: 1.2rem;
 }
 
 .practice-container {
     align-items: center;
     background-color: var(--gray-light);
-    box-shadow: 0 0 0.2rem 0.2rem var(--gray-light);
     display: flex;
     font-size: 1.2rem;
     gap: var(--gap-xs);
@@ -140,6 +161,11 @@ p {
 /* =============================
     BUTTONS
 ============================= */
+button[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .btn-primary,
 .btn-secondary {
     border: none;
