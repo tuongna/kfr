@@ -5,6 +5,7 @@ const CACHE_NAME = `pwa-cache-${APP_VERSION}`;
 const coreFiles = [
     '/',
     '/index.html',
+    '/vocab.html',
     '/lessions.html',
     '/feedback.html',
     '/sentences.html',
@@ -15,10 +16,10 @@ const coreFiles = [
     '/js/feedback.js',
     '/js/sentences.js',
     '/manifest.json',
-    '/favicon.ico',
 ];
 
 const icons = [
+    '/favicon.ico',
     '/icons/icon-72.png',
     '/icons/icon-128.png',
     '/icons/icon-144.png',
@@ -45,10 +46,25 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
     event.respondWith(
-        caches
-            .match(event.request)
-            .then((response) => response || fetch(event.request))
-            .catch(() => caches.match('/index.html'))
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) return cachedResponse;
+
+            return fetch(event.request)
+                .then((networkResponse) => {
+                    if (
+                        event.request.method === 'GET' &&
+                        networkResponse.ok &&
+                        event.request.url.startsWith('http')
+                    ) {
+                        const responseToCache = networkResponse.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache);
+                        });
+                    }
+                    return networkResponse;
+                })
+                .catch(() => caches.match('/index.html'));
+        })
     );
 });
 

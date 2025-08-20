@@ -17,7 +17,7 @@ body {
     background-color: var(--gray-light);
     color: var(--text-color);
     font-family: var(--font-base);
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     line-height: var(--line-height-base);
     padding: var(--gap-lg) var(--gap-md);
 }
@@ -53,21 +53,18 @@ a {
     --font-base: Arial, sans-serif;
     --line-height-base: 1.5;
 
-    /* Spacing */
     --gap-xs: 0.4rem;
     --gap-sm: 0.8rem;
     --gap-md: 1.2rem;
     --gap-lg: 2.4rem;
 
-    /* Border radius */
     --radius-xs: 0.4rem;
     --radius-sm: 0.8rem;
     --radius-md: 1.2rem;
     --radius-lg: 2.4rem;
 
-    /* Width */
-    --w-sm: 32rem; /* 320px */
-    --w-md: 50rem; /* 500px */
+    --w-sm: 40rem;
+    --w-md: 50rem;
 }
 
 /* =============================
@@ -91,7 +88,7 @@ p {
     border-radius: var(--radius-lg);
     margin: var(--gap-md) auto;
     max-width: var(--w-sm);
-    padding: var(--gap-lg);
+    padding: calc(var(--gap-lg) * 1.25) var(--gap-lg);
     position: relative;
     text-align: center;
 }
@@ -113,7 +110,7 @@ p {
     font-size: 2rem;
     position: absolute;
     right: var(--gap-md);
-    top: var(--gap-md);
+    top: var(--gap-sm);
 }
 
 #word {
@@ -123,7 +120,7 @@ p {
 }
 
 #word > span {
-    font-size: 3.2rem;
+    font-size: 2.4rem;
 }
 #word.learned > span {
     color: var(--success);
@@ -137,7 +134,7 @@ p {
 
 #meaning {
     color: var(--text-light);
-    font-size: 2rem;
+    font-size: 1.6rem;
 }
 
 /* =============================
@@ -231,6 +228,7 @@ p {
 
 .actions > button {
     box-shadow: 0 0 1.2rem 1.2rem #ffffffaa;
+    min-width: 9.2rem;
 }
 
 .navbar {
@@ -251,21 +249,6 @@ p {
 }
 .navbar a.active {
     font-weight: bold;
-}
-
-/* =============================
-    SENTENCE CARD
-============================= */
-#card.sentence-card {
-    max-width: var(--w-md);
-}
-
-#card.sentence-card #word > span {
-    font-size: 2.4rem;
-}
-
-#card.sentence-card #meaning {
-    font-size: 1.6rem;
 }
 
 /* =============================
