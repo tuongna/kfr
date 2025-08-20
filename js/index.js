@@ -229,12 +229,14 @@ function hasPractice() {
 
 function prevCard() {
     const data = getData();
+    const index = getIndex();
 
     if (practiceMode.checked) {
         if (hasPractice()) {
-            for (let i = data.length - 1; i >= 0; i--) {
-                if (canPractice(data[i].ko)) {
-                    setIndex(i);
+            for (let i = index - 1; i > index - data.length; i--) {
+                const idx = (i + data.length) % data.length;
+                if (canPractice(data[idx].ko)) {
+                    setIndex(idx);
                     break;
                 }
             }
@@ -248,12 +250,13 @@ function prevCard() {
 
 function nextCard() {
     const data = getData();
+    const index = getIndex();
 
     if (practiceMode.checked) {
         if (hasPractice()) {
-            for (let i = 0; i < data.length; i++) {
-                if (canPractice(data[i].ko)) {
-                    setIndex(i);
+            for (let i = index + 1; i < index + data.length; i++) {
+                if (canPractice(data[i % data.length].ko)) {
+                    setIndex(i % data.length);
                     break;
                 }
             }
@@ -348,8 +351,8 @@ function handleOnClickSpeak(e) {
 async function loadData() {
     const index = getIndex();
 
-    const vocab = await fetch('../data/vocab.json');
-    const sentences = await fetch('../data/sentences.json');
+    const vocab = await fetch('../resources/vocab.json');
+    const sentences = await fetch('../resources/sentences.json');
 
     dataSource = {
         vocab: await vocab.json(),

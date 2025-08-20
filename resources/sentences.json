@@ -1,0 +1,186 @@
+[
+    {
+        "ko": "천천히 말해 주세요.",
+        "rr": "cheoncheonhi malhae juseyo",
+        "en": ["Please speak slowly."],
+        "vi": ["Làm ơn nói chậm lại."],
+        "level": "A1",
+        "tags": ["communication", "request"]
+    },
+    {
+        "ko": "다시 한번 말해 주세요.",
+        "rr": "dasi hanbeon malhae juseyo",
+        "en": ["Please say it again once more."],
+        "vi": ["Làm ơn nói lại một lần nữa."],
+        "level": "A1",
+        "tags": ["communication", "request"]
+    },
+    {
+        "ko": "영어로 뭐예요?",
+        "rr": "yeongeoro mwoyeyo",
+        "en": ["What is it in English?"],
+        "vi": ["Cái này bằng tiếng Anh là gì?"],
+        "level": "A1",
+        "tags": ["communication", "question"]
+    },
+    {
+        "ko": "한국어로 뭐예요?",
+        "rr": "hangugeoro mwoyeyo",
+        "en": ["What is it in Korean?"],
+        "vi": ["Cái này bằng tiếng Hàn là gì?"],
+        "level": "A1",
+        "tags": ["communication", "question"]
+    },
+    {
+        "ko": "한국어를 잘 못해요.",
+        "rr": "hangugeoreul jal mothaeyo",
+        "en": ["I can't understand Korean well."],
+        "vi": ["Tôi không giỏi tiếng Hàn."],
+        "level": "A1",
+        "tags": ["communication", "ability"]
+    },
+    {
+        "ko": "안녕하세요.",
+        "rr": "annyeonghaseyo",
+        "en": ["Hello.", "Good morning.", "Good afternoon.", "Good evening."],
+        "vi": ["Xin chào.", "Chào buổi sáng.", "Chào buổi trưa.", "Chào buổi tối."],
+        "level": "A1",
+        "tags": ["greeting"]
+    },
+    {
+        "ko": "잘 지냈어요?",
+        "rr": "jal jinaesseoyo",
+        "en": ["How have you been?"],
+        "vi": ["Bạn có khỏe không?"],
+        "level": "A1",
+        "tags": ["greeting", "question"]
+    },
+    {
+        "ko": "오랜만이에요!",
+        "rr": "oraenmanieyo",
+        "en": ["Long time no see!"],
+        "vi": ["Lâu rồi không gặp!"],
+        "level": "A1",
+        "tags": ["greeting"]
+    },
+    {
+        "ko": "안녕히 계세요.",
+        "rr": "annyeonghi gyeseyo",
+        "en": ["Goodbye (said by the person leaving)."],
+        "vi": ["Tạm biệt (nói khi mình rời đi)."],
+        "level": "A1",
+        "tags": ["farewell"]
+    },
+    {
+        "ko": "안녕히 가세요.",
+        "rr": "annyeonghi gaseyo",
+        "en": ["Goodbye (said by the person staying)."],
+        "vi": ["Tạm biệt (nói khi người khác rời đi)."],
+        "level": "A1",
+        "tags": ["farewell"]
+    },
+    {
+        "ko": "안녕!",
+        "rr": "annyeong",
+        "en": ["Hi!", "Bye! (informal)"],
+        "vi": ["Chào!", "Tạm biệt! (thân mật)"],
+        "level": "A1",
+        "tags": ["greeting", "farewell", "informal"]
+    },
+    {
+        "ko": "네.",
+        "rr": "ne",
+        "en": ["Yes."],
+        "vi": ["Vâng.", "Đúng."],
+        "level": "A1",
+        "tags": ["answer"]
+    },
+    {
+        "ko": "아니요.",
+        "rr": "aniyo",
+        "en": ["No."],
+        "vi": ["Không."],
+        "level": "A1",
+        "tags": ["answer"]
+    },
+    {
+        "ko": "아마도.",
+        "rr": "amado",
+        "en": ["Maybe."],
+        "vi": ["Có lẽ."],
+        "level": "A1",
+        "tags": ["answer", "uncertainty"]
+    },
+    {
+        "ko": "괜찮아요.",
+        "rr": "gwaenchanhayo",
+        "en": ["It's okay.", "I'm okay."],
+        "vi": ["Ổn mà.", "Tôi ổn."],
+        "level": "A1",
+        "tags": ["response"]
+    },
+    {
+        "ko": "안 돼요!",
+        "rr": "an dwaeyo",
+        "en": ["No!", "I can't!"],
+        "vi": ["Không được!", "Tôi không thể!"],
+        "level": "A1",
+        "tags": ["negative", "strong"]
+    },
+    {
+        "ko": "감사합니다.",
+        "rr": "gamsahamnida",
+        "en": ["Thank you."],
+        "vi": ["Xin cảm ơn."],
+        "level": "A1",
+        "tags": ["manners", "formal"]
+    },
+    {
+        "ko": "고맙습니다.",
+        "rr": "gomapseumnida",
+        "en": ["Thank you."],
+        "vi": ["Cảm ơn."],
+        "level": "A1",
+        "tags": ["manners", "formal"]
+    },
+    {
+        "ko": "고마워.",
+        "rr": "gomawo",
+        "en": ["Thanks."],
+        "vi": ["Cảm ơn (thân mật)."],
+        "level": "A1",
+        "tags": ["manners", "informal"]
+    },
+    {
+        "ko": "천만에요.",
+        "rr": "cheonmaneyo",
+        "en": ["You're welcome."],
+        "vi": ["Không có gì."],
+        "level": "A1",
+        "tags": ["manners", "reply"]
+    },
+    {
+        "ko": "사과 두 개",
+        "vi": "2 quả táo",
+        "en": "two apples",
+        "rr": "sagwa du gae",
+        "level": "A1",
+        "tags": ["example", "native", "counter"]
+    },
+    {
+        "ko": "삼십 분",
+        "vi": "30 phút",
+        "en": "thirty minutes",
+        "rr": "samsip bun",
+        "level": "A1",
+        "tags": ["example", "sino", "time"]
+    },
+    {
+        "ko": "나이 스물다섯",
+        "vi": "25 tuổi",
+        "en": "twenty-five years old",
+        "rr": "nai seumuldaseot",
+        "level": "A1",
+        "tags": ["example", "native", "age"]
+    }
+]

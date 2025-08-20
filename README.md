@@ -11,16 +11,15 @@ Korean from Ryan is a Progressive Web App (PWA) for learning Korean grammar and 
 
 ## Content and Audio License
 
-- **Text data (Korean, English, Vietnamese sentences):** aggregated from multiple public sources and AI; no specific license applies.  
-- **Audio files:** generated using **gTTS**, licensed under **MIT License**.  
-- **Source code:** MIT License
+-   **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
+-   **Audio files:** generated using **gTTS**, licensed under **MIT License**.
+-   **Source code:** MIT License
 
-> ⚠ **Important:** Use of the data is at your own discretion. Attribution is encouraged when possible, but data files in `data/` do not include explicit license fields.
+> ⚠ **Important:** Use of the content is at your own discretion. Attribution is encouraged when possible.
 
 ## License
 
-This project’s **source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.  
-Data in `data/` are **not covered by MIT** and have no formal license.
+This project’s **source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.
 
 ## How to Contribute
 
