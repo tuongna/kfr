@@ -180,15 +180,9 @@ button[disabled] {
 .btn-primary {
     background-color: var(--primary);
 }
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-}
 
 .btn-secondary {
     background-color: var(--secondary);
-}
-.btn-secondary:hover {
-    background-color: var(--secondary-dark);
 }
 
 .btn-icon {
@@ -260,19 +254,19 @@ button[disabled] {
 .navbar {
     padding: var(--gap-md) 0;
 }
+
 .navbar ul {
     display: flex;
     gap: var(--gap-lg);
     justify-content: center;
     list-style: none;
 }
+
 .navbar a {
     color: var(--primary);
     text-decoration: none;
 }
-.navbar a:hover {
-    text-decoration: underline;
-}
+
 .navbar a.active {
     font-weight: bold;
 }
@@ -359,10 +353,6 @@ button:focus-visible {
     text-align: center;
 }
 
-.marked tr:hover {
-    background-color: var(--gray-light);
-}
-
 .marked td.type {
     color: var(--accent);
     font-weight: bold;
@@ -416,4 +406,25 @@ button:focus-visible {
     border: 0;
     border-top: 1px solid var(--gray);
     margin: 2rem 0;
+}
+
+/* =============================
+    HOVER STYLES
+============================= */
+@media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-dark);
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+.marked tr:hover {
+    background-color: var(--gray-light);
 }
