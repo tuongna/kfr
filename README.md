@@ -24,10 +24,18 @@ This app uses a **hash-based SPA router**:
 <a href="#vocab" data-link>Vocabulary</a> <a href="#sentences" data-link>Sentences</a>
 ```
 
-## Content and Audio License - **Text data (Korean, English, Vietnamese sentences):** collected from
+## Content and Audio License
 
-multiple public sources; no specific license applies. - **Audio files:** generated using **gTTS**,
-licensed under **MIT License**. - **Source code:** MIT License > ⚠ **Important:** Use of the content
-is at your own discretion. Attribution is encouraged when possible. ## License This project’s
-**source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details. ## How
-to Contribute See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+-   **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
+-   **Audio files:** generated using **gTTS**, licensed under **MIT License**.
+-   **Source code:** MIT License
+
+> ⚠ **Important:** Use of the content is at your own discretion. Attribution is encouraged when possible.
+
+## License
+
+This project’s **source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.
+
+## How to Contribute
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.

@@ -5,10 +5,8 @@ const CACHE_NAME = `pwa-cache-${APP_VERSION}`;
 const coreFiles = [
     '/',
     '/index.html',
-    '/vocab.html',
     '/lessions.html',
     '/feedback.html',
-    '/sentences.html',
     '/style.css',
     '/js/app.js',
     '/js/feedback.js',
