@@ -4,8 +4,8 @@ from gtts import gTTS
 
 # --- Paths ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-RESOURCES_DIR = os.path.join(SCRIPT_DIR, "..", "resources")
-OUTPUT_DIR = os.path.join(SCRIPT_DIR, "..", "audio")
+RESOURCES_DIR = os.path.join(SCRIPT_DIR, "..", "data")
+OUTPUT_DIR = os.path.join(SCRIPT_DIR, "..", "assets", "audio")
 
 INPUT_FILES = [
     os.path.join(RESOURCES_DIR, "vocab.json"),

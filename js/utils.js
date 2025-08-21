@@ -12,7 +12,7 @@ export function genIdFromRR(rr = '') {
 }
 
 export function playAudio(filename) {
-    const audio = new Audio(`../audio/${filename}`);
+    const audio = new Audio(`../assets/audio/${filename}`);
     audio.play();
 }
 

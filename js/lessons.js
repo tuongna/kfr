@@ -1,7 +1,7 @@
 import { marked } from '../vendors/js/marked.esm.js';
 
 async function fetchHangul() {
-    const res = await fetch('../resources/hangul.md');
+    const res = await fetch('../data/hangul.md');
     return res.text();
 }
 

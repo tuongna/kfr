@@ -20,11 +20,11 @@ const coreFiles = [
 
 const icons = [
     '/favicon.ico',
-    '/icons/icon-72.png',
-    '/icons/icon-128.png',
-    '/icons/icon-144.png',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png',
+    '/assets/icons/icon-72.png',
+    '/assets/icons/icon-128.png',
+    '/assets/icons/icon-144.png',
+    '/assets/icons/icon-192.png',
+    '/assets/icons/icon-512.png',
 ];
 
 const urlsToCache = [...coreFiles, ...icons];
