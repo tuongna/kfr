@@ -1,5 +1,12 @@
 import { initRouter } from './router.js';
-import { playAudio, genIdFromRR, cloneDeep } from './utils.js';
+import {
+    playAudio,
+    genIdFromRR,
+    cloneDeep,
+    shuffleData,
+    findMatchingIndex,
+    getQuizWords,
+} from './utils.js';
 import { getLearned, saveLearned, migrateOldLearned } from './store.js';
 
 // ==============================
@@ -18,6 +25,7 @@ const PAGE_INDEX_KEYS = {
     [VOCAB_KEY]: 'vocabPage',
     [SENTENCES_KEY]: 'sentencesPage',
 };
+const PRACTICE_MODE_KEY = 'practiceMode';
 
 // ==============================
 // DOM ELEMENTS
@@ -39,11 +47,14 @@ const reviewMessage = document.getElementById('review-message');
 // ==============================
 // STATE
 // ==============================
-let dataSource = { [VOCAB_KEY]: [], [SENTENCES_KEY]: [] };
-let currentIndex = {
+const dataSource = { [VOCAB_KEY]: [], [SENTENCES_KEY]: [] };
+const dataSourcePractice = { [VOCAB_KEY]: [], [SENTENCES_KEY]: [] };
+
+const currentIndex = {
     [VOCAB_KEY]: parseInt(localStorage.getItem(PAGE_INDEX_KEYS.vocab), 10) || 0,
     [SENTENCES_KEY]: parseInt(localStorage.getItem(PAGE_INDEX_KEYS.sentences), 10) || 0,
 };
+
 let wrong = false;
 
 // ==============================
@@ -55,7 +66,7 @@ function getUrlKey() {
 
 function getData() {
     const key = getUrlKey();
-    return dataSource[key] || [];
+    return practiceMode.checked ? dataSourcePractice[key] || [] : dataSource[key] || [];
 }
 
 function getIndex() {
@@ -110,22 +121,6 @@ function decreaseIndex() {
 
 function increaseIndex() {
     setIndex((getIndex() + 1) % getData().length);
-}
-
-function getQuizWords() {
-    const index = getIndex();
-    const data = getData();
-    const seeds = [29, 11, 19, 95];
-    let distractors = [];
-
-    for (let s of seeds) {
-        let idx = (s * 3 + index * 7) % data.length;
-        if (idx === index || distractors.includes(idx)) idx = (95 * 3 + index * 7) % data.length;
-        if (!distractors.includes(idx) && distractors.length < 3) distractors.push(idx);
-        if (distractors.length === 3) break;
-    }
-
-    return [...distractors.map((i) => data[i]), data[index]].sort(() => 0.5 - Math.random());
 }
 
 function handleClickSpeak(e) {
@@ -188,7 +183,7 @@ function renderQuiz(index, data, learnedCount) {
     learnProgress.style.display = '';
     learnProgress.value = (learnedCount / (data.length || 1)) * 100;
 
-    quizEl.innerHTML = getQuizWords()
+    quizEl.innerHTML = getQuizWords(getData(), getIndex())
         .map(
             (v) => `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`
         )
@@ -262,9 +257,21 @@ function nextCard() {
 }
 
 function activatePracticeMode() {
-    const data = getData();
-    if (practiceMode.checked && !canPractice(data[getIndex()].ko)) nextCard();
-    else renderAndSave(getIndex());
+    const key = getUrlKey();
+    const isPracticeMode = practiceMode.checked;
+    localStorage.setItem(PRACTICE_MODE_KEY, isPracticeMode ? '1' : '0');
+
+    if (isPracticeMode) {
+        setIndex(findMatchingIndex(dataSource[key], dataSourcePractice[key], currentIndex[key]));
+    } else {
+        setIndex(findMatchingIndex(dataSourcePractice[key], dataSource[key], currentIndex[key]));
+    }
+
+    if (practiceMode.checked && !canPractice(getData()[getIndex()].ko)) {
+        nextCard();
+    } else {
+        renderAndSave(getIndex());
+    }
 }
 
 // ==============================
@@ -287,13 +294,20 @@ function onRouteChange() {
 // LOAD DATA
 // ==============================
 async function loadData() {
+    // Load vocabulary and sentences data
     const [vocab, sentences] = await Promise.all([
         fetch('../data/vocab.json').then((r) => r.json()),
         fetch('../data/sentences.json').then((r) => r.json()),
     ]);
-    dataSource = { [VOCAB_KEY]: vocab, [SENTENCES_KEY]: sentences };
-}
 
+    // Initialize data sources
+    dataSource[VOCAB_KEY] = vocab;
+    dataSource[SENTENCES_KEY] = sentences;
+
+    // Shuffle data for practice mode
+    dataSourcePractice[VOCAB_KEY] = shuffleData(vocab);
+    dataSourcePractice[SENTENCES_KEY] = shuffleData(sentences);
+}
 // ==============================
 // EVENTS
 // ==============================
@@ -301,22 +315,21 @@ speakBtn.addEventListener('click', handleClickSpeak);
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
 practiceMode.addEventListener('change', activatePracticeMode);
+window.addEventListener('hashchange', onRouteChange);
 
 // ==============================
 // INIT
 // ==============================
-await loadData();
-migrateOldLearned();
-renderAndSave(getIndex());
-initRouter(onRouteChange);
+(async () => {
+    await loadData();
+    migrateOldLearned();
+    renderAndSave(getIndex());
+    initRouter(onRouteChange);
+    practiceMode.checked = localStorage.getItem(PRACTICE_MODE_KEY) === '1';
 
-// ==============================
-// EVENTS / SPA LINK DELEGATION
-// ==============================
-window.addEventListener('hashchange', onRouteChange);
-
-if (!window.location.hash) {
-    window.location.hash = '#vocab';
-}
-
-onRouteChange();
+    // Set initial hash
+    if (!window.location.hash) {
+        window.location.hash = '#vocab';
+    }
+    onRouteChange();
+})();
