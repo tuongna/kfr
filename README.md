@@ -1,4 +1,4 @@
-# Korean from Ryan
+# KfR
 
 🔗 Live App: [https://tuongna.github.io](https://tuongna.github.io)
 
@@ -7,24 +7,25 @@ Developed under the MIT License.
 
 ## About
 
-Korean from Ryan is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
+KfR is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
 
 ## SPA Routing
 
 This app uses a **hash-based SPA router**:
 
--   URLs: `/#vocab` or `/#sentences`
--   Navigation is handled by `data-link` attributes on `<a>` elements:
+- URLs: `/#vocab` or `/#sentences`
+- Navigation is handled by `data-link` attributes on `<a>` elements:
 
 ```html
-<a href="#vocab" data-link>Vocabulary</a> <a href="#sentences" data-link>Sentences</a>
+<a href="#vocab" data-link>Vocabulary</a>
+<a href="#sentences" data-link>Sentences</a>
 ```
 
 ## Content and Audio License
 
--   **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
--   **Audio files:** generated using **gTTS**, licensed under **MIT License**.
--   **Source code:** MIT License
+- **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
+- **Audio files:** generated using **gTTS**, licensed under **MIT License**.
+- **Source code:** MIT License
 
 > ⚠ **Important:** Use of the content is at your own discretion. Attribution is encouraged when possible.
 

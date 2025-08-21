@@ -4,22 +4,22 @@
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-    font-size: 62.5%; /* 1rem = 10px */
+  font-size: 62.5%; /* 1rem = 10px */
 }
 
 body {
-    background-color: var(--gray-light);
-    color: var(--text-color);
-    font-family: var(--font-base);
-    font-size: 1.3rem;
-    line-height: var(--line-height-base);
-    padding: var(--gap-lg) var(--gap-md);
+  background-color: var(--gray-light);
+  color: var(--text-color);
+  font-family: var(--font-base);
+  font-size: 1.3rem;
+  line-height: var(--line-height-base);
+  padding: var(--gap-lg) var(--gap-md);
 }
 
 /* =============================
@@ -27,293 +27,312 @@ body {
 ============================= */
 button,
 a {
-    touch-action: manipulation;
+  touch-action: manipulation;
 }
 
 /* =============================
     VARIABLES
 ============================= */
 :root {
-    /* Colors */
-    --primary: #0056b3;
-    --primary-dark: #003d80;
-    --secondary: #d3d3d3;
-    --secondary-dark: #bfbfbf;
-    --success: #2ecc71;
-    --error: #e74c3c;
-    --warning: #f39c12;
-    --info: #3498db;
-    --gray-light: #f7f7f7;
-    --gray: #ccc;
-    --text-color: #333;
-    --text-light: #444;
-    --text-muted: #555;
+  /* Colors */
+  --primary: #0056b3;
+  --primary-dark: #003d80;
+  --secondary: #d3d3d3;
+  --secondary-dark: #bfbfbf;
+  --success: #2ecc71;
+  --error: #e74c3c;
+  --warning: #f39c12;
+  --info: #3498db;
+  --gray-light: #f7f7f7;
+  --gray: #ccc;
+  --text-color: #333;
+  --text-light: #444;
+  --text-muted: #555;
 
-    /* Typography */
-    --font-base: Arial, sans-serif;
-    --line-height-base: 1.5;
+  /* Typography */
+  --font-base: Arial, sans-serif;
+  --line-height-base: 1.5;
 
-    --gap-xs: 0.4rem;
-    --gap-sm: 0.8rem;
-    --gap-md: 1.2rem;
-    --gap-lg: 2.4rem;
+  --gap-xs: 0.4rem;
+  --gap-sm: 0.8rem;
+  --gap-md: 1.2rem;
+  --gap-lg: 2.4rem;
 
-    --radius-xs: 0.4rem;
-    --radius-sm: 0.8rem;
-    --radius-md: 1.2rem;
-    --radius-lg: 2.4rem;
+  --radius-xs: 0.4rem;
+  --radius-sm: 0.8rem;
+  --radius-md: 1.2rem;
+  --radius-lg: 2.4rem;
 
-    --w-sm: 40rem;
-    --w-md: 50rem;
+  --w-sm: 40rem;
+  --w-md: 50rem;
 }
 
 /* =============================
     TYPOGRAPHY
 ============================= */
 h1 {
-    color: var(--primary);
-    text-align: center;
+  color: var(--primary);
+  text-align: center;
 }
 
 p {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 input[disabled] + label {
-    color: var(--gray);
+  color: var(--gray);
 }
 
 /* =============================
     CARD
 ============================= */
 #card {
-    background-color: var(--gray-light);
-    border: 0.1rem solid var(--gray);
-    border-radius: var(--radius-lg);
-    margin: var(--gap-md) auto;
-    max-width: var(--w-sm);
-    min-height: 15rem;
-    padding: calc(var(--gap-lg) * 1.5) var(--gap-lg) var(--gap-lg) var(--gap-lg);
-    position: relative;
-    text-align: center;
+  background-color: var(--gray-light);
+  border: 0.1rem solid var(--gray);
+  border-radius: var(--radius-lg);
+  margin: var(--gap-md) auto;
+  max-width: var(--w-sm);
+  min-height: 15rem;
+  padding: calc(var(--gap-lg) * 1.5) var(--gap-lg) var(--gap-lg) var(--gap-lg);
+  position: relative;
+  text-align: center;
 }
 
 .progress-container {
-    left: 50%;
-    position: absolute;
-    top: 0;
-    transform: translateX(-50%);
-    width: calc(100% - 2 * var(--gap-lg));
+  left: 50%;
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  width: calc(100% - 2 * var(--gap-lg));
 }
 
-.progress-container > progress {
-    display: inherit;
-    width: 100%;
+.progress-list {
+  display: flex;
+  column-gap: 0.4rem;
 }
 
+#learn-progress-bronze::-webkit-progress-value {
+  background-color: #cd7f32;
+}
+
+#learn-progress-silver::-webkit-progress-value {
+  background-color: #c0c0c0;
+}
+
+#learn-progress-gold::-webkit-progress-value {
+  background-color: #ffd700;
+}
+
+#learn-progress-cup::-webkit-progress-value {
+  background-color: #ff69b4;
+}
+
+#learn-progress-diamond::-webkit-progress-value {
+  background-color: #b9f2ff;
+}
 .progress-container > span {
-    color: var(--primary);
-    font-size: 1.2rem;
+  color: var(--primary);
+  font-size: 1.2rem;
 }
 
 .practice-container {
-    align-items: center;
-    background-color: var(--gray-light);
-    display: flex;
-    font-size: 1.2rem;
-    gap: var(--gap-xs);
-    left: var(--gap-md);
-    padding: 0 0.2rem;
-    position: absolute;
-    top: var(--gap-md);
+  align-items: center;
+  background-color: var(--gray-light);
+  display: flex;
+  font-size: 1.2rem;
+  gap: var(--gap-xs);
+  left: var(--gap-md);
+  padding: 0 0.2rem;
+  position: absolute;
+  top: var(--gap-md);
 }
 
 #card-badge {
-    font-size: 2rem;
-    position: absolute;
-    right: var(--gap-md);
-    top: var(--gap-sm);
+  font-size: 2rem;
+  position: absolute;
+  right: var(--gap-md);
+  top: var(--gap-sm);
 }
 
 #word {
-    align-items: center;
-    column-gap: var(--gap-sm);
-    display: inline-flex;
+  align-items: center;
+  column-gap: var(--gap-sm);
+  display: inline-flex;
 }
 
 #word > span {
-    font-size: 2.4rem;
+  font-size: 2.4rem;
 }
 #word.learned > span {
-    color: var(--success);
+  color: var(--success);
 }
 
 #phonetic {
-    color: var(--text-muted);
-    font-style: italic;
-    margin-bottom: var(--gap-sm);
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: var(--gap-sm);
 }
 
 #meaning {
-    color: var(--text-light);
-    font-size: 1.6rem;
+  color: var(--text-light);
+  font-size: 1.6rem;
 }
 
 /* =============================
     BUTTONS
 ============================= */
 button[disabled] {
-    opacity: 0.5;
-    pointer-events: none;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .btn-primary,
 .btn-secondary {
-    border: none;
-    border-radius: var(--radius-lg);
-    color: #fff;
-    cursor: pointer;
-    font-size: 1.4rem;
-    padding: var(--gap-sm) var(--gap-lg);
-    transition: background-color 0.2s ease;
+  border: none;
+  border-radius: var(--radius-lg);
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.4rem;
+  padding: var(--gap-sm) var(--gap-lg);
+  transition: background-color 0.2s ease;
 }
 
 .btn-primary {
-    background-color: var(--primary);
+  background-color: var(--primary);
 }
 
 .btn-secondary {
-    background-color: var(--secondary);
+  background-color: var(--secondary);
 }
 
 .btn-icon {
-    background-color: transparent;
-    border: 0;
-    cursor: pointer;
-    display: inline-flex;
-    flex-shrink: 0;
-    font-size: 2.4rem;
-    height: 3.6rem;
-    justify-content: center;
-    padding: 0 0 0.4rem 0;
-    width: 3.6rem;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 2.4rem;
+  height: 3.6rem;
+  justify-content: center;
+  padding: 0 0 0.4rem 0;
+  width: 3.6rem;
 }
 
 .quiz-words {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--gap-xs);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-xs);
 }
 
 .quiz-words button {
-    background-color: var(--gray);
-    color: var(--text-color);
-    text-align: left;
+  background-color: var(--gray);
+  color: var(--text-color);
+  text-align: left;
 }
 .quiz-words button.correct {
-    background-color: var(--success);
-    color: #fff;
+  background-color: var(--success);
+  color: #fff;
 }
 .quiz-words button.incorrect {
-    background-color: var(--error);
-    color: #fff;
-    pointer-events: none;
+  background-color: var(--error);
+  color: #fff;
+  pointer-events: none;
 }
 
 /* =============================
     LAYOUT
 ============================= */
 #stats {
-    align-items: center;
-    color: var(--text-color);
-    color: var(--primary);
-    display: flex;
-    font-size: 1.4rem;
-    font-weight: bold;
-    gap: var(--gap-md);
-    justify-content: center;
-    min-height: 3.3rem;
-    padding: 0 0 var(--gap-md) 0;
+  align-items: center;
+  color: var(--text-color);
+  color: var(--primary);
+  display: flex;
+  font-size: 1.4rem;
+  font-weight: bold;
+  gap: var(--gap-md);
+  justify-content: center;
+  min-height: 3.3rem;
+  padding: 0 0 var(--gap-md) 0;
 }
 
 .actions {
-    border-radius: var(--radius-sm);
-    display: flex;
-    justify-content: space-between;
-    margin: 0 auto;
-    max-width: var(--w-sm);
-    padding: var(--gap-sm) 0;
-    position: sticky;
-    top: 1.6rem;
-    z-index: 1;
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: var(--w-sm);
+  padding: var(--gap-sm) 0;
+  position: sticky;
+  top: 1.6rem;
+  z-index: 1;
 }
 
 .actions > button {
-    box-shadow: 0 0 1.2rem 1.2rem #ffffffaa;
-    min-width: 9.2rem;
+  box-shadow: 0 0 1.2rem 1.2rem #ffffffaa;
+  min-width: 9.2rem;
 }
 
 .navbar {
-    padding: var(--gap-md) 0;
+  padding: var(--gap-md) 0;
 }
 
 .navbar ul {
-    display: flex;
-    gap: var(--gap-lg);
-    justify-content: center;
-    list-style: none;
+  display: flex;
+  gap: var(--gap-lg);
+  justify-content: center;
+  list-style: none;
 }
 
 .navbar a {
-    color: var(--primary);
-    text-decoration: none;
+  color: var(--primary);
+  text-decoration: none;
 }
 
 .navbar a.active {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 /* =============================
     LESSON CARD
 ============================= */
 #card.lesson-card {
-    max-width: var(--w-md);
+  max-width: var(--w-md);
 }
 
 /* =============================
     FEEDBACK
 ============================= */
 #card.feedback-card {
-    max-width: var(--w-md);
+  max-width: var(--w-md);
 }
 #card.feedback-card h2 {
-    color: var(--primary);
-    margin-bottom: var(--gap-lg);
-    text-align: center;
+  color: var(--primary);
+  margin-bottom: var(--gap-lg);
+  text-align: center;
 }
 #card.feedback-card label {
-    color: var(--text-light);
-    display: block;
-    font-weight: bold;
-    margin-bottom: var(--gap-xs);
+  color: var(--text-light);
+  display: block;
+  font-weight: bold;
+  margin-bottom: var(--gap-xs);
 }
 #card.feedback-card input,
 #card.feedback-card textarea {
-    border: 0.1rem solid var(--gray);
-    border-radius: var(--radius-xs);
-    box-sizing: border-box;
-    font-size: 1.4rem;
-    margin-bottom: var(--gap-md);
-    padding: var(--gap-sm);
-    width: 100%;
+  border: 0.1rem solid var(--gray);
+  border-radius: var(--radius-xs);
+  box-sizing: border-box;
+  font-size: 1.4rem;
+  margin-bottom: var(--gap-md);
+  padding: var(--gap-sm);
+  width: 100%;
 }
 #card.feedback-card textarea {
-    resize: vertical;
+  resize: vertical;
 }
 #card.feedback-card button {
-    font-size: 1.6rem;
-    padding: var(--gap-sm);
-    width: 100%;
+  font-size: 1.6rem;
+  padding: var(--gap-sm);
+  width: 100%;
 }
 
 /* =============================
@@ -321,53 +340,53 @@ button[disabled] {
 ============================= */
 a:focus-visible,
 button:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* =============================
     FOOTER
 ============================= */
 .footer {
-    background-color: var(--gray-light);
-    padding: var(--gap-xs) 0;
-    text-align: center;
+  background-color: var(--gray-light);
+  padding: var(--gap-xs) 0;
+  text-align: center;
 }
 
 /* =============================
     MARKDOWN STYLES
 ============================= */
 .marked table {
-    border-collapse: collapse;
-    width: 100%;
+  border-collapse: collapse;
+  width: 100%;
 }
 
 .marked th {
-    background-color: var(--primary);
-    color: #fff;
-    padding: 0.6rem;
-    text-align: center;
+  background-color: var(--primary);
+  color: #fff;
+  padding: 0.6rem;
+  text-align: center;
 }
 
 .marked td {
-    border: 1px solid var(--gray);
-    padding: 0.6rem;
-    text-align: center;
+  border: 1px solid var(--gray);
+  padding: 0.6rem;
+  text-align: center;
 }
 
 .marked td.type {
-    color: var(--accent);
-    font-weight: bold;
+  color: var(--accent);
+  font-weight: bold;
 }
 
 .marked td.hangul {
-    color: var(--primary);
-    font-size: 1.5rem;
-    font-weight: bold;
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .marked {
-    overflow-x: auto;
+  overflow-x: auto;
 }
 
 .marked h1,
@@ -376,57 +395,57 @@ button:focus-visible {
 .marked h4,
 .marked h5,
 .marked h6 {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 .marked h1 {
-    font-size: 2.4rem;
-    margin-bottom: 1rem;
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
 }
 
 .marked h2 {
-    font-size: 2rem;
-    margin-bottom: 0.8rem;
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
 }
 
 .marked h3 {
-    font-size: 1.8rem;
-    margin-bottom: 0.6rem;
+  font-size: 1.8rem;
+  margin-bottom: 0.6rem;
 }
 
 .marked h4 {
-    font-size: 1.6rem;
-    margin-bottom: 0.4rem;
+  font-size: 1.6rem;
+  margin-bottom: 0.4rem;
 }
 
 .marked h5,
 .marked h6 {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 .marked hr {
-    border: 0;
-    border-top: 1px solid var(--gray);
-    margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid var(--gray);
+  margin: 2rem 0;
 }
 
 /* =============================
     HOVER STYLES
 ============================= */
 @media (hover: hover) and (pointer: fine) {
-    .btn-primary:hover {
-        background-color: var(--primary-dark);
-    }
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+  }
 }
 
 .btn-secondary:hover {
-    background-color: var(--secondary-dark);
+  background-color: var(--secondary-dark);
 }
 
 .navbar a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .marked tr:hover {
-    background-color: var(--gray-light);
+  background-color: var(--gray-light);
 }

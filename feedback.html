@@ -1,69 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="Gửi góp ý cho 라이언의 한국어. Chúng tôi luôn lắng nghe ý kiến của bạn để cải thiện trải nghiệm học tiếng Hàn."
-        />
-        <title>KfR | Góp ý</title>
-        <link rel="stylesheet" href="style.css" />
-        <link rel="manifest" href="manifest.json" />
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Gửi góp ý cho 라이언의 한국어. Chúng tôi luôn lắng nghe ý kiến của bạn để cải thiện trải nghiệm học tiếng Hàn."
+    />
+    <title>KfR | Góp ý</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
 
-    <body>
-        <h1>라이언의 한국어</h1>
-        <div id="app">
-            <nav class="navbar">
-                <ul>
-                    <li>
-                        <a href="/#vocab" data-link>Từ vựng</a>
-                    </li>
-                    <li>
-                        <a href="/#sentences" data-link>Câu mẫu</a>
-                    </li>
-                    <li>
-                        <a href="lessons.html">Bài học</a>
-                    </li>
-                    <li>
-                        <a class="active" href="feedback.html">Góp ý</a>
-                    </li>
-                </ul>
-            </nav>
-            <div id="card" class="feedback-card">
-                <h2>Send Feedback</h2>
-                <form action="https://formspree.io/f/xzzvwqpd" method="POST">
-                    <label for="name">Tên của bạn</label>
-                    <input type="text" id="name" name="name" />
+  <body>
+    <h1>라이언의 한국어</h1>
+    <div id="app">
+      <nav class="navbar">
+        <ul>
+          <li>
+            <a href="/#vocab" data-link>Từ vựng</a>
+          </li>
+          <li>
+            <a href="/#sentences" data-link>Câu mẫu</a>
+          </li>
+          <li>
+            <a href="lessons.html">Bài học</a>
+          </li>
+          <li>
+            <a class="active" href="feedback.html">Góp ý</a>
+          </li>
+        </ul>
+      </nav>
+      <div id="card" class="feedback-card">
+        <h2>Send Feedback</h2>
+        <form action="https://formspree.io/f/xzzvwqpd" method="POST">
+          <label for="name">Tên của bạn</label>
+          <input type="text" id="name" name="name" />
 
-                    <label for="email">Email của bạn</label>
-                    <input type="email" id="email" name="_replyto" placeholder="Tùy chọn" />
+          <label for="email">Email của bạn</label>
+          <input
+            type="email"
+            id="email"
+            name="_replyto"
+            placeholder="Tùy chọn"
+          />
 
-                    <label for="message">Góp ý của bạn</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
+          <label for="message">Góp ý của bạn</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
 
-                    <button class="btn-primary" type="submit">Gửi</button>
-                </form>
-            </div>
-        </div>
-        <footer class="footer">
-            <a
-                href="https://github.com/tuongna/tuongna.github.io"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                Xem trên GitHub
-            </a>
-        </footer>
-        <script type="module" src="js/feedback.js"></script>
-        <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker
-                    .register('sw.js')
-                    .then(() => console.log('Service Worker registered'))
-                    .catch((err) => console.log('Service Worker failed:', err));
-            }
-        </script>
-    </body>
+          <button class="btn-primary" type="submit">Gửi</button>
+        </form>
+      </div>
+    </div>
+    <footer class="footer">
+      <a
+        href="https://github.com/tuongna/kfr"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Xem trên GitHub
+      </a>
+    </footer>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('sw.js')
+          .then(() => console.log('Service Worker registered'))
+          .catch((err) => console.log('Service Worker failed:', err));
+      }
+    </script>
+  </body>
 </html>

@@ -1,55 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="Khám phá các bài học tiếng Hàn thực tế dành cho người Việt, giúp bạn học tiếng Hàn hiệu quả và dễ dàng."
-        />
-        <title>KfR | Bài học</title>
-        <link rel="stylesheet" href="style.css" />
-        <link rel="manifest" href="manifest.json" />
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Khám phá các bài học tiếng Hàn thực tế dành cho người Việt, giúp bạn học tiếng Hàn hiệu quả và dễ dàng."
+    />
+    <title>KfR | Bài học</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
 
-    <body>
-        <h1>라이언의 한국어</h1>
-        <div id="app">
-            <nav class="navbar">
-                <ul>
-                    <li>
-                        <a href="/#vocab" data-link>Từ vựng</a>
-                    </li>
-                    <li>
-                        <a href="/#sentences" data-link>Câu mẫu</a>
-                    </li>
-                    <li>
-                        <a class="active" href="lessons.html">Bài học</a>
-                    </li>
-                    <li>
-                        <a href="feedback.html">Góp ý</a>
-                    </li>
-                </ul>
-            </nav>
-            <div id="card" class="lesson-card marked"></div>
-        </div>
-        <footer class="footer">
-            <a
-                href="https://github.com/tuongna/tuongna.github.io"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                Xem trên GitHub
-            </a>
-        </footer>
-        <script type="module" src="js/lessons.js"></script>
-        <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker
-                    .register('sw.js')
-                    .then(() => console.log('Service Worker registered'))
-                    .catch((err) => console.log('Service Worker failed:', err));
-            }
-        </script>
-    </body>
+  <body>
+    <h1>라이언의 한국어</h1>
+    <div id="app">
+      <nav class="navbar">
+        <ul>
+          <li>
+            <a href="/#vocab" data-link>Từ vựng</a>
+          </li>
+          <li>
+            <a href="/#sentences" data-link>Câu mẫu</a>
+          </li>
+          <li>
+            <a class="active" href="lessons.html">Bài học</a>
+          </li>
+          <li>
+            <a href="feedback.html">Góp ý</a>
+          </li>
+        </ul>
+      </nav>
+      <div id="card" class="lesson-card marked"></div>
+    </div>
+    <footer class="footer">
+      <a
+        href="https://github.com/tuongna/kfr"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Xem trên GitHub
+      </a>
+    </footer>
+    <script type="module" src="js/lessons.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('sw.js')
+          .then(() => console.log('Service Worker registered'))
+          .catch((err) => console.log('Service Worker failed:', err));
+      }
+    </script>
+  </body>
 </html>

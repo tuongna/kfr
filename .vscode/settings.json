@@ -1,12 +1,12 @@
 {
-    "liveServer.settings.port": 5501,
-    "emeraldwalk.runonsave": {
-        "commands": [
-            {
-                "match": ".*\\.html|style\\.css|js/.*\\.js|manifest\\.json",
-                "isAsync": true,
-                "cmd": "node ./bump-version.js"
-            }
-        ]
-    }
+  "liveServer.settings.port": 5501,
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": ".*\\.html|style\\.css|js/.*\\.js|manifest\\.json",
+        "isAsync": true,
+        "cmd": "node ./bump-version.js"
+      }
+    ]
+  }
 }

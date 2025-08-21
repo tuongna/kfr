@@ -1,77 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="Ứng dụng học từ vựng và câu mẫu tiếng Hàn. Luyện tập, ôn tập và cải thiện kỹ năng tiếng Hàn của bạn."
-        />
-        <title>KfR | Từ vựng</title>
-        <link rel="stylesheet" href="style.css" />
-        <link rel="manifest" href="manifest.json" />
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Ứng dụng học từ vựng và câu mẫu tiếng Hàn. Luyện tập, ôn tập và cải thiện kỹ năng tiếng Hàn của bạn."
+    />
+    <title>KfR | Từ vựng</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
 
-    <body>
-        <div id="stats"></div>
-        <h1>라이언의 한국어</h1>
-        <div id="app">
-            <nav class="navbar">
-                <ul>
-                    <li>
-                        <a href="/#vocab" data-link>Từ vựng</a>
-                    </li>
-                    <li>
-                        <a href="/#sentences" data-link>Câu mẫu</a>
-                    </li>
-                    <li>
-                        <a href="lessons.html">Bài học</a>
-                    </li>
-                    <li>
-                        <a href="feedback.html">Góp ý</a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="actions">
-                <button class="btn-primary" id="prevBtn">Trước</button>
-                <button class="btn-primary" id="nextBtn">Tiếp</button>
-            </div>
-            <div id="card">
-                <div class="progress-container">
-                    <progress id="learn-progress" max="100" style="display: none"></progress>
-                    <span id="review-message" style="display: none">Quay lại ôn tập nhé</span>
-                </div>
-                <div class="practice-container">
-                    <input type="checkbox" id="practice-mode" />
-                    <label for="practice-mode">Luyện tập</label>
-                </div>
-                <div id="card-badge"></div>
-                <div id="word">
-                    <span>----</span>
-                    <button class="btn-icon" data-speak="">🔊</button>
-                </div>
-                <div id="phonetic">----</div>
-                <div id="meaning">----</div>
-                <div id="quiz" class="quiz-words"></div>
-            </div>
+  <body>
+    <div id="stats"></div>
+    <h1>라이언의 한국어</h1>
+    <div id="app">
+      <nav class="navbar">
+        <ul>
+          <li>
+            <a href="/#vocab" data-link>Từ vựng</a>
+          </li>
+          <li>
+            <a href="/#sentences" data-link>Câu mẫu</a>
+          </li>
+          <li>
+            <a href="lessons.html">Bài học</a>
+          </li>
+          <li>
+            <a href="feedback.html">Góp ý</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="actions">
+        <button class="btn-primary" id="prevBtn">Trước</button>
+        <button class="btn-primary" id="nextBtn">Tiếp</button>
+      </div>
+      <div id="card">
+        <div class="progress-container">
+          <div class="progress-list">
+            <progress
+              id="learn-progress-bronze"
+              max="100"
+              style="display: none"
+            ></progress>
+            <progress
+              id="learn-progress-silver"
+              max="100"
+              style="display: none"
+            ></progress>
+            <progress
+              id="learn-progress-gold"
+              max="100"
+              style="display: none"
+            ></progress>
+            <progress
+              id="learn-progress-cup"
+              max="100"
+              style="display: none"
+            ></progress>
+            <progress
+              id="learn-progress-diamond"
+              max="100"
+              style="display: none"
+            ></progress>
+          </div>
+          <span id="review-message" style="display: none"
+            >Quay lại ôn tập nhé</span
+          >
         </div>
-        <footer class="footer">
-            <a
-                href="https://github.com/tuongna/tuongna.github.io"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                Xem trên GitHub
-            </a>
-        </footer>
-        <script type="module" src="js/app.js"></script>
-        <script>
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker
-                    .register('sw.js')
-                    .then(() => console.log('Service Worker registered'))
-                    .catch((err) => console.log('Service Worker failed:', err));
-            }
-        </script>
-    </body>
+        <div class="practice-container">
+          <input type="checkbox" id="practice-mode" />
+          <label for="practice-mode">Luyện tập</label>
+        </div>
+        <div id="card-badge"></div>
+        <div id="word">
+          <span>----</span>
+          <button class="btn-icon" data-speak="">🔊</button>
+        </div>
+        <div id="phonetic">----</div>
+        <div id="meaning">----</div>
+        <div id="quiz" class="quiz-words"></div>
+      </div>
+    </div>
+    <footer class="footer">
+      <a
+        href="https://github.com/tuongna/kfr"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Xem trên GitHub
+      </a>
+    </footer>
+    <script type="module" src="js/app.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('sw.js')
+          .then(() => console.log('Service Worker registered'))
+          .catch((err) => console.log('Service Worker failed:', err));
+      }
+    </script>
+  </body>
 </html>

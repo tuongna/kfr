@@ -1,1330 +1,1330 @@
 [
-    {
-        "ko": "사과",
-        "vi": "Táo",
-        "en": "apple",
-        "rr": "sagwa",
-        "level": "A1",
-        "tags": ["food", "fruit"]
-    },
-    {
-        "ko": "바나나",
-        "vi": "Chuối",
-        "en": "banana",
-        "rr": "banana",
-        "level": "A1",
-        "tags": ["food", "fruit"]
-    },
-    {
-        "ko": "귤",
-        "vi": "Quýt, quýt mandarin",
-        "en": "tangerine; mandarin orange",
-        "rr": "gyul",
-        "level": "A1",
-        "tags": ["food", "fruit"]
-    },
-    {
-        "ko": "오이",
-        "vi": "Dưa leo",
-        "en": "cucumber",
-        "rr": "oi",
-        "level": "A1",
-        "tags": ["food", "vegetable"]
-    },
-    {
-        "ko": "버섯",
-        "vi": "Nấm",
-        "en": "mushroom",
-        "rr": "beoseot",
-        "level": "A1",
-        "tags": ["food", "vegetable"]
-    },
-    {
-        "ko": "고기",
-        "vi": "Thịt",
-        "en": "meat",
-        "rr": "gogi",
-        "level": "A1",
-        "tags": ["food", "protein"]
-    },
-    {
-        "ko": "음식",
-        "vi": "Thức ăn",
-        "en": "food",
-        "rr": "eumsik",
-        "level": "A1",
-        "tags": ["food"]
-    },
-    {
-        "ko": "라면",
-        "vi": "Mì ramen",
-        "en": "ramen (instant noodles)",
-        "rr": "ramyeon",
-        "level": "A1",
-        "tags": ["food", "meal"]
-    },
-    {
-        "ko": "김밥",
-        "vi": "Cơm cuộn rong biển",
-        "en": "gimbap (seaweed rice roll)",
-        "rr": "gimbap",
-        "level": "A1",
-        "tags": ["food", "meal"]
-    },
-    {
-        "ko": "국",
-        "vi": "Canh, súp",
-        "en": "soup",
-        "rr": "guk",
-        "level": "A1",
-        "tags": ["food", "meal"]
-    },
-    {
-        "ko": "과일",
-        "vi": "Trái cây",
-        "en": "fruit",
-        "rr": "gwail",
-        "level": "A1",
-        "tags": ["food", "fruit"]
-    },
-    {
-        "ko": "야채",
-        "vi": "Rau củ",
-        "en": "vegetables",
-        "rr": "yachae",
-        "level": "A1",
-        "tags": ["food", "vegetable"]
-    },
-    {
-        "ko": "물",
-        "vi": "Nước (uống)",
-        "en": "water (drinking)",
-        "rr": "mul",
-        "level": "A1",
-        "tags": ["drink"]
-    },
-    {
-        "ko": "주스",
-        "vi": "Nước ép",
-        "en": "juice",
-        "rr": "juseu",
-        "level": "A1",
-        "tags": ["drink"]
-    },
-    {
-        "ko": "차",
-        "vi": "Trà; Xe (ngữ cảnh quyết định)",
-        "en": "tea; car/vehicle (context-dependent)",
-        "rr": "cha",
-        "level": "A1",
-        "tags": ["drink", "transportation"]
-    },
-    {
-        "ko": "커피",
-        "vi": "Cà phê",
-        "en": "coffee",
-        "rr": "keopi",
-        "level": "A1",
-        "tags": ["drink"]
-    },
-    {
-        "ko": "우유",
-        "vi": "Sữa",
-        "en": "milk",
-        "rr": "uyu",
-        "level": "A1",
-        "tags": ["drink"]
-    },
-    {
-        "ko": "콜라",
-        "vi": "Coca (nước ngọt có ga)",
-        "en": "cola (soda)",
-        "rr": "kolla",
-        "level": "A1",
-        "tags": ["drink"]
-    },
-    {
-        "ko": "케이크",
-        "vi": "Bánh kem",
-        "en": "cake",
-        "rr": "keikeu",
-        "level": "A1",
-        "tags": ["food", "dessert"]
-    },
-    {
-        "ko": "빵",
-        "vi": "Bánh mì",
-        "en": "bread",
-        "rr": "ppang",
-        "level": "A1",
-        "tags": ["food", "meal"]
-    },
-    {
-        "ko": "계란",
-        "vi": "Trứng",
-        "en": "egg",
-        "rr": "gyeran",
-        "level": "A1",
-        "tags": ["food", "protein"]
-    },
-    {
-        "ko": "떡",
-        "vi": "Bánh gạo",
-        "en": "rice cake (tteok)",
-        "rr": "tteok",
-        "level": "A1",
-        "tags": ["food", "dessert"]
-    },
-    {
-        "ko": "초콜릿",
-        "vi": "Sô-cô-la",
-        "en": "chocolate",
-        "rr": "chokollit",
-        "level": "A1",
-        "tags": ["food", "dessert"]
-    },
-    {
-        "ko": "설탕",
-        "vi": "Đường",
-        "en": "sugar",
-        "rr": "seoltang",
-        "level": "A1",
-        "tags": ["food", "ingredient"]
-    },
-    {
-        "ko": "소금",
-        "vi": "Muối",
-        "en": "salt",
-        "rr": "sogeum",
-        "level": "A1",
-        "tags": ["food", "ingredient"]
-    },
-    {
-        "ko": "학교",
-        "vi": "Trường học",
-        "en": "school",
-        "rr": "hakgyo",
-        "level": "A1",
-        "tags": ["place", "education"]
-    },
-    {
-        "ko": "교실",
-        "vi": "Lớp học",
-        "en": "classroom",
-        "rr": "gyosil",
-        "level": "A1",
-        "tags": ["place", "education"]
-    },
-    {
-        "ko": "도서관",
-        "vi": "Thư viện",
-        "en": "library",
-        "rr": "doseogwan",
-        "level": "A1",
-        "tags": ["place", "education"]
-    },
-    {
-        "ko": "회사",
-        "vi": "Công ty",
-        "en": "company",
-        "rr": "hoesa",
-        "level": "A1",
-        "tags": ["place", "work"]
-    },
-    {
-        "ko": "공항",
-        "vi": "Sân bay",
-        "en": "airport",
-        "rr": "gonghang",
-        "level": "A1",
-        "tags": ["place", "transportation"]
-    },
-    {
-        "ko": "병원",
-        "vi": "Bệnh viện",
-        "en": "hospital",
-        "rr": "byeongwon",
-        "level": "A1",
-        "tags": ["place", "health"]
-    },
-    {
-        "ko": "식당",
-        "vi": "Nhà hàng, quán ăn",
-        "en": "restaurant",
-        "rr": "sikdang",
-        "level": "A1",
-        "tags": ["place", "food"]
-    },
-    {
-        "ko": "가게",
-        "vi": "Cửa hàng",
-        "en": "shop; store",
-        "rr": "gage",
-        "level": "A1",
-        "tags": ["place", "store"]
-    },
-    {
-        "ko": "은행",
-        "vi": "Ngân hàng",
-        "en": "bank",
-        "rr": "eunhaeng",
-        "level": "A1",
-        "tags": ["place", "finance"]
-    },
-    {
-        "ko": "서점",
-        "vi": "Nhà sách",
-        "en": "bookstore",
-        "rr": "seojeom",
-        "level": "A1",
-        "tags": ["place", "store"]
-    },
-    {
-        "ko": "약국",
-        "vi": "Hiệu thuốc",
-        "en": "pharmacy; drugstore",
-        "rr": "yakkuk",
-        "level": "A1",
-        "tags": ["place", "health"]
-    },
-    {
-        "ko": "편의점",
-        "vi": "Cửa hàng tiện lợi",
-        "en": "convenience store",
-        "rr": "pyeonuijeom",
-        "level": "A1",
-        "tags": ["place", "store"]
-    },
-    {
-        "ko": "영화관",
-        "vi": "Rạp chiếu phim",
-        "en": "cinema; movie theater",
-        "rr": "yeonghwagwan",
-        "level": "A1",
-        "tags": ["place", "entertainment"]
-    },
-    {
-        "ko": "화장실",
-        "vi": "Nhà vệ sinh",
-        "en": "restroom; toilet",
-        "rr": "hwajangsil",
-        "level": "A1",
-        "tags": ["place"]
-    },
-    {
-        "ko": "책",
-        "vi": "Sách",
-        "en": "book",
-        "rr": "chaek",
-        "level": "A1",
-        "tags": ["object", "education"]
-    },
-    {
-        "ko": "잡지",
-        "vi": "Tạp chí",
-        "en": "magazine",
-        "rr": "japji",
-        "level": "A1",
-        "tags": ["object", "education"]
-    },
-    {
-        "ko": "편지",
-        "vi": "Thư",
-        "en": "letter",
-        "rr": "pyeonji",
-        "level": "A1",
-        "tags": ["object", "communication"]
-    },
-    {
-        "ko": "연필",
-        "vi": "Bút chì",
-        "en": "pencil",
-        "rr": "yeonpil",
-        "level": "A1",
-        "tags": ["object", "education"]
-    },
-    {
-        "ko": "펜",
-        "vi": "Bút mực",
-        "en": "pen",
-        "rr": "pen",
-        "level": "A1",
-        "tags": ["object", "education"]
-    },
-    {
-        "ko": "지우개",
-        "vi": "Cục tẩy",
-        "en": "eraser",
-        "rr": "jiugae",
-        "level": "A1",
-        "tags": ["object", "education"]
-    },
-    {
-        "ko": "종이",
-        "vi": "Giấy",
-        "en": "paper",
-        "rr": "jongi",
-        "level": "A1",
-        "tags": ["object", "education"]
-    },
-    {
-        "ko": "가위",
-        "vi": "Kéo",
-        "en": "scissors",
-        "rr": "gawi",
-        "level": "A1",
-        "tags": ["object"]
-    },
-    {
-        "ko": "테이프",
-        "vi": "Băng dính",
-        "en": "tape",
-        "rr": "teipeu",
-        "level": "A1",
-        "tags": ["object"]
-    },
-    {
-        "ko": "자",
-        "vi": "Thước",
-        "en": "ruler",
-        "rr": "ja",
-        "level": "A1",
-        "tags": ["object", "education"]
-    },
-    {
-        "ko": "노트북",
-        "vi": "Laptop",
-        "en": "laptop",
-        "rr": "noteubuk",
-        "level": "A1",
-        "tags": ["object", "technology"]
-    },
-    {
-        "ko": "계산기",
-        "vi": "Máy tính cầm tay",
-        "en": "calculator",
-        "rr": "gyesangi",
-        "level": "A1",
-        "tags": ["object", "technology"]
-    },
-    {
-        "ko": "남자",
-        "vi": "Nam, con trai",
-        "en": "man; male",
-        "rr": "namja",
-        "level": "A1",
-        "tags": ["people", "family"]
-    },
-    {
-        "ko": "여자",
-        "vi": "Nữ, con gái",
-        "en": "woman; female",
-        "rr": "yeoja",
-        "level": "A1",
-        "tags": ["people", "family"]
-    },
-    {
-        "ko": "학생",
-        "vi": "Học sinh, sinh viên",
-        "en": "student",
-        "rr": "haksaeng",
-        "level": "A1",
-        "tags": ["people", "education"]
-    },
-    {
-        "ko": "대학생",
-        "vi": "Sinh viên đại học",
-        "en": "university student",
-        "rr": "daehaksaeng",
-        "level": "A1",
-        "tags": ["people", "education"]
-    },
-    {
-        "ko": "선생님",
-        "vi": "Giáo viên",
-        "en": "teacher",
-        "rr": "seonsaengnim",
-        "level": "A1",
-        "tags": ["people", "education"]
-    },
-    {
-        "ko": "아버지",
-        "vi": "Bố",
-        "en": "father",
-        "rr": "abeoji",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "어머니",
-        "vi": "Mẹ",
-        "en": "mother",
-        "rr": "eomeoni",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "형",
-        "vi": "Anh trai (nam gọi)",
-        "en": "older brother (for male speaker)",
-        "rr": "hyeong",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "오빠",
-        "vi": "Anh trai (nữ gọi)",
-        "en": "older brother (for female speaker)",
-        "rr": "oppa",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "누나",
-        "vi": "Chị gái (nam gọi)",
-        "en": "older sister (for male speaker)",
-        "rr": "nuna",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "언니",
-        "vi": "Chị gái (nữ gọi)",
-        "en": "older sister (for female speaker)",
-        "rr": "eonni",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "남동생",
-        "vi": "Em trai",
-        "en": "younger brother",
-        "rr": "namdongsaeng",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "여동생",
-        "vi": "Em gái",
-        "en": "younger sister",
-        "rr": "yeodongsaeng",
-        "level": "A1",
-        "tags": ["family"]
-    },
-    {
-        "ko": "친구",
-        "vi": "Bạn bè",
-        "en": "friend",
-        "rr": "chingu",
-        "level": "A1",
-        "tags": ["people", "friend"]
-    },
-    {
-        "ko": "강아지",
-        "vi": "Chó con (cún)",
-        "en": "puppy",
-        "rr": "gangaji",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "개",
-        "vi": "Chó",
-        "en": "dog",
-        "rr": "gae",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "고양이",
-        "vi": "Mèo",
-        "en": "cat",
-        "rr": "goyangi",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "쥐",
-        "vi": "Chuột",
-        "en": "mouse; rat",
-        "rr": "jwi",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "곰",
-        "vi": "Gấu",
-        "en": "bear",
-        "rr": "gom",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "하마",
-        "vi": "Hà mã",
-        "en": "hippopotamus",
-        "rr": "hama",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "기린",
-        "vi": "Hươu cao cổ",
-        "en": "giraffe",
-        "rr": "girin",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "코끼리",
-        "vi": "Voi",
-        "en": "elephant",
-        "rr": "kokkiri",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "펭귄",
-        "vi": "Chim cánh cụt",
-        "en": "penguin",
-        "rr": "penggwin",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "물고기",
-        "vi": "Cá",
-        "en": "fish",
-        "rr": "mulgogi",
-        "level": "A1",
-        "tags": ["animal"]
-    },
-    {
-        "ko": "차",
-        "vi": "Xe",
-        "en": "car; vehicle",
-        "rr": "cha",
-        "level": "A1",
-        "tags": ["transportation"]
-    },
-    {
-        "ko": "버스",
-        "vi": "Xe buýt",
-        "en": "bus",
-        "rr": "beoseu",
-        "level": "A1",
-        "tags": ["transportation"]
-    },
-    {
-        "ko": "자전거",
-        "vi": "Xe đạp",
-        "en": "bicycle",
-        "rr": "jajeongeo",
-        "level": "A1",
-        "tags": ["transportation"]
-    },
-    {
-        "ko": "지하철",
-        "vi": "Tàu điện ngầm",
-        "en": "subway; metro",
-        "rr": "jihacheol",
-        "level": "A1",
-        "tags": ["transportation"]
-    },
-    {
-        "ko": "비행기",
-        "vi": "Máy bay",
-        "en": "airplane",
-        "rr": "bihaenggi",
-        "level": "A1",
-        "tags": ["transportation"]
-    },
-    {
-        "ko": "택시",
-        "vi": "Taxi",
-        "en": "taxi",
-        "rr": "taegsi",
-        "level": "A1",
-        "tags": ["transportation"]
-    },
-    {
-        "ko": "날씨",
-        "vi": "Thời tiết",
-        "en": "weather",
-        "rr": "nalssi",
-        "level": "A1",
-        "tags": ["weather"]
-    },
-    {
-        "ko": "덥다",
-        "vi": "Nóng (thời tiết)",
-        "en": "to be hot (weather)",
-        "rr": "deoptta",
-        "level": "A1",
-        "tags": ["adjective", "weather"]
-    },
-    {
-        "ko": "춥다",
-        "vi": "Lạnh (thời tiết)",
-        "en": "to be cold (weather)",
-        "rr": "chuptta",
-        "level": "A1",
-        "tags": ["adjective", "weather"]
-    },
-    {
-        "ko": "맵다",
-        "vi": "Cay",
-        "en": "spicy",
-        "rr": "maeppda",
-        "level": "A1",
-        "tags": ["adjective", "taste"]
-    },
-    {
-        "ko": "쉽다",
-        "vi": "Dễ",
-        "en": "easy",
-        "rr": "swiptta",
-        "level": "A1",
-        "tags": ["adjective"]
-    },
-    {
-        "ko": "어렵다",
-        "vi": "Khó",
-        "en": "difficult",
-        "rr": "eoryeoptta",
-        "level": "A1",
-        "tags": ["adjective"]
-    },
-    {
-        "ko": "싸다",
-        "vi": "Rẻ",
-        "en": "cheap",
-        "rr": "ssada",
-        "level": "A1",
-        "tags": ["adjective", "price"]
-    },
-    {
-        "ko": "비싸다",
-        "vi": "Đắt",
-        "en": "expensive",
-        "rr": "bissada",
-        "level": "A1",
-        "tags": ["adjective", "price"]
-    },
-    {
-        "ko": "크다",
-        "vi": "To, lớn",
-        "en": "big; large",
-        "rr": "keuda",
-        "level": "A1",
-        "tags": ["adjective", "size"]
-    },
-    {
-        "ko": "작다",
-        "vi": "Nhỏ",
-        "en": "small",
-        "rr": "jaktta",
-        "level": "A1",
-        "tags": ["adjective", "size"]
-    },
-    {
-        "ko": "좋다",
-        "vi": "Tốt, thích",
-        "en": "good; nice; to like (adjectival)",
-        "rr": "jota",
-        "level": "A1",
-        "tags": ["adjective"]
-    },
-    {
-        "ko": "나쁘다",
-        "vi": "Xấu",
-        "en": "bad",
-        "rr": "nappeuda",
-        "level": "A1",
-        "tags": ["adjective"]
-    },
-    {
-        "ko": "예쁘다",
-        "vi": "Đẹp (xinh)",
-        "en": "pretty",
-        "rr": "yeppeuda",
-        "level": "A1",
-        "tags": ["adjective"]
-    },
-    {
-        "ko": "친절하다",
-        "vi": "Tử tế, thân thiện",
-        "en": "kind; friendly",
-        "rr": "chinjeolhada",
-        "level": "A1",
-        "tags": ["adjective", "personality"]
-    },
-    {
-        "ko": "재미있다",
-        "vi": "Thú vị",
-        "en": "interesting; fun",
-        "rr": "jaemiitda",
-        "level": "A1",
-        "tags": ["adjective"]
-    },
-    {
-        "ko": "재미없다",
-        "vi": "Không thú vị",
-        "en": "not interesting; boring",
-        "rr": "jaemieoptta",
-        "level": "A1",
-        "tags": ["adjective"]
-    },
-    {
-        "ko": "맛있다",
-        "vi": "Ngon",
-        "en": "delicious; tasty",
-        "rr": "masitda",
-        "level": "A1",
-        "tags": ["adjective", "taste"]
-    },
-    {
-        "ko": "맛없다",
-        "vi": "Dở, không ngon",
-        "en": "tasteless; not delicious",
-        "rr": "madeoptta",
-        "level": "A1",
-        "tags": ["adjective", "taste"]
-    },
-    {
-        "ko": "달다",
-        "vi": "Ngọt",
-        "en": "sweet",
-        "rr": "dalda",
-        "level": "A1",
-        "tags": ["adjective", "taste"]
-    },
-    {
-        "ko": "쓰다",
-        "vi": "Đắng; Viết; Dùng (ngữ cảnh quyết định)",
-        "en": "bitter; to write; to use (context-dependent)",
-        "rr": "sseuda",
-        "level": "A1",
-        "tags": ["adjective", "verb", "taste"]
-    },
-    {
-        "ko": "짜다",
-        "vi": "Mặn",
-        "en": "salty",
-        "rr": "jjada",
-        "level": "A1",
-        "tags": ["adjective", "taste"]
-    },
-    {
-        "ko": "가다",
-        "vi": "Đi",
-        "en": "to go",
-        "rr": "gada",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "오다",
-        "vi": "Đến",
-        "en": "to come",
-        "rr": "oda",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "먹다",
-        "vi": "Ăn",
-        "en": "to eat",
-        "rr": "meoktta",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "마시다",
-        "vi": "Uống",
-        "en": "to drink",
-        "rr": "masida",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "보다",
-        "vi": "Xem, nhìn",
-        "en": "to see; to watch; to look",
-        "rr": "boda",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "사다",
-        "vi": "Mua",
-        "en": "to buy",
-        "rr": "sada",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "주다",
-        "vi": "Cho, đưa",
-        "en": "to give",
-        "rr": "juda",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "받다",
-        "vi": "Nhận",
-        "en": "to receive",
-        "rr": "battta",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "읽다",
-        "vi": "Đọc",
-        "en": "to read",
-        "rr": "iktta",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "배우다",
-        "vi": "Học (tiếp thu từ ai đó)",
-        "en": "to learn",
-        "rr": "baeuda",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "하다",
-        "vi": "Làm",
-        "en": "to do",
-        "rr": "hada",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "공부하다",
-        "vi": "Học (tự học, học hành)",
-        "en": "to study",
-        "rr": "gongbuhada",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "전화하다",
-        "vi": "Gọi điện thoại",
-        "en": "to make a phone call",
-        "rr": "jeonhwahada",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "이야기하다",
-        "vi": "Nói chuyện, kể",
-        "en": "to talk; to chat; to tell",
-        "rr": "iyagihada",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "말하다",
-        "vi": "Nói",
-        "en": "to speak; to say",
-        "rr": "malhada",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "가르치다",
-        "vi": "Dạy",
-        "en": "to teach",
-        "rr": "gareuchida",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "있다",
-        "vi": "Có; Tồn tại; Ở",
-        "en": "to have; to exist; to be (at/in)",
-        "rr": "ittta",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "없다",
-        "vi": "Không có; Không tồn tại",
-        "en": "to not have; to not exist",
-        "rr": "eoptta",
-        "level": "A1",
-        "tags": ["verb"]
-    },
-    {
-        "ko": "한국",
-        "vi": "Hàn Quốc",
-        "en": "Korea (South Korea)",
-        "rr": "Hanguk",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "한국어",
-        "vi": "Tiếng Hàn",
-        "en": "Korean (language)",
-        "rr": "Hangugeo",
-        "level": "A1",
-        "tags": ["language"]
-    },
-    {
-        "ko": "미국",
-        "vi": "Mỹ",
-        "en": "United States",
-        "rr": "Miguk",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "영국",
-        "vi": "Anh (UK)",
-        "en": "United Kingdom",
-        "rr": "Yeongguk",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "일본",
-        "vi": "Nhật Bản",
-        "en": "Japan",
-        "rr": "Ilbon",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "중국",
-        "vi": "Trung Quốc",
-        "en": "China",
-        "rr": "Jungguk",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "호주",
-        "vi": "Úc",
-        "en": "Australia",
-        "rr": "Hoju",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "캐나다",
-        "vi": "Canada",
-        "en": "Canada",
-        "rr": "Kaenada",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "태국",
-        "vi": "Thái Lan",
-        "en": "Thailand",
-        "rr": "Taeguk",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "독일",
-        "vi": "Đức",
-        "en": "Germany",
-        "rr": "Dogil",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "프랑스",
-        "vi": "Pháp",
-        "en": "France",
-        "rr": "Peurangseu",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "필리핀",
-        "vi": "Philippines",
-        "en": "Philippines",
-        "rr": "Pillipin",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "인도",
-        "vi": "Ấn Độ",
-        "en": "India",
-        "rr": "Indo",
-        "level": "A1",
-        "tags": ["country"]
-    },
-    {
-        "ko": "하나",
-        "vi": "một",
-        "en": "one",
-        "rr": "hana",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "둘",
-        "vi": "hai",
-        "en": "two",
-        "rr": "dul",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "셋",
-        "vi": "ba",
-        "en": "three",
-        "rr": "set",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "넷",
-        "vi": "bốn",
-        "en": "four",
-        "rr": "net",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "다섯",
-        "vi": "năm",
-        "en": "five",
-        "rr": "daseot",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "여섯",
-        "vi": "sáu",
-        "en": "six",
-        "rr": "yeoseot",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "일곱",
-        "vi": "bảy",
-        "en": "seven",
-        "rr": "ilgop",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "여덟",
-        "vi": "tám",
-        "en": "eight",
-        "rr": "yeodeol",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "아홉",
-        "vi": "chín",
-        "en": "nine",
-        "rr": "ahop",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "열",
-        "vi": "mười",
-        "en": "ten",
-        "rr": "yeol",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "스물",
-        "vi": "hai mươi",
-        "en": "twenty",
-        "rr": "seumul",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "서른",
-        "vi": "ba mươi",
-        "en": "thirty",
-        "rr": "seoreun",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "마흔",
-        "vi": "bốn mươi",
-        "en": "forty",
-        "rr": "maheun",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "쉰",
-        "vi": "năm mươi",
-        "en": "fifty",
-        "rr": "swin",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "예순",
-        "vi": "sáu mươi",
-        "en": "sixty",
-        "rr": "yesun",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "일흔",
-        "vi": "bảy mươi",
-        "en": "seventy",
-        "rr": "ilheun",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "여든",
-        "vi": "tám mươi",
-        "en": "eighty",
-        "rr": "yeodeun",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "아흔",
-        "vi": "chín mươi",
-        "en": "ninety",
-        "rr": "aheun",
-        "level": "A1",
-        "tags": ["number", "native"]
-    },
-    {
-        "ko": "일",
-        "vi": "một",
-        "en": "one",
-        "rr": "il",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "이",
-        "vi": "hai",
-        "en": "two",
-        "rr": "i",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "삼",
-        "vi": "ba",
-        "en": "three",
-        "rr": "sam",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "사",
-        "vi": "bốn",
-        "en": "four",
-        "rr": "sa",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "오",
-        "vi": "năm",
-        "en": "five",
-        "rr": "o",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "육",
-        "vi": "sáu",
-        "en": "six",
-        "rr": "yuk",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "칠",
-        "vi": "bảy",
-        "en": "seven",
-        "rr": "chil",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "팔",
-        "vi": "tám",
-        "en": "eight",
-        "rr": "pal",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "구",
-        "vi": "chín",
-        "en": "nine",
-        "rr": "gu",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "십",
-        "vi": "mười",
-        "en": "ten",
-        "rr": "sip",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "백",
-        "vi": "một trăm",
-        "en": "hundred",
-        "rr": "baek",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "천",
-        "vi": "một nghìn",
-        "en": "thousand",
-        "rr": "cheon",
-        "level": "A1",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "만",
-        "vi": "mười nghìn",
-        "en": "ten thousand",
-        "rr": "man",
-        "level": "A2",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "십만",
-        "vi": "một trăm nghìn",
-        "en": "hundred thousand",
-        "rr": "sipman",
-        "level": "A2",
-        "tags": ["number", "sino"]
-    },
-    {
-        "ko": "백만",
-        "vi": "một triệu",
-        "en": "million",
-        "rr": "baengman",
-        "level": "A2",
-        "tags": ["number", "sino"]
-    }
+  {
+    "ko": "사과",
+    "vi": "Táo",
+    "en": "apple",
+    "rr": "sagwa",
+    "level": "A1",
+    "tags": ["food", "fruit"]
+  },
+  {
+    "ko": "바나나",
+    "vi": "Chuối",
+    "en": "banana",
+    "rr": "banana",
+    "level": "A1",
+    "tags": ["food", "fruit"]
+  },
+  {
+    "ko": "귤",
+    "vi": "Quýt, quýt mandarin",
+    "en": "tangerine; mandarin orange",
+    "rr": "gyul",
+    "level": "A1",
+    "tags": ["food", "fruit"]
+  },
+  {
+    "ko": "오이",
+    "vi": "Dưa leo",
+    "en": "cucumber",
+    "rr": "oi",
+    "level": "A1",
+    "tags": ["food", "vegetable"]
+  },
+  {
+    "ko": "버섯",
+    "vi": "Nấm",
+    "en": "mushroom",
+    "rr": "beoseot",
+    "level": "A1",
+    "tags": ["food", "vegetable"]
+  },
+  {
+    "ko": "고기",
+    "vi": "Thịt",
+    "en": "meat",
+    "rr": "gogi",
+    "level": "A1",
+    "tags": ["food", "protein"]
+  },
+  {
+    "ko": "음식",
+    "vi": "Thức ăn",
+    "en": "food",
+    "rr": "eumsik",
+    "level": "A1",
+    "tags": ["food"]
+  },
+  {
+    "ko": "라면",
+    "vi": "Mì ramen",
+    "en": "ramen (instant noodles)",
+    "rr": "ramyeon",
+    "level": "A1",
+    "tags": ["food", "meal"]
+  },
+  {
+    "ko": "김밥",
+    "vi": "Cơm cuộn rong biển",
+    "en": "gimbap (seaweed rice roll)",
+    "rr": "gimbap",
+    "level": "A1",
+    "tags": ["food", "meal"]
+  },
+  {
+    "ko": "국",
+    "vi": "Canh, súp",
+    "en": "soup",
+    "rr": "guk",
+    "level": "A1",
+    "tags": ["food", "meal"]
+  },
+  {
+    "ko": "과일",
+    "vi": "Trái cây",
+    "en": "fruit",
+    "rr": "gwail",
+    "level": "A1",
+    "tags": ["food", "fruit"]
+  },
+  {
+    "ko": "야채",
+    "vi": "Rau củ",
+    "en": "vegetables",
+    "rr": "yachae",
+    "level": "A1",
+    "tags": ["food", "vegetable"]
+  },
+  {
+    "ko": "물",
+    "vi": "Nước (uống)",
+    "en": "water (drinking)",
+    "rr": "mul",
+    "level": "A1",
+    "tags": ["drink"]
+  },
+  {
+    "ko": "주스",
+    "vi": "Nước ép",
+    "en": "juice",
+    "rr": "juseu",
+    "level": "A1",
+    "tags": ["drink"]
+  },
+  {
+    "ko": "차",
+    "vi": "Trà; Xe (ngữ cảnh quyết định)",
+    "en": "tea; car/vehicle (context-dependent)",
+    "rr": "cha",
+    "level": "A1",
+    "tags": ["drink", "transportation"]
+  },
+  {
+    "ko": "커피",
+    "vi": "Cà phê",
+    "en": "coffee",
+    "rr": "keopi",
+    "level": "A1",
+    "tags": ["drink"]
+  },
+  {
+    "ko": "우유",
+    "vi": "Sữa",
+    "en": "milk",
+    "rr": "uyu",
+    "level": "A1",
+    "tags": ["drink"]
+  },
+  {
+    "ko": "콜라",
+    "vi": "Coca (nước ngọt có ga)",
+    "en": "cola (soda)",
+    "rr": "kolla",
+    "level": "A1",
+    "tags": ["drink"]
+  },
+  {
+    "ko": "케이크",
+    "vi": "Bánh kem",
+    "en": "cake",
+    "rr": "keikeu",
+    "level": "A1",
+    "tags": ["food", "dessert"]
+  },
+  {
+    "ko": "빵",
+    "vi": "Bánh mì",
+    "en": "bread",
+    "rr": "ppang",
+    "level": "A1",
+    "tags": ["food", "meal"]
+  },
+  {
+    "ko": "계란",
+    "vi": "Trứng",
+    "en": "egg",
+    "rr": "gyeran",
+    "level": "A1",
+    "tags": ["food", "protein"]
+  },
+  {
+    "ko": "떡",
+    "vi": "Bánh gạo",
+    "en": "rice cake (tteok)",
+    "rr": "tteok",
+    "level": "A1",
+    "tags": ["food", "dessert"]
+  },
+  {
+    "ko": "초콜릿",
+    "vi": "Sô-cô-la",
+    "en": "chocolate",
+    "rr": "chokollit",
+    "level": "A1",
+    "tags": ["food", "dessert"]
+  },
+  {
+    "ko": "설탕",
+    "vi": "Đường",
+    "en": "sugar",
+    "rr": "seoltang",
+    "level": "A1",
+    "tags": ["food", "ingredient"]
+  },
+  {
+    "ko": "소금",
+    "vi": "Muối",
+    "en": "salt",
+    "rr": "sogeum",
+    "level": "A1",
+    "tags": ["food", "ingredient"]
+  },
+  {
+    "ko": "학교",
+    "vi": "Trường học",
+    "en": "school",
+    "rr": "hakgyo",
+    "level": "A1",
+    "tags": ["place", "education"]
+  },
+  {
+    "ko": "교실",
+    "vi": "Lớp học",
+    "en": "classroom",
+    "rr": "gyosil",
+    "level": "A1",
+    "tags": ["place", "education"]
+  },
+  {
+    "ko": "도서관",
+    "vi": "Thư viện",
+    "en": "library",
+    "rr": "doseogwan",
+    "level": "A1",
+    "tags": ["place", "education"]
+  },
+  {
+    "ko": "회사",
+    "vi": "Công ty",
+    "en": "company",
+    "rr": "hoesa",
+    "level": "A1",
+    "tags": ["place", "work"]
+  },
+  {
+    "ko": "공항",
+    "vi": "Sân bay",
+    "en": "airport",
+    "rr": "gonghang",
+    "level": "A1",
+    "tags": ["place", "transportation"]
+  },
+  {
+    "ko": "병원",
+    "vi": "Bệnh viện",
+    "en": "hospital",
+    "rr": "byeongwon",
+    "level": "A1",
+    "tags": ["place", "health"]
+  },
+  {
+    "ko": "식당",
+    "vi": "Nhà hàng, quán ăn",
+    "en": "restaurant",
+    "rr": "sikdang",
+    "level": "A1",
+    "tags": ["place", "food"]
+  },
+  {
+    "ko": "가게",
+    "vi": "Cửa hàng",
+    "en": "shop; store",
+    "rr": "gage",
+    "level": "A1",
+    "tags": ["place", "store"]
+  },
+  {
+    "ko": "은행",
+    "vi": "Ngân hàng",
+    "en": "bank",
+    "rr": "eunhaeng",
+    "level": "A1",
+    "tags": ["place", "finance"]
+  },
+  {
+    "ko": "서점",
+    "vi": "Nhà sách",
+    "en": "bookstore",
+    "rr": "seojeom",
+    "level": "A1",
+    "tags": ["place", "store"]
+  },
+  {
+    "ko": "약국",
+    "vi": "Hiệu thuốc",
+    "en": "pharmacy; drugstore",
+    "rr": "yakkuk",
+    "level": "A1",
+    "tags": ["place", "health"]
+  },
+  {
+    "ko": "편의점",
+    "vi": "Cửa hàng tiện lợi",
+    "en": "convenience store",
+    "rr": "pyeonuijeom",
+    "level": "A1",
+    "tags": ["place", "store"]
+  },
+  {
+    "ko": "영화관",
+    "vi": "Rạp chiếu phim",
+    "en": "cinema; movie theater",
+    "rr": "yeonghwagwan",
+    "level": "A1",
+    "tags": ["place", "entertainment"]
+  },
+  {
+    "ko": "화장실",
+    "vi": "Nhà vệ sinh",
+    "en": "restroom; toilet",
+    "rr": "hwajangsil",
+    "level": "A1",
+    "tags": ["place"]
+  },
+  {
+    "ko": "책",
+    "vi": "Sách",
+    "en": "book",
+    "rr": "chaek",
+    "level": "A1",
+    "tags": ["object", "education"]
+  },
+  {
+    "ko": "잡지",
+    "vi": "Tạp chí",
+    "en": "magazine",
+    "rr": "japji",
+    "level": "A1",
+    "tags": ["object", "education"]
+  },
+  {
+    "ko": "편지",
+    "vi": "Thư",
+    "en": "letter",
+    "rr": "pyeonji",
+    "level": "A1",
+    "tags": ["object", "communication"]
+  },
+  {
+    "ko": "연필",
+    "vi": "Bút chì",
+    "en": "pencil",
+    "rr": "yeonpil",
+    "level": "A1",
+    "tags": ["object", "education"]
+  },
+  {
+    "ko": "펜",
+    "vi": "Bút mực",
+    "en": "pen",
+    "rr": "pen",
+    "level": "A1",
+    "tags": ["object", "education"]
+  },
+  {
+    "ko": "지우개",
+    "vi": "Cục tẩy",
+    "en": "eraser",
+    "rr": "jiugae",
+    "level": "A1",
+    "tags": ["object", "education"]
+  },
+  {
+    "ko": "종이",
+    "vi": "Giấy",
+    "en": "paper",
+    "rr": "jongi",
+    "level": "A1",
+    "tags": ["object", "education"]
+  },
+  {
+    "ko": "가위",
+    "vi": "Kéo",
+    "en": "scissors",
+    "rr": "gawi",
+    "level": "A1",
+    "tags": ["object"]
+  },
+  {
+    "ko": "테이프",
+    "vi": "Băng dính",
+    "en": "tape",
+    "rr": "teipeu",
+    "level": "A1",
+    "tags": ["object"]
+  },
+  {
+    "ko": "자",
+    "vi": "Thước",
+    "en": "ruler",
+    "rr": "ja",
+    "level": "A1",
+    "tags": ["object", "education"]
+  },
+  {
+    "ko": "노트북",
+    "vi": "Laptop",
+    "en": "laptop",
+    "rr": "noteubuk",
+    "level": "A1",
+    "tags": ["object", "technology"]
+  },
+  {
+    "ko": "계산기",
+    "vi": "Máy tính cầm tay",
+    "en": "calculator",
+    "rr": "gyesangi",
+    "level": "A1",
+    "tags": ["object", "technology"]
+  },
+  {
+    "ko": "남자",
+    "vi": "Nam, con trai",
+    "en": "man; male",
+    "rr": "namja",
+    "level": "A1",
+    "tags": ["people", "family"]
+  },
+  {
+    "ko": "여자",
+    "vi": "Nữ, con gái",
+    "en": "woman; female",
+    "rr": "yeoja",
+    "level": "A1",
+    "tags": ["people", "family"]
+  },
+  {
+    "ko": "학생",
+    "vi": "Học sinh, sinh viên",
+    "en": "student",
+    "rr": "haksaeng",
+    "level": "A1",
+    "tags": ["people", "education"]
+  },
+  {
+    "ko": "대학생",
+    "vi": "Sinh viên đại học",
+    "en": "university student",
+    "rr": "daehaksaeng",
+    "level": "A1",
+    "tags": ["people", "education"]
+  },
+  {
+    "ko": "선생님",
+    "vi": "Giáo viên",
+    "en": "teacher",
+    "rr": "seonsaengnim",
+    "level": "A1",
+    "tags": ["people", "education"]
+  },
+  {
+    "ko": "아버지",
+    "vi": "Bố",
+    "en": "father",
+    "rr": "abeoji",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "어머니",
+    "vi": "Mẹ",
+    "en": "mother",
+    "rr": "eomeoni",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "형",
+    "vi": "Anh trai (nam gọi)",
+    "en": "older brother (for male speaker)",
+    "rr": "hyeong",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "오빠",
+    "vi": "Anh trai (nữ gọi)",
+    "en": "older brother (for female speaker)",
+    "rr": "oppa",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "누나",
+    "vi": "Chị gái (nam gọi)",
+    "en": "older sister (for male speaker)",
+    "rr": "nuna",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "언니",
+    "vi": "Chị gái (nữ gọi)",
+    "en": "older sister (for female speaker)",
+    "rr": "eonni",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "남동생",
+    "vi": "Em trai",
+    "en": "younger brother",
+    "rr": "namdongsaeng",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "여동생",
+    "vi": "Em gái",
+    "en": "younger sister",
+    "rr": "yeodongsaeng",
+    "level": "A1",
+    "tags": ["family"]
+  },
+  {
+    "ko": "친구",
+    "vi": "Bạn bè",
+    "en": "friend",
+    "rr": "chingu",
+    "level": "A1",
+    "tags": ["people", "friend"]
+  },
+  {
+    "ko": "강아지",
+    "vi": "Chó con (cún)",
+    "en": "puppy",
+    "rr": "gangaji",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "개",
+    "vi": "Chó",
+    "en": "dog",
+    "rr": "gae",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "고양이",
+    "vi": "Mèo",
+    "en": "cat",
+    "rr": "goyangi",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "쥐",
+    "vi": "Chuột",
+    "en": "mouse; rat",
+    "rr": "jwi",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "곰",
+    "vi": "Gấu",
+    "en": "bear",
+    "rr": "gom",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "하마",
+    "vi": "Hà mã",
+    "en": "hippopotamus",
+    "rr": "hama",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "기린",
+    "vi": "Hươu cao cổ",
+    "en": "giraffe",
+    "rr": "girin",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "코끼리",
+    "vi": "Voi",
+    "en": "elephant",
+    "rr": "kokkiri",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "펭귄",
+    "vi": "Chim cánh cụt",
+    "en": "penguin",
+    "rr": "penggwin",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "물고기",
+    "vi": "Cá",
+    "en": "fish",
+    "rr": "mulgogi",
+    "level": "A1",
+    "tags": ["animal"]
+  },
+  {
+    "ko": "차",
+    "vi": "Xe",
+    "en": "car; vehicle",
+    "rr": "cha",
+    "level": "A1",
+    "tags": ["transportation"]
+  },
+  {
+    "ko": "버스",
+    "vi": "Xe buýt",
+    "en": "bus",
+    "rr": "beoseu",
+    "level": "A1",
+    "tags": ["transportation"]
+  },
+  {
+    "ko": "자전거",
+    "vi": "Xe đạp",
+    "en": "bicycle",
+    "rr": "jajeongeo",
+    "level": "A1",
+    "tags": ["transportation"]
+  },
+  {
+    "ko": "지하철",
+    "vi": "Tàu điện ngầm",
+    "en": "subway; metro",
+    "rr": "jihacheol",
+    "level": "A1",
+    "tags": ["transportation"]
+  },
+  {
+    "ko": "비행기",
+    "vi": "Máy bay",
+    "en": "airplane",
+    "rr": "bihaenggi",
+    "level": "A1",
+    "tags": ["transportation"]
+  },
+  {
+    "ko": "택시",
+    "vi": "Taxi",
+    "en": "taxi",
+    "rr": "taegsi",
+    "level": "A1",
+    "tags": ["transportation"]
+  },
+  {
+    "ko": "날씨",
+    "vi": "Thời tiết",
+    "en": "weather",
+    "rr": "nalssi",
+    "level": "A1",
+    "tags": ["weather"]
+  },
+  {
+    "ko": "덥다",
+    "vi": "Nóng (thời tiết)",
+    "en": "to be hot (weather)",
+    "rr": "deoptta",
+    "level": "A1",
+    "tags": ["adjective", "weather"]
+  },
+  {
+    "ko": "춥다",
+    "vi": "Lạnh (thời tiết)",
+    "en": "to be cold (weather)",
+    "rr": "chuptta",
+    "level": "A1",
+    "tags": ["adjective", "weather"]
+  },
+  {
+    "ko": "맵다",
+    "vi": "Cay",
+    "en": "spicy",
+    "rr": "maeppda",
+    "level": "A1",
+    "tags": ["adjective", "taste"]
+  },
+  {
+    "ko": "쉽다",
+    "vi": "Dễ",
+    "en": "easy",
+    "rr": "swiptta",
+    "level": "A1",
+    "tags": ["adjective"]
+  },
+  {
+    "ko": "어렵다",
+    "vi": "Khó",
+    "en": "difficult",
+    "rr": "eoryeoptta",
+    "level": "A1",
+    "tags": ["adjective"]
+  },
+  {
+    "ko": "싸다",
+    "vi": "Rẻ",
+    "en": "cheap",
+    "rr": "ssada",
+    "level": "A1",
+    "tags": ["adjective", "price"]
+  },
+  {
+    "ko": "비싸다",
+    "vi": "Đắt",
+    "en": "expensive",
+    "rr": "bissada",
+    "level": "A1",
+    "tags": ["adjective", "price"]
+  },
+  {
+    "ko": "크다",
+    "vi": "To, lớn",
+    "en": "big; large",
+    "rr": "keuda",
+    "level": "A1",
+    "tags": ["adjective", "size"]
+  },
+  {
+    "ko": "작다",
+    "vi": "Nhỏ",
+    "en": "small",
+    "rr": "jaktta",
+    "level": "A1",
+    "tags": ["adjective", "size"]
+  },
+  {
+    "ko": "좋다",
+    "vi": "Tốt, thích",
+    "en": "good; nice; to like (adjectival)",
+    "rr": "jota",
+    "level": "A1",
+    "tags": ["adjective"]
+  },
+  {
+    "ko": "나쁘다",
+    "vi": "Xấu",
+    "en": "bad",
+    "rr": "nappeuda",
+    "level": "A1",
+    "tags": ["adjective"]
+  },
+  {
+    "ko": "예쁘다",
+    "vi": "Đẹp (xinh)",
+    "en": "pretty",
+    "rr": "yeppeuda",
+    "level": "A1",
+    "tags": ["adjective"]
+  },
+  {
+    "ko": "친절하다",
+    "vi": "Tử tế, thân thiện",
+    "en": "kind; friendly",
+    "rr": "chinjeolhada",
+    "level": "A1",
+    "tags": ["adjective", "personality"]
+  },
+  {
+    "ko": "재미있다",
+    "vi": "Thú vị",
+    "en": "interesting; fun",
+    "rr": "jaemiitda",
+    "level": "A1",
+    "tags": ["adjective"]
+  },
+  {
+    "ko": "재미없다",
+    "vi": "Không thú vị",
+    "en": "not interesting; boring",
+    "rr": "jaemieoptta",
+    "level": "A1",
+    "tags": ["adjective"]
+  },
+  {
+    "ko": "맛있다",
+    "vi": "Ngon",
+    "en": "delicious; tasty",
+    "rr": "masitda",
+    "level": "A1",
+    "tags": ["adjective", "taste"]
+  },
+  {
+    "ko": "맛없다",
+    "vi": "Dở, không ngon",
+    "en": "tasteless; not delicious",
+    "rr": "madeoptta",
+    "level": "A1",
+    "tags": ["adjective", "taste"]
+  },
+  {
+    "ko": "달다",
+    "vi": "Ngọt",
+    "en": "sweet",
+    "rr": "dalda",
+    "level": "A1",
+    "tags": ["adjective", "taste"]
+  },
+  {
+    "ko": "쓰다",
+    "vi": "Đắng; Viết; Dùng (ngữ cảnh quyết định)",
+    "en": "bitter; to write; to use (context-dependent)",
+    "rr": "sseuda",
+    "level": "A1",
+    "tags": ["adjective", "verb", "taste"]
+  },
+  {
+    "ko": "짜다",
+    "vi": "Mặn",
+    "en": "salty",
+    "rr": "jjada",
+    "level": "A1",
+    "tags": ["adjective", "taste"]
+  },
+  {
+    "ko": "가다",
+    "vi": "Đi",
+    "en": "to go",
+    "rr": "gada",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "오다",
+    "vi": "Đến",
+    "en": "to come",
+    "rr": "oda",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "먹다",
+    "vi": "Ăn",
+    "en": "to eat",
+    "rr": "meoktta",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "마시다",
+    "vi": "Uống",
+    "en": "to drink",
+    "rr": "masida",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "보다",
+    "vi": "Xem, nhìn",
+    "en": "to see; to watch; to look",
+    "rr": "boda",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "사다",
+    "vi": "Mua",
+    "en": "to buy",
+    "rr": "sada",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "주다",
+    "vi": "Cho, đưa",
+    "en": "to give",
+    "rr": "juda",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "받다",
+    "vi": "Nhận",
+    "en": "to receive",
+    "rr": "battta",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "읽다",
+    "vi": "Đọc",
+    "en": "to read",
+    "rr": "iktta",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "배우다",
+    "vi": "Học (tiếp thu từ ai đó)",
+    "en": "to learn",
+    "rr": "baeuda",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "하다",
+    "vi": "Làm",
+    "en": "to do",
+    "rr": "hada",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "공부하다",
+    "vi": "Học (tự học, học hành)",
+    "en": "to study",
+    "rr": "gongbuhada",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "전화하다",
+    "vi": "Gọi điện thoại",
+    "en": "to make a phone call",
+    "rr": "jeonhwahada",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "이야기하다",
+    "vi": "Nói chuyện, kể",
+    "en": "to talk; to chat; to tell",
+    "rr": "iyagihada",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "말하다",
+    "vi": "Nói",
+    "en": "to speak; to say",
+    "rr": "malhada",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "가르치다",
+    "vi": "Dạy",
+    "en": "to teach",
+    "rr": "gareuchida",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "있다",
+    "vi": "Có; Tồn tại; Ở",
+    "en": "to have; to exist; to be (at/in)",
+    "rr": "ittta",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "없다",
+    "vi": "Không có; Không tồn tại",
+    "en": "to not have; to not exist",
+    "rr": "eoptta",
+    "level": "A1",
+    "tags": ["verb"]
+  },
+  {
+    "ko": "한국",
+    "vi": "Hàn Quốc",
+    "en": "Korea (South Korea)",
+    "rr": "Hanguk",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "한국어",
+    "vi": "Tiếng Hàn",
+    "en": "Korean (language)",
+    "rr": "Hangugeo",
+    "level": "A1",
+    "tags": ["language"]
+  },
+  {
+    "ko": "미국",
+    "vi": "Mỹ",
+    "en": "United States",
+    "rr": "Miguk",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "영국",
+    "vi": "Anh (UK)",
+    "en": "United Kingdom",
+    "rr": "Yeongguk",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "일본",
+    "vi": "Nhật Bản",
+    "en": "Japan",
+    "rr": "Ilbon",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "중국",
+    "vi": "Trung Quốc",
+    "en": "China",
+    "rr": "Jungguk",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "호주",
+    "vi": "Úc",
+    "en": "Australia",
+    "rr": "Hoju",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "캐나다",
+    "vi": "Canada",
+    "en": "Canada",
+    "rr": "Kaenada",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "태국",
+    "vi": "Thái Lan",
+    "en": "Thailand",
+    "rr": "Taeguk",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "독일",
+    "vi": "Đức",
+    "en": "Germany",
+    "rr": "Dogil",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "프랑스",
+    "vi": "Pháp",
+    "en": "France",
+    "rr": "Peurangseu",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "필리핀",
+    "vi": "Philippines",
+    "en": "Philippines",
+    "rr": "Pillipin",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "인도",
+    "vi": "Ấn Độ",
+    "en": "India",
+    "rr": "Indo",
+    "level": "A1",
+    "tags": ["country"]
+  },
+  {
+    "ko": "하나",
+    "vi": "một",
+    "en": "one",
+    "rr": "hana",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "둘",
+    "vi": "hai",
+    "en": "two",
+    "rr": "dul",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "셋",
+    "vi": "ba",
+    "en": "three",
+    "rr": "set",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "넷",
+    "vi": "bốn",
+    "en": "four",
+    "rr": "net",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "다섯",
+    "vi": "năm",
+    "en": "five",
+    "rr": "daseot",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "여섯",
+    "vi": "sáu",
+    "en": "six",
+    "rr": "yeoseot",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "일곱",
+    "vi": "bảy",
+    "en": "seven",
+    "rr": "ilgop",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "여덟",
+    "vi": "tám",
+    "en": "eight",
+    "rr": "yeodeol",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "아홉",
+    "vi": "chín",
+    "en": "nine",
+    "rr": "ahop",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "열",
+    "vi": "mười",
+    "en": "ten",
+    "rr": "yeol",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "스물",
+    "vi": "hai mươi",
+    "en": "twenty",
+    "rr": "seumul",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "서른",
+    "vi": "ba mươi",
+    "en": "thirty",
+    "rr": "seoreun",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "마흔",
+    "vi": "bốn mươi",
+    "en": "forty",
+    "rr": "maheun",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "쉰",
+    "vi": "năm mươi",
+    "en": "fifty",
+    "rr": "swin",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "예순",
+    "vi": "sáu mươi",
+    "en": "sixty",
+    "rr": "yesun",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "일흔",
+    "vi": "bảy mươi",
+    "en": "seventy",
+    "rr": "ilheun",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "여든",
+    "vi": "tám mươi",
+    "en": "eighty",
+    "rr": "yeodeun",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "아흔",
+    "vi": "chín mươi",
+    "en": "ninety",
+    "rr": "aheun",
+    "level": "A1",
+    "tags": ["number", "native"]
+  },
+  {
+    "ko": "일",
+    "vi": "một",
+    "en": "one",
+    "rr": "il",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "이",
+    "vi": "hai",
+    "en": "two",
+    "rr": "i",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "삼",
+    "vi": "ba",
+    "en": "three",
+    "rr": "sam",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "사",
+    "vi": "bốn",
+    "en": "four",
+    "rr": "sa",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "오",
+    "vi": "năm",
+    "en": "five",
+    "rr": "o",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "육",
+    "vi": "sáu",
+    "en": "six",
+    "rr": "yuk",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "칠",
+    "vi": "bảy",
+    "en": "seven",
+    "rr": "chil",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "팔",
+    "vi": "tám",
+    "en": "eight",
+    "rr": "pal",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "구",
+    "vi": "chín",
+    "en": "nine",
+    "rr": "gu",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "십",
+    "vi": "mười",
+    "en": "ten",
+    "rr": "sip",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "백",
+    "vi": "một trăm",
+    "en": "hundred",
+    "rr": "baek",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "천",
+    "vi": "một nghìn",
+    "en": "thousand",
+    "rr": "cheon",
+    "level": "A1",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "만",
+    "vi": "mười nghìn",
+    "en": "ten thousand",
+    "rr": "man",
+    "level": "A2",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "십만",
+    "vi": "một trăm nghìn",
+    "en": "hundred thousand",
+    "rr": "sipman",
+    "level": "A2",
+    "tags": ["number", "sino"]
+  },
+  {
+    "ko": "백만",
+    "vi": "một triệu",
+    "en": "million",
+    "rr": "baengman",
+    "level": "A2",
+    "tags": ["number", "sino"]
+  }
 ]
