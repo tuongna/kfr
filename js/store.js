@@ -1,4 +1,4 @@
-export const STORAGE_KEYS = {
+const STORAGE_KEYS = {
     vocab: 'learnedVocab',
     sentences: 'learnedSentences',
 };

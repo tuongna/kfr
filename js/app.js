@@ -1,5 +1,6 @@
+import { initRouter } from './router.js';
 import { playAudio, genIdFromRR, cloneDeep } from './utils.js';
-import { getLearned, saveLearned, migrateOldLearned, STORAGE_KEYS } from './store.js';
+import { getLearned, saveLearned, migrateOldLearned } from './store.js';
 
 // ==============================
 // CONFIG & CONSTANTS
@@ -32,8 +33,6 @@ const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
 const practiceMode = document.getElementById('practice-mode');
 const cardBadge = document.getElementById('card-badge');
-const vocabLink = document.getElementById('vocab-link');
-const sentencesLink = document.getElementById('sentences-link');
 const learnProgress = document.getElementById('learn-progress');
 const reviewMessage = document.getElementById('review-message');
 
@@ -50,10 +49,8 @@ let wrong = false;
 // ==============================
 // LOGIC / DATA FUNCTIONS
 // ==============================
-
 function getUrlKey() {
-    const key = new URLSearchParams(location.search).get('key');
-    return key || VOCAB_KEY;
+    return window.location.hash.replace('#', '');
 }
 
 function getData() {
@@ -131,10 +128,15 @@ function getQuizWords() {
     return [...distractors.map((i) => data[i]), data[index]].sort(() => 0.5 - Math.random());
 }
 
+function handleClickSpeak(e) {
+    if (!e.target.disabled) {
+        playAudio(`${e.target.dataset.speak}.mp3`);
+    }
+}
+
 // ==============================
 // VIEW / RENDER FUNCTIONS
 // ==============================
-
 function render(index) {
     const data = getData();
     const learnedWords = getLearnedWords();
@@ -144,12 +146,10 @@ function render(index) {
 
     const audioFileName = genIdFromRR(item.rr);
 
-    // Word / phonetic / meaning
     wordLabelEl.textContent = item.ko;
     phoneticEl.textContent = practiceMode.checked ? '----' : item.rr || '';
     meaningEl.textContent = practiceMode.checked ? '' : item[MOTHER_TONGUE] || '';
 
-    // Audio
     speakBtn.dataset.speak = audioFileName;
     speakBtn.style.display = practiceMode.checked ? 'none' : '';
     speakBtn.disabled = false;
@@ -159,7 +159,6 @@ function render(index) {
         })
         .catch(() => (speakBtn.disabled = true));
 
-    // Quiz mode
     quizEl.innerHTML = '';
     learnProgress.style.display = 'none';
     reviewMessage.style.display = 'none';
@@ -170,7 +169,6 @@ function render(index) {
         renderQuiz(index, data, learnedCount);
     }
 
-    // Practice mode enable/disable
     if (!hasPractice()) {
         practiceMode.disabled = true;
         practiceMode.checked = false;
@@ -179,7 +177,6 @@ function render(index) {
         reviewMessage.style.display = '';
     } else practiceMode.disabled = false;
 
-    // Badge
     const meta = learnedWords[item.ko];
     wordEl.classList.toggle('learned', !!meta);
     cardBadge.textContent = meta ? BADGES.slice(0, meta.level + 1).join('') : '';
@@ -271,32 +268,21 @@ function activatePracticeMode() {
 }
 
 // ==============================
-// EVENTS
+// SPA ROUTER
 // ==============================
-speakBtn.addEventListener('click', (e) => {
-    if (!e.target.disabled) playAudio(`${e.target.dataset.speak}.mp3`);
-});
-prevBtn.addEventListener('click', prevCard);
-nextBtn.addEventListener('click', nextCard);
-practiceMode.addEventListener('change', activatePracticeMode);
+function activateLinks() {
+    const key = getUrlKey();
+    document.querySelectorAll('a[data-link]').forEach((a) => {
+        const hash = a.getAttribute('href').replace('/', '');
+        const linkKey = hash.replace('#', '');
+        a.classList.toggle('active', linkKey === key);
+    });
+}
 
-vocabLink.addEventListener('click', () => handleLinkClick(VOCAB_KEY));
-sentencesLink.addEventListener('click', () => handleLinkClick(SENTENCES_KEY));
-
-function handleLinkClick(key) {
-    const url = new URL(window.location);
-    url.searchParams.set('key', key);
-    window.history.pushState({}, '', url);
+function onRouteChange() {
     renderAndSave(getIndex());
     activateLinks();
 }
-
-function activateLinks() {
-    const key = getUrlKey();
-    vocabLink.classList.toggle('active', key === VOCAB_KEY);
-    sentencesLink.classList.toggle('active', key === SENTENCES_KEY);
-}
-
 // ==============================
 // LOAD DATA
 // ==============================
@@ -309,9 +295,28 @@ async function loadData() {
 }
 
 // ==============================
+// EVENTS
+// ==============================
+speakBtn.addEventListener('click', handleClickSpeak);
+prevBtn.addEventListener('click', prevCard);
+nextBtn.addEventListener('click', nextCard);
+practiceMode.addEventListener('change', activatePracticeMode);
+
+// ==============================
 // INIT
 // ==============================
 await loadData();
 migrateOldLearned();
 renderAndSave(getIndex());
-activateLinks();
+initRouter(onRouteChange);
+
+// ==============================
+// EVENTS / SPA LINK DELEGATION
+// ==============================
+window.addEventListener('hashchange', onRouteChange);
+
+if (!window.location.hash) {
+    window.location.hash = '#vocab';
+}
+
+onRouteChange();

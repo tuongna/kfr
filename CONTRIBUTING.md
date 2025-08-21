@@ -4,10 +4,13 @@ Thank you for considering contributing to Korean from Ryan!
 
 ## How You Can Help
 
--   Fix bugs or improve the code structure.
--   Audit existing content for accuracy, clarity, and relevance.
--   Improve the UI/UX for a better learning experience.
--   Translate the interface or content into other languages.
+We welcome contributions of all kinds! You can help by:
+
+-   **Fixing bugs** or improving the app’s functionality.
+-   **Enhancing the content**, such as correcting errors, clarifying explanations, or adding missing examples.
+-   **Improving UI/UX** to make learning Korean easier and more enjoyable.
+-   **Testing** new features and providing feedback.
+-   **Suggesting ideas** for new features, lessons, or exercises.
 
 ## Important Legal Note
 

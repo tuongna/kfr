@@ -92,6 +92,7 @@ input[disabled] + label {
     border-radius: var(--radius-lg);
     margin: var(--gap-md) auto;
     max-width: var(--w-sm);
+    min-height: 15rem;
     padding: calc(var(--gap-lg) * 1.5) var(--gap-lg) var(--gap-lg) var(--gap-lg);
     position: relative;
     text-align: center;
@@ -231,6 +232,7 @@ button[disabled] {
     font-weight: bold;
     gap: var(--gap-md);
     justify-content: center;
+    min-height: 3.3rem;
     padding: 0 0 var(--gap-md) 0;
 }
 

@@ -13,18 +13,21 @@ Korean from Ryan is a Progressive Web App (PWA) for learning Korean grammar and 
 
 ![SPA Architecture](ARCHITECTURE-1.svg)
 
-## Content and Audio License
+## SPA Routing
 
--   **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
--   **Audio files:** generated using **gTTS**, licensed under **MIT License**.
--   **Source code:** MIT License
+This app uses a **hash-based SPA router**:
 
-> ⚠ **Important:** Use of the content is at your own discretion. Attribution is encouraged when possible.
+-   URLs: `/#vocab` or `/#sentences`
+-   Navigation is handled by `data-link` attributes on `<a>` elements:
 
-## License
+```html
+<a href="#vocab" data-link>Vocabulary</a> <a href="#sentences" data-link>Sentences</a>
+```
 
-This project’s **source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.
+## Content and Audio License - **Text data (Korean, English, Vietnamese sentences):** collected from
 
-## How to Contribute
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+multiple public sources; no specific license applies. - **Audio files:** generated using **gTTS**,
+licensed under **MIT License**. - **Source code:** MIT License > ⚠ **Important:** Use of the content
+is at your own discretion. Attribution is encouraged when possible. ## License This project’s
+**source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details. ## How
+to Contribute See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.

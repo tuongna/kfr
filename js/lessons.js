@@ -1,4 +1,4 @@
-import { marked } from '../vendors/js/marked.esm.js';
+import { marked } from './vendors/marked.esm.js';
 
 async function fetchHangul() {
     const res = await fetch('../data/hangul.md');

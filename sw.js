@@ -10,11 +10,12 @@ const coreFiles = [
     '/feedback.html',
     '/sentences.html',
     '/style.css',
-    '/js/utils/speech.js',
-    '/js/vocab.js',
-    '/js/lessions.js',
+    '/js/app.js',
     '/js/feedback.js',
-    '/js/sentences.js',
+    '/js/lessions.js',
+    '/js/router.js',
+    '/js/store.js',
+    '/js/utils.js',
     '/manifest.json',
 ];
 
