@@ -9,10 +9,6 @@ Developed under the MIT License.
 
 Korean from Ryan is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
 
-# SPA Overview
-
-![SPA Architecture](ARCHITECTURE-1.svg)
-
 ## SPA Routing
 
 This app uses a **hash-based SPA router**:

@@ -2,8 +2,8 @@
 
 ```mermaid
 flowchart TD
-   %% SPA
-    SPA1[User opens SPA page] --> SPA2[Check URL key: vocab or sentences]
+    %% SPA
+    SPA1[User opens SPA page] --> SPA2[Check URL: / or /#vocab or /#sentences]
     SPA2 --> SPA3{Load Data from localStorage or fetch JSON}
     SPA3 --> SPA4[Set current index from localStorage or default 0]
     SPA4 --> SPA5[Render card]
@@ -37,12 +37,12 @@ flowchart TD
     SPA19 --> SPA4
 
     %% Hangul Markdown rendering
-    H1[Import marked parser] --> H2[Fetch hangul.md]
-    H2 --> H3[Parse Markdown to HTML with marked parse method]
+    H1[User opens 'Bài học' page] --> H2[Fetch hangul.md]
+    H2 --> H3[Parse Markdown to HTML with marked.parse]
     H3 --> H4[Insert HTML into #card]
 
     %% Feedback page flow
-    F1[User opens Feedback page] --> F2[Display form]
+    F1[User opens 'Góp ý' page] --> F2[Display form]
     F2 --> F3[User fills name, email, message]
     F3 --> F4[User clicks 'Gửi' button]
     F4 --> F5[Form submitted to Formspree endpoint]
@@ -51,8 +51,8 @@ flowchart TD
     F6 -- No --> F8[Show error message]
 
     %% Navigation between SSR pages
-    NAV1[Navigation bar links] --> NAV2["Từ vựng -> index.html?key=vocab"]
-    NAV1 --> NAV3["Câu mẫu -> index.html?key=sentences"]
-    NAV1 --> NAV4["Bài học -> lessons.html"]
-    NAV1 --> NAV5["Góp ý -> feedback.html"]
+    NAV1[Navigation bar links] --> NAV2[Từ vựng -> /#vocab]
+    NAV1 --> NAV3[Câu mẫu -> /#sentences]
+    NAV1 --> NAV4[Bài học -> lessons.html]
+    NAV1 --> NAV5[Góp ý -> feedback.html]
 ```
