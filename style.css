@@ -107,32 +107,30 @@ input[disabled] + label {
 }
 
 .progress-list {
+  column-gap: 0.8rem;
   display: flex;
-  column-gap: 0.4rem;
+  min-height: 1.8rem;
 }
 
-#learn-progress-bronze::-webkit-progress-value {
-  background-color: #cd7f32;
-}
-
-#learn-progress-silver::-webkit-progress-value {
-  background-color: #c0c0c0;
-}
-
-#learn-progress-gold::-webkit-progress-value {
-  background-color: #ffd700;
-}
-
-#learn-progress-cup::-webkit-progress-value {
-  background-color: #ff69b4;
-}
-
-#learn-progress-diamond::-webkit-progress-value {
-  background-color: #b9f2ff;
-}
 .progress-container > span {
   color: var(--primary);
   font-size: 1.2rem;
+}
+
+.progress-item {
+  align-items: center;
+  display: inline-flex;
+  flex: 1 1 auto;
+}
+
+.progress-item > progress {
+  flex: 1 1 auto;
+  width: auto;
+}
+
+.progress-item > span {
+  flex-shrink: 0;
+  margin-top: -0.2rem;
 }
 
 .practice-container {
@@ -144,7 +142,7 @@ input[disabled] + label {
   left: var(--gap-md);
   padding: 0 0.2rem;
   position: absolute;
-  top: var(--gap-md);
+  top: calc(1.25 * var(--gap-md));
 }
 
 #card-badge {
@@ -263,7 +261,7 @@ button[disabled] {
   max-width: var(--w-sm);
   padding: var(--gap-sm) 0;
   position: sticky;
-  top: 1.6rem;
+  top: calc(1.25 * var(--gap-md));
   z-index: 1;
 }
 
@@ -305,17 +303,21 @@ button[disabled] {
 #card.feedback-card {
   max-width: var(--w-md);
 }
+
 #card.feedback-card h2 {
   color: var(--primary);
   margin-bottom: var(--gap-lg);
   text-align: center;
 }
+
 #card.feedback-card label {
   color: var(--text-light);
   display: block;
   font-weight: bold;
   margin-bottom: var(--gap-xs);
+  user-select: none;
 }
+
 #card.feedback-card input,
 #card.feedback-card textarea {
   border: 0.1rem solid var(--gray);
@@ -326,9 +328,11 @@ button[disabled] {
   padding: var(--gap-sm);
   width: 100%;
 }
+
 #card.feedback-card textarea {
   resize: vertical;
 }
+
 #card.feedback-card button {
   font-size: 1.6rem;
   padding: var(--gap-sm);

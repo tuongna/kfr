@@ -99,6 +99,21 @@ export function findMatchingIndex(srcData, desData, srcIndex) {
 }
 
 /**
+ * Shuffles an array using the Fisher-Yates algorithm for unbiased randomization.
+ *
+ * @param {Array<any>} array - The array to shuffle.
+ * @returns {Array<any>} A new shuffled array.
+ */
+export function shuffle(array) {
+  const arr = array.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/**
  * Returns an array of 4 quiz word objects related to the target item at the given index.
  *
  * Selects up to 3 candidate items from the data array that share tags with the target item,
@@ -111,21 +126,6 @@ export function findMatchingIndex(srcData, desData, srcIndex) {
  * @returns {Array<Object>} Array of 4 word objects for the quiz, including the target and related candidates.
  */
 export function getQuizWords(data, index) {
-  const seeds = [29, 11, 19, 95];
-
-  // Seeded shuffle function using Fisher-Yates and a simple LCG
-  function seededShuffle(array, seed) {
-    let arr = array.slice();
-    let s = seed;
-    for (let i = arr.length - 1; i > 0; i--) {
-      s = (s * 9301 + 49297) % 233280;
-      const rand = s / 233280;
-      const j = Math.floor(rand * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
   const target = data[index];
   const targetTags = new Set(target.tags);
 
@@ -134,27 +134,18 @@ export function getQuizWords(data, index) {
     (item, idx) => idx !== index && item.tags.some((tag) => targetTags.has(tag))
   );
 
-  // Seeded shuffle candidates
-  candidates = seededShuffle(candidates, seeds[0]);
-
   // Select up to 3 candidates
   let selected = candidates.slice(0, 3);
 
   // If not enough, fill from other items (excluding duplicates and target)
   if (selected.length < 3) {
     const usedIds = new Set([target.id, ...selected.map((item) => item.id)]);
-    const extra = seededShuffle(
-      data.filter((item) => !usedIds.has(item.id)),
-      seeds[1]
-    ).slice(0, 3 - selected.length);
+    const extra = data
+      .filter((item) => !usedIds.has(item.id))
+      .slice(0, 3 - selected.length);
     selected = selected.concat(extra);
   }
 
-  // Merge target and selected
-  const merged = [target, ...selected];
-
-  // Seeded shuffle so target is not always at index 0
-  const result = seededShuffle(merged, seeds[2]);
-
-  return result;
+  // Merge target and selected, then shuffle once
+  return shuffle([target, ...selected]);
 }

@@ -39,31 +39,46 @@
       <div id="card">
         <div class="progress-container">
           <div class="progress-list">
-            <progress
-              id="learn-progress-bronze"
-              max="100"
-              style="display: none"
-            ></progress>
-            <progress
-              id="learn-progress-silver"
-              max="100"
-              style="display: none"
-            ></progress>
-            <progress
-              id="learn-progress-gold"
-              max="100"
-              style="display: none"
-            ></progress>
-            <progress
-              id="learn-progress-cup"
-              max="100"
-              style="display: none"
-            ></progress>
-            <progress
-              id="learn-progress-diamond"
-              max="100"
-              style="display: none"
-            ></progress>
+            <div class="progress-item">
+              <progress
+                id="learn-progress-bronze"
+                max="100"
+                style="display: none"
+              ></progress>
+              <span>🥉</span>
+            </div>
+            <div class="progress-item">
+              <progress
+                id="learn-progress-silver"
+                max="100"
+                style="display: none"
+              ></progress>
+              <span>🥈</span>
+            </div>
+            <div class="progress-item">
+              <progress
+                id="learn-progress-gold"
+                max="100"
+                style="display: none"
+              ></progress>
+              <span>🥇</span>
+            </div>
+            <div class="progress-item">
+              <progress
+                id="learn-progress-cup"
+                max="100"
+                style="display: none"
+              ></progress>
+              <span>🏆</span>
+            </div>
+            <div class="progress-item">
+              <progress
+                id="learn-progress-diamond"
+                max="100"
+                style="display: none"
+              ></progress>
+              <span>💎</span>
+            </div>
           </div>
           <span id="review-message" style="display: none"
             >Quay lại ôn tập nhé</span
@@ -92,6 +107,10 @@
         Xem trên GitHub
       </a>
     </footer>
+    <script type="module">
+      import { checkAndUpdateVersion } from './version.js';
+      checkAndUpdateVersion();
+    </script>
     <script type="module" src="js/app.js"></script>
     <script>
       if ('serviceWorker' in navigator) {

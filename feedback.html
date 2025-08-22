@@ -61,6 +61,10 @@
         Xem trên GitHub
       </a>
     </footer>
+    <script type="module">
+      import { checkAndUpdateVersion } from './version.js';
+      checkAndUpdateVersion();
+    </script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker

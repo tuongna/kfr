@@ -21,6 +21,17 @@ This app uses a **hash-based SPA router**:
 <a href="#sentences" data-link>Sentences</a>
 ```
 
+## Running Unit Tests
+
+This project uses **Jasmine** for unit testing.
+
+### Run tests
+
+```bash
+npm install           # install dependencies
+npm test              # run all tests
+```
+
 ## Content and Audio License
 
 - **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
