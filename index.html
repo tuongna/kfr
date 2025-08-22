@@ -38,51 +38,29 @@
       </div>
       <div id="card">
         <div class="progress-container">
-          <div class="progress-list">
+          <div id="learn-progress-list" class="progress-list" style="display: none">
             <div class="progress-item">
-              <progress
-                id="learn-progress-bronze"
-                max="100"
-                style="display: none"
-              ></progress>
+              <progress id="learn-progress-bronze" value="0" max="100"></progress>
               <span>🥉</span>
             </div>
             <div class="progress-item">
-              <progress
-                id="learn-progress-silver"
-                max="100"
-                style="display: none"
-              ></progress>
+              <progress id="learn-progress-silver" value="0" max="100"></progress>
               <span>🥈</span>
             </div>
             <div class="progress-item">
-              <progress
-                id="learn-progress-gold"
-                max="100"
-                style="display: none"
-              ></progress>
+              <progress id="learn-progress-gold" value="0" max="100"></progress>
               <span>🥇</span>
             </div>
             <div class="progress-item">
-              <progress
-                id="learn-progress-cup"
-                max="100"
-                style="display: none"
-              ></progress>
+              <progress id="learn-progress-cup" value="0" max="100"></progress>
               <span>🏆</span>
             </div>
             <div class="progress-item">
-              <progress
-                id="learn-progress-diamond"
-                max="100"
-                style="display: none"
-              ></progress>
+              <progress id="learn-progress-diamond" value="0" max="100"></progress>
               <span>💎</span>
             </div>
           </div>
-          <span id="review-message" style="display: none"
-            >Quay lại ôn tập nhé</span
-          >
+          <span id="review-message" style="display: none">Quay lại ôn tập nhé</span>
         </div>
         <div class="practice-container">
           <input type="checkbox" id="practice-mode" />
@@ -99,11 +77,7 @@
       </div>
     </div>
     <footer class="footer">
-      <a
-        href="https://github.com/tuongna/kfr"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href="https://github.com/tuongna/kfr" target="_blank" rel="noopener noreferrer">
         Xem trên GitHub
       </a>
     </footer>
@@ -115,7 +89,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js')
+          .register('sw.js', { type: 'module' })
           .then(() => console.log('Service Worker registered'))
           .catch((err) => console.log('Service Worker failed:', err));
       }

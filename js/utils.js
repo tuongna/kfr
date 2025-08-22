@@ -140,9 +140,7 @@ export function getQuizWords(data, index) {
   // If not enough, fill from other items (excluding duplicates and target)
   if (selected.length < 3) {
     const usedIds = new Set([target.id, ...selected.map((item) => item.id)]);
-    const extra = data
-      .filter((item) => !usedIds.has(item.id))
-      .slice(0, 3 - selected.length);
+    const extra = data.filter((item) => !usedIds.has(item.id)).slice(0, 3 - selected.length);
     selected = selected.concat(extra);
   }
 

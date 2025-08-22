@@ -1,4 +1,4 @@
-importScripts('version.js');
+import { APP_VERSION } from './version.js';
 
 const CACHE_NAME = `pwa-cache-${APP_VERSION}`;
 
@@ -79,9 +79,7 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(
-          keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
-        )
+        Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
       )
   );
   self.clients.claim();

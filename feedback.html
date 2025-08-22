@@ -38,12 +38,7 @@
           <input type="text" id="name" name="name" />
 
           <label for="email">Email của bạn</label>
-          <input
-            type="email"
-            id="email"
-            name="_replyto"
-            placeholder="Tùy chọn"
-          />
+          <input type="email" id="email" name="_replyto" placeholder="Tùy chọn" />
 
           <label for="message">Góp ý của bạn</label>
           <textarea id="message" name="message" rows="5" required></textarea>
@@ -53,11 +48,7 @@
       </div>
     </div>
     <footer class="footer">
-      <a
-        href="https://github.com/tuongna/kfr"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href="https://github.com/tuongna/kfr" target="_blank" rel="noopener noreferrer">
         Xem trên GitHub
       </a>
     </footer>
@@ -68,7 +59,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js')
+          .register('sw.js', { type: 'module' })
           .then(() => console.log('Service Worker registered'))
           .catch((err) => console.log('Service Worker failed:', err));
       }

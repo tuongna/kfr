@@ -17,8 +17,7 @@ This app uses a **hash-based SPA router**:
 - Navigation is handled by `data-link` attributes on `<a>` elements:
 
 ```html
-<a href="#vocab" data-link>Vocabulary</a>
-<a href="#sentences" data-link>Sentences</a>
+<a href="/#vocab" data-link>Vocabulary</a> <a href="/#sentences" data-link>Sentences</a>
 ```
 
 ## Running Unit Tests

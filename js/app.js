@@ -41,6 +41,7 @@ const nextBtn = document.getElementById('nextBtn');
 const statsEl = document.getElementById('stats');
 const practiceMode = document.getElementById('practice-mode');
 const cardBadge = document.getElementById('card-badge');
+const learnProgressList = document.getElementById('learn-progress-list');
 const learnProgressBronze = document.getElementById('learn-progress-bronze');
 const learnProgressSilver = document.getElementById('learn-progress-silver');
 const learnProgressGold = document.getElementById('learn-progress-gold');
@@ -56,8 +57,7 @@ const dataSourcePractice = { [VOCAB_KEY]: [], [SENTENCES_KEY]: [] };
 
 const currentIndex = {
   [VOCAB_KEY]: parseInt(localStorage.getItem(PAGE_INDEX_KEYS.vocab), 10) || 0,
-  [SENTENCES_KEY]:
-    parseInt(localStorage.getItem(PAGE_INDEX_KEYS.sentences), 10) || 0,
+  [SENTENCES_KEY]: parseInt(localStorage.getItem(PAGE_INDEX_KEYS.sentences), 10) || 0,
 };
 
 let wrong = false;
@@ -66,14 +66,18 @@ let wrong = false;
 // LOGIC / DATA FUNCTIONS
 // ==============================
 function getUrlKey() {
-  return window.location.hash.replace('#', '');
+  const hash = window.location.hash;
+
+  if (!hash || hash === '#') {
+    return VOCAB_KEY;
+  }
+
+  return hash.replace('#', '');
 }
 
 function getData() {
   const key = getUrlKey();
-  return practiceMode.checked
-    ? dataSourcePractice[key] || []
-    : dataSource[key] || [];
+  return practiceMode.checked ? dataSourcePractice[key] || [] : dataSource[key] || [];
 }
 
 function getIndex() {
@@ -161,11 +165,7 @@ function render(index) {
     .catch(() => (speakBtn.disabled = true));
 
   quizEl.innerHTML = '';
-  learnProgressBronze.style.display = 'none';
-  learnProgressSilver.style.display = 'none';
-  learnProgressGold.style.display = 'none';
-  learnProgressCup.style.display = 'none';
-  learnProgressDiamond.style.display = 'none';
+  learnProgressList.display = 'none';
   reviewMessage.style.display = 'none';
   prevBtn.disabled = false;
   nextBtn.disabled = false;
@@ -177,11 +177,7 @@ function render(index) {
   if (!hasPractice()) {
     practiceMode.disabled = true;
     practiceMode.checked = false;
-    learnProgressBronze.style.display = '';
-    learnProgressSilver.style.display = '';
-    learnProgressGold.style.display = '';
-    learnProgressCup.style.display = '';
-    learnProgressDiamond.style.display = '';
+    learnProgressList.display = '';
     reviewMessage.style.display = '';
   } else practiceMode.disabled = false;
 
@@ -193,28 +189,13 @@ function render(index) {
 }
 
 function renderQuiz(index, data, learnedWords) {
-  const learnedCountBronze = Object.values(learnedWords).filter(
-    (w) => w.level >= 0
-  ).length;
-  const learnedCountSilver = Object.values(learnedWords).filter(
-    (w) => w.level >= 1
-  ).length;
-  const learnedCountGold = Object.values(learnedWords).filter(
-    (w) => w.level >= 2
-  ).length;
-  const learnedCountCup = Object.values(learnedWords).filter(
-    (w) => w.level >= 3
-  ).length;
-  const learnedCountDiamond = Object.values(learnedWords).filter(
-    (w) => w.level >= 4
-  ).length;
+  const learnedCountBronze = Object.values(learnedWords).filter((w) => w.level >= 0).length;
+  const learnedCountSilver = Object.values(learnedWords).filter((w) => w.level >= 1).length;
+  const learnedCountGold = Object.values(learnedWords).filter((w) => w.level >= 2).length;
+  const learnedCountCup = Object.values(learnedWords).filter((w) => w.level >= 3).length;
+  const learnedCountDiamond = Object.values(learnedWords).filter((w) => w.level >= 4).length;
 
-  learnProgressBronze.style.display = '';
-  learnProgressSilver.style.display = '';
-  learnProgressGold.style.display = '';
-  learnProgressCup.style.display = '';
-  learnProgressDiamond.style.display = '';
-
+  learnProgressList.style.display = '';
   learnProgressBronze.value = (learnedCountBronze / (data.length || 1)) * 100;
   learnProgressSilver.value = (learnedCountSilver / (data.length || 1)) * 100;
   learnProgressGold.value = (learnedCountGold / (data.length || 1)) * 100;
@@ -222,10 +203,7 @@ function renderQuiz(index, data, learnedWords) {
   learnProgressDiamond.value = (learnedCountDiamond / (data.length || 1)) * 100;
 
   quizEl.innerHTML = getQuizWords(getData(), getIndex())
-    .map(
-      (v) =>
-        `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`
-    )
+    .map((v) => `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`)
     .join('');
 
   quizEl.querySelectorAll('button').forEach((btn) => {
@@ -256,13 +234,10 @@ function renderAndSave(index) {
 function updateStats() {
   const learned = Object.values(getLearnedWords());
   const totalXP = learned.reduce((sum, { xp }) => sum + xp, 0);
-  const counts = [0, 1, 2, 3, 4].map(
-    (l) => learned.filter((w) => w.level >= l).length
-  );
+  const counts = [0, 1, 2, 3, 4].map((l) => learned.filter((w) => w.level >= l).length);
 
   statsEl.innerHTML =
-    `<span>${totalXP} XP</span>` +
-    counts.map((c, i) => `<span>${c}${BADGES[i]}</span>`).join('');
+    `<span>${totalXP} XP</span>` + counts.map((c, i) => `<span>${c}${BADGES[i]}</span>`).join('');
 }
 
 // ==============================
@@ -303,21 +278,9 @@ function activatePracticeMode() {
   localStorage.setItem(PRACTICE_MODE_KEY, isPracticeMode ? '1' : '0');
 
   if (isPracticeMode) {
-    setIndex(
-      findMatchingIndex(
-        dataSource[key],
-        dataSourcePractice[key],
-        currentIndex[key]
-      )
-    );
+    setIndex(findMatchingIndex(dataSource[key], dataSourcePractice[key], currentIndex[key]));
   } else {
-    setIndex(
-      findMatchingIndex(
-        dataSourcePractice[key],
-        dataSource[key],
-        currentIndex[key]
-      )
-    );
+    setIndex(findMatchingIndex(dataSourcePractice[key], dataSource[key], currentIndex[key]));
   }
 
   if (practiceMode.checked && !canPractice(getData()[getIndex()].ko)) {

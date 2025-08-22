@@ -34,11 +34,7 @@
       <div id="card" class="lesson-card marked"></div>
     </div>
     <footer class="footer">
-      <a
-        href="https://github.com/tuongna/kfr"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href="https://github.com/tuongna/kfr" target="_blank" rel="noopener noreferrer">
         Xem trên GitHub
       </a>
     </footer>
@@ -50,7 +46,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-          .register('sw.js')
+          .register('sw.js', { type: 'module' })
           .then(() => console.log('Service Worker registered'))
           .catch((err) => console.log('Service Worker failed:', err));
       }

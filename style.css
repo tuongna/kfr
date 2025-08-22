@@ -30,6 +30,10 @@ a {
   touch-action: manipulation;
 }
 
+button {
+  user-select: none;
+}
+
 /* =============================
     VARIABLES
 ============================= */
@@ -143,6 +147,10 @@ input[disabled] + label {
   padding: 0 0.2rem;
   position: absolute;
   top: calc(1.25 * var(--gap-md));
+}
+
+#practice-mode + label {
+  user-select: none;
 }
 
 #card-badge {
@@ -315,7 +323,6 @@ button[disabled] {
   display: block;
   font-weight: bold;
   margin-bottom: var(--gap-xs);
-  user-select: none;
 }
 
 #card.feedback-card input,
@@ -440,16 +447,16 @@ button:focus-visible {
   .btn-primary:hover {
     background-color: var(--primary-dark);
   }
-}
 
-.btn-secondary:hover {
-  background-color: var(--secondary-dark);
-}
+  .btn-secondary:hover {
+    background-color: var(--secondary-dark);
+  }
 
-.navbar a:hover {
-  text-decoration: underline;
-}
+  .navbar a:hover {
+    text-decoration: underline;
+  }
 
-.marked tr:hover {
-  background-color: var(--gray-light);
+  .marked tr:hover {
+    background-color: var(--gray-light);
+  }
 }
