@@ -248,6 +248,19 @@ button[disabled] {
 /* =============================
     LAYOUT
 ============================= */
+#btn-update {
+  background-color: var(--gray-light);
+  border-radius: 999rem;
+  box-shadow: 0 0 0.2rem 0.2rem var(--gray-light);
+  height: 2.4rem;
+  position: fixed;
+  right: var(--gap-md);
+  top: var(--gap-sm);
+  width: 2.4rem;
+  z-index: 1;
+  border-width: 0;
+}
+
 #stats {
   align-items: center;
   color: var(--text-color);

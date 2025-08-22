@@ -47,15 +47,13 @@
         </form>
       </div>
     </div>
+    <button id="btn-update" style="display: none">🔄</button>
     <footer class="footer">
       <a href="https://github.com/tuongna/kfr" target="_blank" rel="noopener noreferrer">
         Xem trên GitHub
       </a>
     </footer>
-    <script type="module">
-      import { checkAndUpdateVersion } from './version.js';
-      checkAndUpdateVersion();
-    </script>
+    <script type="module" src="js/version-manager.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
