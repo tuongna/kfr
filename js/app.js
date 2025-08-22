@@ -153,7 +153,7 @@ function render(index) {
 
   wordLabelEl.textContent = item.ko;
   phoneticEl.textContent = practiceMode.checked ? '----' : item.rr || '';
-  meaningEl.textContent = practiceMode.checked ? '' : item[MOTHER_TONGUE] || '';
+  meaningEl.textContent = practiceMode.checked ? '' : item[MOTHER_TONGUE].join('; ') || '';
 
   speakBtn.dataset.speak = audioFileName;
   speakBtn.style.display = practiceMode.checked ? 'none' : '';
@@ -165,19 +165,20 @@ function render(index) {
     .catch(() => (speakBtn.disabled = true));
 
   quizEl.innerHTML = '';
-  learnProgressList.display = 'none';
+  learnProgressList.style.display = 'none';
   reviewMessage.style.display = 'none';
   prevBtn.disabled = false;
   nextBtn.disabled = false;
 
   if (practiceMode.checked) {
+    learnProgressList.style.display = '';
     renderQuiz(index, data, learnedWords);
   }
 
   if (!hasPractice()) {
     practiceMode.disabled = true;
     practiceMode.checked = false;
-    learnProgressList.display = '';
+    learnProgressList.style.display = '';
     reviewMessage.style.display = '';
   } else practiceMode.disabled = false;
 
@@ -195,7 +196,6 @@ function renderQuiz(index, data, learnedWords) {
   const learnedCountCup = Object.values(learnedWords).filter((w) => w.level >= 3).length;
   const learnedCountDiamond = Object.values(learnedWords).filter((w) => w.level >= 4).length;
 
-  learnProgressList.style.display = '';
   learnProgressBronze.value = (learnedCountBronze / (data.length || 1)) * 100;
   learnProgressSilver.value = (learnedCountSilver / (data.length || 1)) * 100;
   learnProgressGold.value = (learnedCountGold / (data.length || 1)) * 100;

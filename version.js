@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.0.1+dev.593';
+export const APP_VERSION = '0.0.1+dev.611';
 
 const VERSION_KEY = 'appVersion';
 

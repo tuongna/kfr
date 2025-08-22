@@ -1,1330 +1,1330 @@
 [
   {
+    "en": ["Apple"],
     "ko": "사과",
-    "vi": "Táo",
-    "en": "apple",
+    "level": "A1",
     "rr": "sagwa",
-    "level": "A1",
-    "tags": ["food", "fruit"]
+    "tags": ["food", "fruit"],
+    "vi": ["Táo"]
   },
   {
+    "en": ["Banana"],
     "ko": "바나나",
-    "vi": "Chuối",
-    "en": "banana",
+    "level": "A1",
     "rr": "banana",
-    "level": "A1",
-    "tags": ["food", "fruit"]
+    "tags": ["food", "fruit"],
+    "vi": ["Chuối"]
   },
   {
+    "en": ["Tangerine", "Mandarin orange"],
     "ko": "귤",
-    "vi": "Quýt, quýt mandarin",
-    "en": "tangerine; mandarin orange",
+    "level": "A1",
     "rr": "gyul",
-    "level": "A1",
-    "tags": ["food", "fruit"]
+    "tags": ["food", "fruit"],
+    "vi": ["Quýt", "Quýt mandarin"]
   },
   {
+    "en": ["Cucumber"],
     "ko": "오이",
-    "vi": "Dưa leo",
-    "en": "cucumber",
+    "level": "A1",
     "rr": "oi",
-    "level": "A1",
-    "tags": ["food", "vegetable"]
+    "tags": ["food", "vegetable"],
+    "vi": ["Dưa leo"]
   },
   {
+    "en": ["Mushroom"],
     "ko": "버섯",
-    "vi": "Nấm",
-    "en": "mushroom",
+    "level": "A1",
     "rr": "beoseot",
-    "level": "A1",
-    "tags": ["food", "vegetable"]
+    "tags": ["food", "vegetable"],
+    "vi": ["Nấm"]
   },
   {
+    "en": ["Meat"],
     "ko": "고기",
-    "vi": "Thịt",
-    "en": "meat",
+    "level": "A1",
     "rr": "gogi",
-    "level": "A1",
-    "tags": ["food", "protein"]
+    "tags": ["food", "protein"],
+    "vi": ["Thịt"]
   },
   {
+    "en": ["Food"],
     "ko": "음식",
-    "vi": "Thức ăn",
-    "en": "food",
+    "level": "A1",
     "rr": "eumsik",
-    "level": "A1",
-    "tags": ["food"]
+    "tags": ["food"],
+    "vi": ["Thức ăn"]
   },
   {
+    "en": ["Ramen (instant noodles)"],
     "ko": "라면",
-    "vi": "Mì ramen",
-    "en": "ramen (instant noodles)",
+    "level": "A1",
     "rr": "ramyeon",
-    "level": "A1",
-    "tags": ["food", "meal"]
+    "tags": ["food", "meal"],
+    "vi": ["Mì ramen"]
   },
   {
+    "en": ["Gimbap (seaweed rice roll)"],
     "ko": "김밥",
-    "vi": "Cơm cuộn rong biển",
-    "en": "gimbap (seaweed rice roll)",
+    "level": "A1",
     "rr": "gimbap",
-    "level": "A1",
-    "tags": ["food", "meal"]
+    "tags": ["food", "meal"],
+    "vi": ["Cơm cuộn rong biển"]
   },
   {
+    "en": ["Soup"],
     "ko": "국",
-    "vi": "Canh, súp",
-    "en": "soup",
+    "level": "A1",
     "rr": "guk",
-    "level": "A1",
-    "tags": ["food", "meal"]
+    "tags": ["food", "meal"],
+    "vi": ["Canh", "Súp"]
   },
   {
+    "en": ["Fruit"],
     "ko": "과일",
-    "vi": "Trái cây",
-    "en": "fruit",
+    "level": "A1",
     "rr": "gwail",
-    "level": "A1",
-    "tags": ["food", "fruit"]
+    "tags": ["food", "fruit"],
+    "vi": ["Trái cây"]
   },
   {
+    "en": ["Vegetables"],
     "ko": "야채",
-    "vi": "Rau củ",
-    "en": "vegetables",
+    "level": "A1",
     "rr": "yachae",
-    "level": "A1",
-    "tags": ["food", "vegetable"]
+    "tags": ["food", "vegetable"],
+    "vi": ["Rau củ"]
   },
   {
+    "en": ["Water (drinking)"],
     "ko": "물",
-    "vi": "Nước (uống)",
-    "en": "water (drinking)",
+    "level": "A1",
     "rr": "mul",
-    "level": "A1",
-    "tags": ["drink"]
+    "tags": ["drink"],
+    "vi": ["Nước (uống)"]
   },
   {
+    "en": ["Juice"],
     "ko": "주스",
-    "vi": "Nước ép",
-    "en": "juice",
+    "level": "A1",
     "rr": "juseu",
-    "level": "A1",
-    "tags": ["drink"]
+    "tags": ["drink"],
+    "vi": ["Nước ép"]
   },
   {
+    "en": ["Tea", "Car/vehicle (context-dependent)"],
     "ko": "차",
-    "vi": "Trà; Xe (ngữ cảnh quyết định)",
-    "en": "tea; car/vehicle (context-dependent)",
-    "rr": "cha",
     "level": "A1",
-    "tags": ["drink", "transportation"]
+    "rr": "cha",
+    "tags": ["drink", "transportation"],
+    "vi": ["Trà", "Xe (ngữ cảnh quyết định)"]
   },
   {
+    "en": ["Coffee"],
     "ko": "커피",
-    "vi": "Cà phê",
-    "en": "coffee",
+    "level": "A1",
     "rr": "keopi",
-    "level": "A1",
-    "tags": ["drink"]
+    "tags": ["drink"],
+    "vi": ["Cà phê"]
   },
   {
+    "en": ["Milk"],
     "ko": "우유",
-    "vi": "Sữa",
-    "en": "milk",
+    "level": "A1",
     "rr": "uyu",
-    "level": "A1",
-    "tags": ["drink"]
+    "tags": ["drink"],
+    "vi": ["Sữa"]
   },
   {
+    "en": ["Cola (soda)"],
     "ko": "콜라",
-    "vi": "Coca (nước ngọt có ga)",
-    "en": "cola (soda)",
+    "level": "A1",
     "rr": "kolla",
-    "level": "A1",
-    "tags": ["drink"]
+    "tags": ["drink"],
+    "vi": ["Coca (nước ngọt có ga)"]
   },
   {
+    "en": ["Cake"],
     "ko": "케이크",
-    "vi": "Bánh kem",
-    "en": "cake",
+    "level": "A1",
     "rr": "keikeu",
-    "level": "A1",
-    "tags": ["food", "dessert"]
+    "tags": ["food", "dessert"],
+    "vi": ["Bánh kem"]
   },
   {
+    "en": ["Bread"],
     "ko": "빵",
-    "vi": "Bánh mì",
-    "en": "bread",
+    "level": "A1",
     "rr": "ppang",
-    "level": "A1",
-    "tags": ["food", "meal"]
+    "tags": ["food", "meal"],
+    "vi": ["Bánh mì"]
   },
   {
+    "en": ["Egg"],
     "ko": "계란",
-    "vi": "Trứng",
-    "en": "egg",
+    "level": "A1",
     "rr": "gyeran",
-    "level": "A1",
-    "tags": ["food", "protein"]
+    "tags": ["food", "protein"],
+    "vi": ["Trứng"]
   },
   {
+    "en": ["Rice cake (tteok)"],
     "ko": "떡",
-    "vi": "Bánh gạo",
-    "en": "rice cake (tteok)",
+    "level": "A1",
     "rr": "tteok",
-    "level": "A1",
-    "tags": ["food", "dessert"]
+    "tags": ["food", "dessert"],
+    "vi": ["Bánh gạo"]
   },
   {
+    "en": ["Chocolate"],
     "ko": "초콜릿",
-    "vi": "Sô-cô-la",
-    "en": "chocolate",
+    "level": "A1",
     "rr": "chokollit",
-    "level": "A1",
-    "tags": ["food", "dessert"]
+    "tags": ["food", "dessert"],
+    "vi": ["Sô-cô-la"]
   },
   {
+    "en": ["Sugar"],
     "ko": "설탕",
-    "vi": "Đường",
-    "en": "sugar",
+    "level": "A1",
     "rr": "seoltang",
-    "level": "A1",
-    "tags": ["food", "ingredient"]
+    "tags": ["food", "ingredient"],
+    "vi": ["Đường"]
   },
   {
+    "en": ["Salt"],
     "ko": "소금",
-    "vi": "Muối",
-    "en": "salt",
+    "level": "A1",
     "rr": "sogeum",
-    "level": "A1",
-    "tags": ["food", "ingredient"]
+    "tags": ["food", "ingredient"],
+    "vi": ["Muối"]
   },
   {
+    "en": ["School"],
     "ko": "학교",
-    "vi": "Trường học",
-    "en": "school",
+    "level": "A1",
     "rr": "hakgyo",
-    "level": "A1",
-    "tags": ["place", "education"]
+    "tags": ["place", "education"],
+    "vi": ["Trường học"]
   },
   {
+    "en": ["Classroom"],
     "ko": "교실",
-    "vi": "Lớp học",
-    "en": "classroom",
+    "level": "A1",
     "rr": "gyosil",
-    "level": "A1",
-    "tags": ["place", "education"]
+    "tags": ["place", "education"],
+    "vi": ["Lớp học"]
   },
   {
+    "en": ["Library"],
     "ko": "도서관",
-    "vi": "Thư viện",
-    "en": "library",
+    "level": "A1",
     "rr": "doseogwan",
-    "level": "A1",
-    "tags": ["place", "education"]
+    "tags": ["place", "education"],
+    "vi": ["Thư viện"]
   },
   {
+    "en": ["Company"],
     "ko": "회사",
-    "vi": "Công ty",
-    "en": "company",
+    "level": "A1",
     "rr": "hoesa",
-    "level": "A1",
-    "tags": ["place", "work"]
+    "tags": ["place", "work"],
+    "vi": ["Công ty"]
   },
   {
+    "en": ["Airport"],
     "ko": "공항",
-    "vi": "Sân bay",
-    "en": "airport",
+    "level": "A1",
     "rr": "gonghang",
-    "level": "A1",
-    "tags": ["place", "transportation"]
+    "tags": ["place", "transportation"],
+    "vi": ["Sân bay"]
   },
   {
+    "en": ["Hospital"],
     "ko": "병원",
-    "vi": "Bệnh viện",
-    "en": "hospital",
+    "level": "A1",
     "rr": "byeongwon",
-    "level": "A1",
-    "tags": ["place", "health"]
+    "tags": ["place", "health"],
+    "vi": ["Bệnh viện"]
   },
   {
+    "en": ["Restaurant"],
     "ko": "식당",
-    "vi": "Nhà hàng, quán ăn",
-    "en": "restaurant",
+    "level": "A1",
     "rr": "sikdang",
-    "level": "A1",
-    "tags": ["place", "food"]
+    "tags": ["place", "food"],
+    "vi": ["Nhà hàng", "Quán ăn"]
   },
   {
+    "en": ["Shop", "Store"],
     "ko": "가게",
-    "vi": "Cửa hàng",
-    "en": "shop; store",
+    "level": "A1",
     "rr": "gage",
-    "level": "A1",
-    "tags": ["place", "store"]
+    "tags": ["place", "store"],
+    "vi": ["Cửa hàng"]
   },
   {
+    "en": ["Bank"],
     "ko": "은행",
-    "vi": "Ngân hàng",
-    "en": "bank",
+    "level": "A1",
     "rr": "eunhaeng",
-    "level": "A1",
-    "tags": ["place", "finance"]
+    "tags": ["place", "finance"],
+    "vi": ["Ngân hàng"]
   },
   {
+    "en": ["Bookstore"],
     "ko": "서점",
-    "vi": "Nhà sách",
-    "en": "bookstore",
+    "level": "A1",
     "rr": "seojeom",
-    "level": "A1",
-    "tags": ["place", "store"]
+    "tags": ["place", "store"],
+    "vi": ["Nhà sách"]
   },
   {
+    "en": ["Pharmacy", "Drugstore"],
     "ko": "약국",
-    "vi": "Hiệu thuốc",
-    "en": "pharmacy; drugstore",
+    "level": "A1",
     "rr": "yakkuk",
-    "level": "A1",
-    "tags": ["place", "health"]
+    "tags": ["place", "health"],
+    "vi": ["Hiệu thuốc"]
   },
   {
+    "en": ["Convenience store"],
     "ko": "편의점",
-    "vi": "Cửa hàng tiện lợi",
-    "en": "convenience store",
+    "level": "A1",
     "rr": "pyeonuijeom",
-    "level": "A1",
-    "tags": ["place", "store"]
+    "tags": ["place", "store"],
+    "vi": ["Cửa hàng tiện lợi"]
   },
   {
+    "en": ["Cinema", "Movie theater"],
     "ko": "영화관",
-    "vi": "Rạp chiếu phim",
-    "en": "cinema; movie theater",
+    "level": "A1",
     "rr": "yeonghwagwan",
-    "level": "A1",
-    "tags": ["place", "entertainment"]
+    "tags": ["place", "entertainment"],
+    "vi": ["Rạp chiếu phim"]
   },
   {
+    "en": ["Restroom", "Toilet"],
     "ko": "화장실",
-    "vi": "Nhà vệ sinh",
-    "en": "restroom; toilet",
+    "level": "A1",
     "rr": "hwajangsil",
-    "level": "A1",
-    "tags": ["place"]
+    "tags": ["place"],
+    "vi": ["Nhà vệ sinh"]
   },
   {
+    "en": ["Book"],
     "ko": "책",
-    "vi": "Sách",
-    "en": "book",
+    "level": "A1",
     "rr": "chaek",
-    "level": "A1",
-    "tags": ["object", "education"]
+    "tags": ["object", "education"],
+    "vi": ["Sách"]
   },
   {
+    "en": ["Magazine"],
     "ko": "잡지",
-    "vi": "Tạp chí",
-    "en": "magazine",
+    "level": "A1",
     "rr": "japji",
-    "level": "A1",
-    "tags": ["object", "education"]
+    "tags": ["object", "education"],
+    "vi": ["Tạp chí"]
   },
   {
+    "en": ["Letter"],
     "ko": "편지",
-    "vi": "Thư",
-    "en": "letter",
+    "level": "A1",
     "rr": "pyeonji",
-    "level": "A1",
-    "tags": ["object", "communication"]
+    "tags": ["object", "communication"],
+    "vi": ["Thư"]
   },
   {
+    "en": ["Pencil"],
     "ko": "연필",
-    "vi": "Bút chì",
-    "en": "pencil",
+    "level": "A1",
     "rr": "yeonpil",
-    "level": "A1",
-    "tags": ["object", "education"]
+    "tags": ["object", "education"],
+    "vi": ["Bút chì"]
   },
   {
+    "en": ["Pen"],
     "ko": "펜",
-    "vi": "Bút mực",
-    "en": "pen",
+    "level": "A1",
     "rr": "pen",
-    "level": "A1",
-    "tags": ["object", "education"]
+    "tags": ["object", "education"],
+    "vi": ["Bút mực"]
   },
   {
+    "en": ["Eraser"],
     "ko": "지우개",
-    "vi": "Cục tẩy",
-    "en": "eraser",
+    "level": "A1",
     "rr": "jiugae",
-    "level": "A1",
-    "tags": ["object", "education"]
+    "tags": ["object", "education"],
+    "vi": ["Cục tẩy"]
   },
   {
+    "en": ["Paper"],
     "ko": "종이",
-    "vi": "Giấy",
-    "en": "paper",
+    "level": "A1",
     "rr": "jongi",
-    "level": "A1",
-    "tags": ["object", "education"]
+    "tags": ["object", "education"],
+    "vi": ["Giấy"]
   },
   {
+    "en": ["Scissors"],
     "ko": "가위",
-    "vi": "Kéo",
-    "en": "scissors",
+    "level": "A1",
     "rr": "gawi",
-    "level": "A1",
-    "tags": ["object"]
+    "tags": ["object"],
+    "vi": ["Kéo"]
   },
   {
+    "en": ["Tape"],
     "ko": "테이프",
-    "vi": "Băng dính",
-    "en": "tape",
+    "level": "A1",
     "rr": "teipeu",
-    "level": "A1",
-    "tags": ["object"]
+    "tags": ["object"],
+    "vi": ["Băng dính"]
   },
   {
+    "en": ["Ruler"],
     "ko": "자",
-    "vi": "Thước",
-    "en": "ruler",
+    "level": "A1",
     "rr": "ja",
-    "level": "A1",
-    "tags": ["object", "education"]
+    "tags": ["object", "education"],
+    "vi": ["Thước"]
   },
   {
+    "en": ["Laptop"],
     "ko": "노트북",
-    "vi": "Laptop",
-    "en": "laptop",
+    "level": "A1",
     "rr": "noteubuk",
-    "level": "A1",
-    "tags": ["object", "technology"]
+    "tags": ["object", "technology"],
+    "vi": ["Laptop"]
   },
   {
+    "en": ["Calculator"],
     "ko": "계산기",
-    "vi": "Máy tính cầm tay",
-    "en": "calculator",
+    "level": "A1",
     "rr": "gyesangi",
-    "level": "A1",
-    "tags": ["object", "technology"]
+    "tags": ["object", "technology"],
+    "vi": ["Máy tính cầm tay"]
   },
   {
+    "en": ["Man", "Male"],
     "ko": "남자",
-    "vi": "Nam, con trai",
-    "en": "man; male",
+    "level": "A1",
     "rr": "namja",
-    "level": "A1",
-    "tags": ["people", "family"]
+    "tags": ["people", "family"],
+    "vi": ["Nam", "Con trai"]
   },
   {
+    "en": ["Woman", "Female"],
     "ko": "여자",
-    "vi": "Nữ, con gái",
-    "en": "woman; female",
+    "level": "A1",
     "rr": "yeoja",
-    "level": "A1",
-    "tags": ["people", "family"]
+    "tags": ["people", "family"],
+    "vi": ["Nữ", "Con gái"]
   },
   {
+    "en": ["Student"],
     "ko": "학생",
-    "vi": "Học sinh, sinh viên",
-    "en": "student",
+    "level": "A1",
     "rr": "haksaeng",
-    "level": "A1",
-    "tags": ["people", "education"]
+    "tags": ["people", "education"],
+    "vi": ["Học sinh", "Sinh viên"]
   },
   {
+    "en": ["University student"],
     "ko": "대학생",
-    "vi": "Sinh viên đại học",
-    "en": "university student",
+    "level": "A1",
     "rr": "daehaksaeng",
-    "level": "A1",
-    "tags": ["people", "education"]
+    "tags": ["people", "education"],
+    "vi": ["Sinh viên đại học"]
   },
   {
+    "en": ["Teacher"],
     "ko": "선생님",
-    "vi": "Giáo viên",
-    "en": "teacher",
+    "level": "A1",
     "rr": "seonsaengnim",
-    "level": "A1",
-    "tags": ["people", "education"]
+    "tags": ["people", "education"],
+    "vi": ["Giáo viên"]
   },
   {
+    "en": ["Father"],
     "ko": "아버지",
-    "vi": "Bố",
-    "en": "father",
+    "level": "A1",
     "rr": "abeoji",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Bố"]
   },
   {
+    "en": ["Mother"],
     "ko": "어머니",
-    "vi": "Mẹ",
-    "en": "mother",
+    "level": "A1",
     "rr": "eomeoni",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Mẹ"]
   },
   {
+    "en": ["Older brother (for male speaker)"],
     "ko": "형",
-    "vi": "Anh trai (nam gọi)",
-    "en": "older brother (for male speaker)",
+    "level": "A1",
     "rr": "hyeong",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Anh trai (nam gọi)"]
   },
   {
+    "en": ["Older brother (for female speaker)"],
     "ko": "오빠",
-    "vi": "Anh trai (nữ gọi)",
-    "en": "older brother (for female speaker)",
+    "level": "A1",
     "rr": "oppa",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Anh trai (nữ gọi)"]
   },
   {
+    "en": ["Older sister (for male speaker)"],
     "ko": "누나",
-    "vi": "Chị gái (nam gọi)",
-    "en": "older sister (for male speaker)",
+    "level": "A1",
     "rr": "nuna",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Chị gái (nam gọi)"]
   },
   {
+    "en": ["Older sister (for female speaker)"],
     "ko": "언니",
-    "vi": "Chị gái (nữ gọi)",
-    "en": "older sister (for female speaker)",
+    "level": "A1",
     "rr": "eonni",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Chị gái (nữ gọi)"]
   },
   {
+    "en": ["Younger brother"],
     "ko": "남동생",
-    "vi": "Em trai",
-    "en": "younger brother",
+    "level": "A1",
     "rr": "namdongsaeng",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Em trai"]
   },
   {
+    "en": ["Younger sister"],
     "ko": "여동생",
-    "vi": "Em gái",
-    "en": "younger sister",
+    "level": "A1",
     "rr": "yeodongsaeng",
-    "level": "A1",
-    "tags": ["family"]
+    "tags": ["family"],
+    "vi": ["Em gái"]
   },
   {
+    "en": ["Friend"],
     "ko": "친구",
-    "vi": "Bạn bè",
-    "en": "friend",
+    "level": "A1",
     "rr": "chingu",
-    "level": "A1",
-    "tags": ["people", "friend"]
+    "tags": ["people", "friend"],
+    "vi": ["Bạn bè"]
   },
   {
+    "en": ["Puppy"],
     "ko": "강아지",
-    "vi": "Chó con (cún)",
-    "en": "puppy",
+    "level": "A1",
     "rr": "gangaji",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Chó con", "Cún"]
   },
   {
+    "en": ["Dog"],
     "ko": "개",
-    "vi": "Chó",
-    "en": "dog",
+    "level": "A1",
     "rr": "gae",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Chó"]
   },
   {
+    "en": ["Cat"],
     "ko": "고양이",
-    "vi": "Mèo",
-    "en": "cat",
+    "level": "A1",
     "rr": "goyangi",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Mèo"]
   },
   {
+    "en": ["Mouse", "Rat"],
     "ko": "쥐",
-    "vi": "Chuột",
-    "en": "mouse; rat",
+    "level": "A1",
     "rr": "jwi",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Chuột"]
   },
   {
+    "en": ["Bear"],
     "ko": "곰",
-    "vi": "Gấu",
-    "en": "bear",
+    "level": "A1",
     "rr": "gom",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Gấu"]
   },
   {
+    "en": ["Hippopotamus"],
     "ko": "하마",
-    "vi": "Hà mã",
-    "en": "hippopotamus",
+    "level": "A1",
     "rr": "hama",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Hà mã"]
   },
   {
+    "en": ["Giraffe"],
     "ko": "기린",
-    "vi": "Hươu cao cổ",
-    "en": "giraffe",
+    "level": "A1",
     "rr": "girin",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Hươu cao cổ"]
   },
   {
+    "en": ["Elephant"],
     "ko": "코끼리",
-    "vi": "Voi",
-    "en": "elephant",
+    "level": "A1",
     "rr": "kokkiri",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Voi"]
   },
   {
+    "en": ["Penguin"],
     "ko": "펭귄",
-    "vi": "Chim cánh cụt",
-    "en": "penguin",
+    "level": "A1",
     "rr": "penggwin",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Chim cánh cụt"]
   },
   {
+    "en": ["Fish"],
     "ko": "물고기",
-    "vi": "Cá",
-    "en": "fish",
+    "level": "A1",
     "rr": "mulgogi",
-    "level": "A1",
-    "tags": ["animal"]
+    "tags": ["animal"],
+    "vi": ["Cá"]
   },
   {
+    "en": ["Car", "Vehicle"],
     "ko": "차",
-    "vi": "Xe",
-    "en": "car; vehicle",
+    "level": "A1",
     "rr": "cha",
-    "level": "A1",
-    "tags": ["transportation"]
+    "tags": ["transportation"],
+    "vi": ["Xe"]
   },
   {
+    "en": ["Bus"],
     "ko": "버스",
-    "vi": "Xe buýt",
-    "en": "bus",
+    "level": "A1",
     "rr": "beoseu",
-    "level": "A1",
-    "tags": ["transportation"]
+    "tags": ["transportation"],
+    "vi": ["Xe buýt"]
   },
   {
+    "en": ["Bicycle"],
     "ko": "자전거",
-    "vi": "Xe đạp",
-    "en": "bicycle",
+    "level": "A1",
     "rr": "jajeongeo",
-    "level": "A1",
-    "tags": ["transportation"]
+    "tags": ["transportation"],
+    "vi": ["Xe đạp"]
   },
   {
+    "en": ["Subway", "Metro"],
     "ko": "지하철",
-    "vi": "Tàu điện ngầm",
-    "en": "subway; metro",
+    "level": "A1",
     "rr": "jihacheol",
-    "level": "A1",
-    "tags": ["transportation"]
+    "tags": ["transportation"],
+    "vi": ["Tàu điện ngầm"]
   },
   {
+    "en": ["Airplane"],
     "ko": "비행기",
-    "vi": "Máy bay",
-    "en": "airplane",
+    "level": "A1",
     "rr": "bihaenggi",
-    "level": "A1",
-    "tags": ["transportation"]
+    "tags": ["transportation"],
+    "vi": ["Máy bay"]
   },
   {
+    "en": ["Taxi"],
     "ko": "택시",
-    "vi": "Taxi",
-    "en": "taxi",
+    "level": "A1",
     "rr": "taegsi",
-    "level": "A1",
-    "tags": ["transportation"]
+    "tags": ["transportation"],
+    "vi": ["Taxi"]
   },
   {
+    "en": ["Weather"],
     "ko": "날씨",
-    "vi": "Thời tiết",
-    "en": "weather",
+    "level": "A1",
     "rr": "nalssi",
-    "level": "A1",
-    "tags": ["weather"]
+    "tags": ["weather"],
+    "vi": ["Thời tiết"]
   },
   {
+    "en": ["To be hot (weather)"],
     "ko": "덥다",
-    "vi": "Nóng (thời tiết)",
-    "en": "to be hot (weather)",
+    "level": "A1",
     "rr": "deoptta",
-    "level": "A1",
-    "tags": ["adjective", "weather"]
+    "tags": ["adjective", "weather"],
+    "vi": ["Nóng (thời tiết)"]
   },
   {
+    "en": ["To be cold (weather)"],
     "ko": "춥다",
-    "vi": "Lạnh (thời tiết)",
-    "en": "to be cold (weather)",
+    "level": "A1",
     "rr": "chuptta",
-    "level": "A1",
-    "tags": ["adjective", "weather"]
+    "tags": ["adjective", "weather"],
+    "vi": ["Lạnh (thời tiết)"]
   },
   {
+    "en": ["Spicy"],
     "ko": "맵다",
-    "vi": "Cay",
-    "en": "spicy",
+    "level": "A1",
     "rr": "maeppda",
-    "level": "A1",
-    "tags": ["adjective", "taste"]
+    "tags": ["adjective", "taste"],
+    "vi": ["Cay"]
   },
   {
+    "en": ["Easy"],
     "ko": "쉽다",
-    "vi": "Dễ",
-    "en": "easy",
+    "level": "A1",
     "rr": "swiptta",
-    "level": "A1",
-    "tags": ["adjective"]
+    "tags": ["adjective"],
+    "vi": ["Dễ"]
   },
   {
+    "en": ["Difficult"],
     "ko": "어렵다",
-    "vi": "Khó",
-    "en": "difficult",
+    "level": "A1",
     "rr": "eoryeoptta",
-    "level": "A1",
-    "tags": ["adjective"]
+    "tags": ["adjective"],
+    "vi": ["Khó"]
   },
   {
+    "en": ["Cheap"],
     "ko": "싸다",
-    "vi": "Rẻ",
-    "en": "cheap",
+    "level": "A1",
     "rr": "ssada",
-    "level": "A1",
-    "tags": ["adjective", "price"]
+    "tags": ["adjective", "price"],
+    "vi": ["Rẻ"]
   },
   {
+    "en": ["Expensive"],
     "ko": "비싸다",
-    "vi": "Đắt",
-    "en": "expensive",
+    "level": "A1",
     "rr": "bissada",
-    "level": "A1",
-    "tags": ["adjective", "price"]
+    "tags": ["adjective", "price"],
+    "vi": ["Đắt"]
   },
   {
+    "en": ["Big", "Large"],
     "ko": "크다",
-    "vi": "To, lớn",
-    "en": "big; large",
+    "level": "A1",
     "rr": "keuda",
-    "level": "A1",
-    "tags": ["adjective", "size"]
+    "tags": ["adjective", "size"],
+    "vi": ["To", "Lớn"]
   },
   {
+    "en": ["Small"],
     "ko": "작다",
-    "vi": "Nhỏ",
-    "en": "small",
+    "level": "A1",
     "rr": "jaktta",
-    "level": "A1",
-    "tags": ["adjective", "size"]
+    "tags": ["adjective", "size"],
+    "vi": ["Nhỏ"]
   },
   {
+    "en": ["Good", "Nice", "To like (adjectival)"],
     "ko": "좋다",
-    "vi": "Tốt, thích",
-    "en": "good; nice; to like (adjectival)",
+    "level": "A1",
     "rr": "jota",
-    "level": "A1",
-    "tags": ["adjective"]
+    "tags": ["adjective"],
+    "vi": ["Tốt", "Thích"]
   },
   {
+    "en": ["Bad"],
     "ko": "나쁘다",
-    "vi": "Xấu",
-    "en": "bad",
+    "level": "A1",
     "rr": "nappeuda",
-    "level": "A1",
-    "tags": ["adjective"]
+    "tags": ["adjective"],
+    "vi": ["Xấu"]
   },
   {
+    "en": ["Pretty"],
     "ko": "예쁘다",
-    "vi": "Đẹp (xinh)",
-    "en": "pretty",
+    "level": "A1",
     "rr": "yeppeuda",
-    "level": "A1",
-    "tags": ["adjective"]
+    "tags": ["adjective"],
+    "vi": ["Đẹp", "Xinh"]
   },
   {
+    "en": ["Kind", "Friendly"],
     "ko": "친절하다",
-    "vi": "Tử tế, thân thiện",
-    "en": "kind; friendly",
+    "level": "A1",
     "rr": "chinjeolhada",
-    "level": "A1",
-    "tags": ["adjective", "personality"]
+    "tags": ["adjective", "personality"],
+    "vi": ["Tử tế", "Thân thiện"]
   },
   {
+    "en": ["Interesting", "Fun"],
     "ko": "재미있다",
-    "vi": "Thú vị",
-    "en": "interesting; fun",
+    "level": "A1",
     "rr": "jaemiitda",
-    "level": "A1",
-    "tags": ["adjective"]
+    "tags": ["adjective"],
+    "vi": ["Thú vị"]
   },
   {
+    "en": ["Not interesting", "Boring"],
     "ko": "재미없다",
-    "vi": "Không thú vị",
-    "en": "not interesting; boring",
+    "level": "A1",
     "rr": "jaemieoptta",
-    "level": "A1",
-    "tags": ["adjective"]
+    "tags": ["adjective"],
+    "vi": ["Không thú vị"]
   },
   {
+    "en": ["Delicious", "Tasty"],
     "ko": "맛있다",
-    "vi": "Ngon",
-    "en": "delicious; tasty",
+    "level": "A1",
     "rr": "masitda",
-    "level": "A1",
-    "tags": ["adjective", "taste"]
+    "tags": ["adjective", "taste"],
+    "vi": ["Ngon"]
   },
   {
+    "en": ["Tasteless", "Not delicious"],
     "ko": "맛없다",
-    "vi": "Dở, không ngon",
-    "en": "tasteless; not delicious",
+    "level": "A1",
     "rr": "madeoptta",
-    "level": "A1",
-    "tags": ["adjective", "taste"]
+    "tags": ["adjective", "taste"],
+    "vi": ["Dở", "Không ngon"]
   },
   {
+    "en": ["Sweet"],
     "ko": "달다",
-    "vi": "Ngọt",
-    "en": "sweet",
+    "level": "A1",
     "rr": "dalda",
-    "level": "A1",
-    "tags": ["adjective", "taste"]
+    "tags": ["adjective", "taste"],
+    "vi": ["Ngọt"]
   },
   {
+    "en": ["Bitter", "To write", "To use (context-dependent)"],
     "ko": "쓰다",
-    "vi": "Đắng; Viết; Dùng (ngữ cảnh quyết định)",
-    "en": "bitter; to write; to use (context-dependent)",
+    "level": "A1",
     "rr": "sseuda",
-    "level": "A1",
-    "tags": ["adjective", "verb", "taste"]
+    "tags": ["adjective", "verb", "taste"],
+    "vi": ["Đắng", "Viết", "Dùng (ngữ cảnh quyết định)"]
   },
   {
+    "en": ["Salty"],
     "ko": "짜다",
-    "vi": "Mặn",
-    "en": "salty",
+    "level": "A1",
     "rr": "jjada",
-    "level": "A1",
-    "tags": ["adjective", "taste"]
+    "tags": ["adjective", "taste"],
+    "vi": ["Mặn"]
   },
   {
+    "en": ["To go"],
     "ko": "가다",
-    "vi": "Đi",
-    "en": "to go",
+    "level": "A1",
     "rr": "gada",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Đi"]
   },
   {
+    "en": ["To come"],
     "ko": "오다",
-    "vi": "Đến",
-    "en": "to come",
+    "level": "A1",
     "rr": "oda",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Đến"]
   },
   {
+    "en": ["To eat"],
     "ko": "먹다",
-    "vi": "Ăn",
-    "en": "to eat",
+    "level": "A1",
     "rr": "meoktta",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Ăn"]
   },
   {
+    "en": ["To drink"],
     "ko": "마시다",
-    "vi": "Uống",
-    "en": "to drink",
+    "level": "A1",
     "rr": "masida",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Uống"]
   },
   {
+    "en": ["To see", "To watch", "To look"],
     "ko": "보다",
-    "vi": "Xem, nhìn",
-    "en": "to see; to watch; to look",
+    "level": "A1",
     "rr": "boda",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Xem", "Nhìn"]
   },
   {
+    "en": ["To buy"],
     "ko": "사다",
-    "vi": "Mua",
-    "en": "to buy",
+    "level": "A1",
     "rr": "sada",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Mua"]
   },
   {
+    "en": ["To give"],
     "ko": "주다",
-    "vi": "Cho, đưa",
-    "en": "to give",
+    "level": "A1",
     "rr": "juda",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Cho", "Đưa"]
   },
   {
+    "en": ["To receive"],
     "ko": "받다",
-    "vi": "Nhận",
-    "en": "to receive",
+    "level": "A1",
     "rr": "battta",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Nhận"]
   },
   {
+    "en": ["To read"],
     "ko": "읽다",
-    "vi": "Đọc",
-    "en": "to read",
+    "level": "A1",
     "rr": "iktta",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Đọc"]
   },
   {
+    "en": ["To learn"],
     "ko": "배우다",
-    "vi": "Học (tiếp thu từ ai đó)",
-    "en": "to learn",
+    "level": "A1",
     "rr": "baeuda",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Học (tiếp thu từ ai đó)"]
   },
   {
+    "en": ["To do"],
     "ko": "하다",
-    "vi": "Làm",
-    "en": "to do",
+    "level": "A1",
     "rr": "hada",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Làm"]
   },
   {
+    "en": ["To study"],
     "ko": "공부하다",
-    "vi": "Học (tự học, học hành)",
-    "en": "to study",
+    "level": "A1",
     "rr": "gongbuhada",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Học (tự học, học hành)"]
   },
   {
+    "en": ["To make a phone call"],
     "ko": "전화하다",
-    "vi": "Gọi điện thoại",
-    "en": "to make a phone call",
+    "level": "A1",
     "rr": "jeonhwahada",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Gọi điện thoại"]
   },
   {
+    "en": ["To talk", "To chat", "To tell"],
     "ko": "이야기하다",
-    "vi": "Nói chuyện, kể",
-    "en": "to talk; to chat; to tell",
+    "level": "A1",
     "rr": "iyagihada",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Nói chuyện", "Kể"]
   },
   {
+    "en": ["To speak", "To say"],
     "ko": "말하다",
-    "vi": "Nói",
-    "en": "to speak; to say",
+    "level": "A1",
     "rr": "malhada",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Nói"]
   },
   {
+    "en": ["To teach"],
     "ko": "가르치다",
-    "vi": "Dạy",
-    "en": "to teach",
+    "level": "A1",
     "rr": "gareuchida",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Dạy"]
   },
   {
+    "en": ["To have", "To exist", "To be (at/in)"],
     "ko": "있다",
-    "vi": "Có; Tồn tại; Ở",
-    "en": "to have; to exist; to be (at/in)",
+    "level": "A1",
     "rr": "ittta",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Có", "Tồn tại", "Ở"]
   },
   {
+    "en": ["To not have", "To not exist"],
     "ko": "없다",
-    "vi": "Không có; Không tồn tại",
-    "en": "to not have; to not exist",
+    "level": "A1",
     "rr": "eoptta",
-    "level": "A1",
-    "tags": ["verb"]
+    "tags": ["verb"],
+    "vi": ["Không có", "Không tồn tại"]
   },
   {
+    "en": ["Korea", "South Korea"],
     "ko": "한국",
-    "vi": "Hàn Quốc",
-    "en": "Korea (South Korea)",
+    "level": "A1",
     "rr": "Hanguk",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Hàn Quốc"]
   },
   {
+    "en": ["Korean (language)"],
     "ko": "한국어",
-    "vi": "Tiếng Hàn",
-    "en": "Korean (language)",
+    "level": "A1",
     "rr": "Hangugeo",
-    "level": "A1",
-    "tags": ["language"]
+    "tags": ["language"],
+    "vi": ["Tiếng Hàn"]
   },
   {
+    "en": ["United States"],
     "ko": "미국",
-    "vi": "Mỹ",
-    "en": "United States",
+    "level": "A1",
     "rr": "Miguk",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Mỹ"]
   },
   {
+    "en": ["United Kingdom"],
     "ko": "영국",
-    "vi": "Anh (UK)",
-    "en": "United Kingdom",
+    "level": "A1",
     "rr": "Yeongguk",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Anh (UK)"]
   },
   {
+    "en": ["Japan"],
     "ko": "일본",
-    "vi": "Nhật Bản",
-    "en": "Japan",
+    "level": "A1",
     "rr": "Ilbon",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Nhật Bản"]
   },
   {
+    "en": ["China"],
     "ko": "중국",
-    "vi": "Trung Quốc",
-    "en": "China",
+    "level": "A1",
     "rr": "Jungguk",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Trung Quốc"]
   },
   {
+    "en": ["Australia"],
     "ko": "호주",
-    "vi": "Úc",
-    "en": "Australia",
+    "level": "A1",
     "rr": "Hoju",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Úc"]
   },
   {
+    "en": ["Canada"],
     "ko": "캐나다",
-    "vi": "Canada",
-    "en": "Canada",
+    "level": "A1",
     "rr": "Kaenada",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Canada"]
   },
   {
+    "en": ["Thailand"],
     "ko": "태국",
-    "vi": "Thái Lan",
-    "en": "Thailand",
+    "level": "A1",
     "rr": "Taeguk",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Thái Lan"]
   },
   {
+    "en": ["Germany"],
     "ko": "독일",
-    "vi": "Đức",
-    "en": "Germany",
+    "level": "A1",
     "rr": "Dogil",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Đức"]
   },
   {
+    "en": ["France"],
     "ko": "프랑스",
-    "vi": "Pháp",
-    "en": "France",
+    "level": "A1",
     "rr": "Peurangseu",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Pháp"]
   },
   {
+    "en": ["Philippines"],
     "ko": "필리핀",
-    "vi": "Philippines",
-    "en": "Philippines",
+    "level": "A1",
     "rr": "Pillipin",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Philippines"]
   },
   {
+    "en": ["India"],
     "ko": "인도",
-    "vi": "Ấn Độ",
-    "en": "India",
+    "level": "A1",
     "rr": "Indo",
-    "level": "A1",
-    "tags": ["country"]
+    "tags": ["country"],
+    "vi": ["Ấn Độ"]
   },
   {
+    "en": ["One"],
     "ko": "하나",
-    "vi": "một",
-    "en": "one",
+    "level": "A1",
     "rr": "hana",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Một"]
   },
   {
+    "en": ["Two"],
     "ko": "둘",
-    "vi": "hai",
-    "en": "two",
+    "level": "A1",
     "rr": "dul",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Hai"]
   },
   {
+    "en": ["Three"],
     "ko": "셋",
-    "vi": "ba",
-    "en": "three",
+    "level": "A1",
     "rr": "set",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Ba"]
   },
   {
+    "en": ["Four"],
     "ko": "넷",
-    "vi": "bốn",
-    "en": "four",
+    "level": "A1",
     "rr": "net",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Bốn"]
   },
   {
+    "en": ["Five"],
     "ko": "다섯",
-    "vi": "năm",
-    "en": "five",
+    "level": "A1",
     "rr": "daseot",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Năm"]
   },
   {
+    "en": ["Six"],
     "ko": "여섯",
-    "vi": "sáu",
-    "en": "six",
+    "level": "A1",
     "rr": "yeoseot",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Sáu"]
   },
   {
+    "en": ["Seven"],
     "ko": "일곱",
-    "vi": "bảy",
-    "en": "seven",
+    "level": "A1",
     "rr": "ilgop",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Bảy"]
   },
   {
+    "en": ["Eight"],
     "ko": "여덟",
-    "vi": "tám",
-    "en": "eight",
+    "level": "A1",
     "rr": "yeodeol",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Tám"]
   },
   {
+    "en": ["Nine"],
     "ko": "아홉",
-    "vi": "chín",
-    "en": "nine",
+    "level": "A1",
     "rr": "ahop",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Chín"]
   },
   {
+    "en": ["Ten"],
     "ko": "열",
-    "vi": "mười",
-    "en": "ten",
+    "level": "A1",
     "rr": "yeol",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Mười"]
   },
   {
+    "en": ["Twenty"],
     "ko": "스물",
-    "vi": "hai mươi",
-    "en": "twenty",
+    "level": "A1",
     "rr": "seumul",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Hai mươi"]
   },
   {
+    "en": ["Thirty"],
     "ko": "서른",
-    "vi": "ba mươi",
-    "en": "thirty",
+    "level": "A1",
     "rr": "seoreun",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Ba mươi"]
   },
   {
+    "en": ["Forty"],
     "ko": "마흔",
-    "vi": "bốn mươi",
-    "en": "forty",
+    "level": "A1",
     "rr": "maheun",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Bốn mươi"]
   },
   {
+    "en": ["Fifty"],
     "ko": "쉰",
-    "vi": "năm mươi",
-    "en": "fifty",
+    "level": "A1",
     "rr": "swin",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Năm mươi"]
   },
   {
+    "en": ["Sixty"],
     "ko": "예순",
-    "vi": "sáu mươi",
-    "en": "sixty",
+    "level": "A1",
     "rr": "yesun",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Sáu mươi"]
   },
   {
+    "en": ["Seventy"],
     "ko": "일흔",
-    "vi": "bảy mươi",
-    "en": "seventy",
+    "level": "A1",
     "rr": "ilheun",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Bảy mươi"]
   },
   {
+    "en": ["Eighty"],
     "ko": "여든",
-    "vi": "tám mươi",
-    "en": "eighty",
+    "level": "A1",
     "rr": "yeodeun",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Tám mươi"]
   },
   {
+    "en": ["Ninety"],
     "ko": "아흔",
-    "vi": "chín mươi",
-    "en": "ninety",
+    "level": "A1",
     "rr": "aheun",
-    "level": "A1",
-    "tags": ["number", "native"]
+    "tags": ["number", "native"],
+    "vi": ["Chín mươi"]
   },
   {
+    "en": ["One"],
     "ko": "일",
-    "vi": "một",
-    "en": "one",
+    "level": "A1",
     "rr": "il",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Một"]
   },
   {
+    "en": ["Two"],
     "ko": "이",
-    "vi": "hai",
-    "en": "two",
+    "level": "A1",
     "rr": "i",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Hai"]
   },
   {
+    "en": ["Three"],
     "ko": "삼",
-    "vi": "ba",
-    "en": "three",
+    "level": "A1",
     "rr": "sam",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Ba"]
   },
   {
+    "en": ["Four"],
     "ko": "사",
-    "vi": "bốn",
-    "en": "four",
+    "level": "A1",
     "rr": "sa",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Bốn"]
   },
   {
+    "en": ["Five"],
     "ko": "오",
-    "vi": "năm",
-    "en": "five",
+    "level": "A1",
     "rr": "o",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Năm"]
   },
   {
+    "en": ["Six"],
     "ko": "육",
-    "vi": "sáu",
-    "en": "six",
+    "level": "A1",
     "rr": "yuk",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Sáu"]
   },
   {
+    "en": ["Seven"],
     "ko": "칠",
-    "vi": "bảy",
-    "en": "seven",
+    "level": "A1",
     "rr": "chil",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Bảy"]
   },
   {
+    "en": ["Eight"],
     "ko": "팔",
-    "vi": "tám",
-    "en": "eight",
+    "level": "A1",
     "rr": "pal",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Tám"]
   },
   {
+    "en": ["Nine"],
     "ko": "구",
-    "vi": "chín",
-    "en": "nine",
+    "level": "A1",
     "rr": "gu",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Chín"]
   },
   {
+    "en": ["Ten"],
     "ko": "십",
-    "vi": "mười",
-    "en": "ten",
+    "level": "A1",
     "rr": "sip",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Mười"]
   },
   {
+    "en": ["Hundred"],
     "ko": "백",
-    "vi": "một trăm",
-    "en": "hundred",
+    "level": "A1",
     "rr": "baek",
-    "level": "A1",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Một trăm"]
   },
   {
+    "en": ["Thousand"],
     "ko": "천",
-    "vi": "một nghìn",
-    "en": "thousand",
-    "rr": "cheon",
     "level": "A1",
-    "tags": ["number", "sino"]
+    "rr": "cheon",
+    "tags": ["number", "sino"],
+    "vi": ["Một nghìn"]
   },
   {
+    "en": ["Ten thousand"],
     "ko": "만",
-    "vi": "mười nghìn",
-    "en": "ten thousand",
+    "level": "A2",
     "rr": "man",
-    "level": "A2",
-    "tags": ["number", "sino"]
+    "tags": ["number", "sino"],
+    "vi": ["Mười nghìn"]
   },
   {
+    "en": ["Hundred thousand"],
     "ko": "십만",
-    "vi": "một trăm nghìn",
-    "en": "hundred thousand",
-    "rr": "sipman",
     "level": "A2",
-    "tags": ["number", "sino"]
+    "rr": "sipman",
+    "tags": ["number", "sino"],
+    "vi": ["Một trăm nghìn"]
   },
   {
+    "en": ["Million"],
     "ko": "백만",
-    "vi": "một triệu",
-    "en": "million",
-    "rr": "baengman",
     "level": "A2",
-    "tags": ["number", "sino"]
+    "rr": "baengman",
+    "tags": ["number", "sino"],
+    "vi": ["Một triệu"]
   }
 ]
