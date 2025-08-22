@@ -1326,5 +1326,77 @@
     "rr": "baengman",
     "tags": ["number", "sino"],
     "vi": ["Một triệu"]
+  },
+  {
+    "en": ["Name"],
+    "ko": "이름",
+    "rr": "ireum",
+    "level": "A1",
+    "tags": ["noun", "introduction"],
+    "vi": ["Tên"]
+  },
+  {
+    "en": ["Honorific name"],
+    "ko": "성함",
+    "rr": "seongham",
+    "level": "A1",
+    "tags": ["noun", "honorific"],
+    "vi": ["Tên (kính ngữ)"]
+  },
+  {
+    "en": ["Age"],
+    "ko": "나이",
+    "rr": "nai",
+    "level": "A1",
+    "tags": ["noun", "age"],
+    "vi": ["Tuổi"]
+  },
+  {
+    "en": ["Years old (counter for age)"],
+    "ko": "살",
+    "rr": "sal",
+    "level": "A1",
+    "tags": ["counter", "age"],
+    "vi": ["Tuổi"]
+  },
+  {
+    "en": ["I (humble)"],
+    "ko": "저",
+    "rr": "jeo",
+    "level": "A1",
+    "tags": ["pronoun", "humble"],
+    "vi": ["Tôi (khiêm nhường)"]
+  },
+  {
+    "en": ["I (plain)"],
+    "ko": "나",
+    "rr": "na",
+    "level": "A1",
+    "tags": ["pronoun", "informal"],
+    "vi": ["Tôi (thân mật)"]
+  },
+  {
+    "en": ["My"],
+    "ko": "제",
+    "rr": "je",
+    "level": "A1",
+    "tags": ["pronoun", "possessive"],
+    "vi": ["Của tôi (khiêm nhường)"]
+  },
+  {
+    "en": ["What"],
+    "ko": "뭐",
+    "rr": "mwo",
+    "level": "A1",
+    "tags": ["question"],
+    "vi": ["Cái gì"]
+  },
+  {
+    "en": ["How many"],
+    "ko": "몇",
+    "rr": "myeot",
+    "level": "A1",
+    "tags": ["question", "number"],
+    "vi": ["Mấy", "Bao nhiêu"]
   }
 ]

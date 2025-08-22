@@ -25,7 +25,7 @@ def shorten_rr(rr: str) -> str:
     Shorten the romanized word (Phiên âm) if it's longer than 20 characters.
     Similar logic to JS genIdFromRR function.
     """
-    rr = rr.replace(" ", "_")
+    rr = rr.replace(" ", "_").replace(".", "_")
     if len(rr) <= 20:
         return rr
     extra = len(rr) - 16

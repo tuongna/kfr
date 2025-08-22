@@ -6,7 +6,7 @@
  * @returns {string} The generated ID.
  */
 export function genIdFromRR(rr = '') {
-  rr = rr.replace(/\s+/g, '_');
+  rr = rr.replace(/[.]/g, '_').replace(/\s+/g, '_');
 
   if (rr.length <= 20) {
     return rr;
@@ -120,6 +120,9 @@ export function shuffle(array) {
  * excluding the target itself. If fewer than 3 candidates are found, fills the remainder
  * with random items from the data array (excluding duplicates and the target).
  * The target item is always included. The final array is shuffled before returning.
+ * If the target ends with "?" or "!", all candidates also end with that mark.
+ * If the target does NOT end with "?" or "!", none of the candidates end with "?" or "!".
+ * If not enough candidates, other answers (not ending with "?" or "!") may be mixed in.
  *
  * @param {Array<Object>} data - Array of objects with at least 'id' and 'tags' properties.
  * @param {number} index - Index of the target item in the data array.
@@ -128,20 +131,78 @@ export function shuffle(array) {
 export function getQuizWords(data, index) {
   const target = data[index];
   const targetTags = new Set(target.tags);
+  const koStr = typeof target.ko === 'string' ? target.ko.trim() : '';
+  const isQuestion = koStr.endsWith('?');
+  const isExclaim = koStr.endsWith('!');
+  const isNormal = !isQuestion && !isExclaim;
 
-  // Find candidates sharing at least one tag, excluding the target
-  let candidates = data.filter(
-    (item, idx) => idx !== index && item.tags.some((tag) => targetTags.has(tag))
-  );
+  // Candidates sharing at least one tag, excluding the target
+  let candidates = data
+    .map((item, idx) => ({ item, idx }))
+    .filter(({ item, idx }) => {
+      if (idx === index) return false;
+      const itemKo = typeof item.ko === 'string' ? item.ko.trim() : '';
+      if (isQuestion && !itemKo.endsWith('?')) return false;
+      if (isExclaim && !itemKo.endsWith('!')) return false;
+      if (isNormal && (itemKo.endsWith('?') || itemKo.endsWith('!'))) return false;
+      return item.tags.some((tag) => targetTags.has(tag));
+    });
 
-  // Select up to 3 candidates
-  let selected = candidates.slice(0, 3);
+  // Select up to 3 candidates, avoiding duplicates by index
+  let selected = [];
+  const usedIdx = new Set([index]);
+  for (const { item, idx } of candidates) {
+    if (selected.length >= 3) break;
+    if (!usedIdx.has(idx)) {
+      selected.push(item);
+      usedIdx.add(idx);
+    }
+  }
 
-  // If not enough, fill from other items (excluding duplicates and target)
+  // If not enough, fill from other items (excluding duplicates and the target)
   if (selected.length < 3) {
-    const usedIds = new Set([target.id, ...selected.map((item) => item.id)]);
-    const extra = data.filter((item) => !usedIds.has(item.id)).slice(0, 3 - selected.length);
-    selected = selected.concat(extra);
+    for (let i = 0; i < data.length && selected.length < 3; i++) {
+      if (!usedIdx.has(i)) {
+        const item = data[i];
+        const itemKo = typeof item.ko === 'string' ? item.ko.trim() : '';
+        // If target is a question, prefer candidates ending with "?"
+        if (isQuestion && itemKo.endsWith('?')) {
+          selected.push(item);
+          usedIdx.add(i);
+        }
+        // If target is an exclamation, prefer candidates ending with "!"
+        else if (isExclaim && itemKo.endsWith('!')) {
+          selected.push(item);
+          usedIdx.add(i);
+        }
+        // If target is normal, prefer candidates NOT ending with "?" or "!"
+        else if (isNormal && !itemKo.endsWith('?') && !itemKo.endsWith('!')) {
+          selected.push(item);
+          usedIdx.add(i);
+        }
+      }
+    }
+    // If still not enough, allow mixing in other answers (not ending with "?" or "!")
+    if (selected.length < 3 && isNormal) {
+      for (let i = 0; i < data.length && selected.length < 3; i++) {
+        if (!usedIdx.has(i)) {
+          const itemKo = typeof data[i].ko === 'string' ? data[i].ko.trim() : '';
+          if (!itemKo.endsWith('?') && !itemKo.endsWith('!')) {
+            selected.push(data[i]);
+            usedIdx.add(i);
+          }
+        }
+      }
+    }
+    // If still not enough, allow any remaining items
+    if (selected.length < 3) {
+      for (let i = 0; i < data.length && selected.length < 3; i++) {
+        if (!usedIdx.has(i)) {
+          selected.push(data[i]);
+          usedIdx.add(i);
+        }
+      }
+    }
   }
 
   // Merge target and selected, then shuffle once

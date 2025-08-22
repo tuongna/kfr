@@ -180,7 +180,10 @@ function render(index) {
     practiceMode.checked = false;
     learnProgressList.style.display = '';
     reviewMessage.style.display = '';
-  } else practiceMode.disabled = false;
+    renderProgress(data, learnedWords);
+  } else {
+    practiceMode.disabled = false;
+  }
 
   const meta = learnedWords[item.ko];
   wordEl.classList.toggle('learned', !!meta);
@@ -189,7 +192,7 @@ function render(index) {
   updateStats();
 }
 
-function renderQuiz(index, data, learnedWords) {
+function renderProgress(data, learnedWords) {
   const learnedCountBronze = Object.values(learnedWords).filter((w) => w.level >= 0).length;
   const learnedCountSilver = Object.values(learnedWords).filter((w) => w.level >= 1).length;
   const learnedCountGold = Object.values(learnedWords).filter((w) => w.level >= 2).length;
@@ -201,6 +204,10 @@ function renderQuiz(index, data, learnedWords) {
   learnProgressGold.value = (learnedCountGold / (data.length || 1)) * 100;
   learnProgressCup.value = (learnedCountCup / (data.length || 1)) * 100;
   learnProgressDiamond.value = (learnedCountDiamond / (data.length || 1)) * 100;
+}
+
+function renderQuiz(index, data, learnedWords) {
+  renderProgress(data, learnedWords);
 
   quizEl.innerHTML = getQuizWords(getData(), getIndex())
     .map((v) => `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`)

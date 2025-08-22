@@ -87,6 +87,14 @@ input[disabled] + label {
   color: var(--gray);
 }
 
+select {
+  background-color: var(--gray-light);
+  border: 0.1rem solid var(--gray);
+  color: var(--text-color);
+  font-size: 1.4rem;
+  padding: 0.3rem;
+}
+
 /* =============================
     CARD
 ============================= */
@@ -135,6 +143,7 @@ input[disabled] + label {
 .progress-item > span {
   flex-shrink: 0;
   margin-top: -0.2rem;
+  font-size: 1.2rem;
 }
 
 .practice-container {
@@ -143,7 +152,7 @@ input[disabled] + label {
   display: flex;
   font-size: 1.2rem;
   gap: var(--gap-xs);
-  left: var(--gap-md);
+  left: calc(1.25 * var(--gap-md));
   padding: 0 0.2rem;
   position: absolute;
   top: calc(1.25 * var(--gap-md));
@@ -154,10 +163,10 @@ input[disabled] + label {
 }
 
 #card-badge {
-  font-size: 2rem;
+  font-size: 1.6rem;
   position: absolute;
-  right: var(--gap-md);
-  top: var(--gap-sm);
+  right: calc(1.25 * var(--gap-md));
+  top: calc(1.25 * var(--gap-md));
 }
 
 #word {
@@ -316,6 +325,7 @@ button[disabled] {
 ============================= */
 #card.lesson-card {
   max-width: var(--w-md);
+  padding: var(--gap-lg);
 }
 
 /* =============================

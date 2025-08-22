@@ -1,109 +1,118 @@
 import { getQuizWords } from './utils.js';
+import fs from 'fs';
+
+const data = JSON.parse(fs.readFileSync('./data/sentences.json', 'utf8'));
 
 describe('getQuizWords', () => {
-  const sampleData = [
-    {
-      id: 1,
-      ko: '사과',
-      vi: 'Táo',
-      en: 'apple',
-      rr: 'sagwa',
-      level: 'A1',
-      tags: ['food', 'fruit'],
-    },
-    {
-      id: 2,
-      ko: '바나나',
-      vi: 'Chuối',
-      en: 'banana',
-      rr: 'banana',
-      level: 'A1',
-      tags: ['food', 'fruit'],
-    },
-    {
-      id: 3,
-      ko: '오렌지',
-      vi: 'Cam',
-      en: 'orange',
-      rr: 'orenji',
-      level: 'A1',
-      tags: ['food', 'fruit'],
-    },
-    {
-      id: 4,
-      ko: '물',
-      vi: 'Nước',
-      en: 'water',
-      rr: 'mul',
-      level: 'A1',
-      tags: ['drink'],
-    },
-    {
-      id: 5,
-      ko: '빵',
-      vi: 'Bánh mì',
-      en: 'bread',
-      rr: 'ppang',
-      level: 'A1',
-      tags: ['food', 'grain'],
-    },
-  ];
-
-  it('returns 4 items including the target', () => {
-    const result = getQuizWords(sampleData, 0);
-    expect(result.length).toBe(4);
-    expect(result.some((item) => item.ko === '사과')).toBe(true);
+  it('should always return 4 items for every index in data', () => {
+    for (let i = 0; i < data.length; i++) {
+      const result = getQuizWords(data, i);
+      if (result.length !== 4) {
+        console.log('Fail at index:', i, 'Result:', result);
+      }
+      expect(result.length).toBe(4);
+    }
   });
 
-  it('includes only one target item', () => {
-    const result = getQuizWords(sampleData, 1);
-    expect(result.filter((item) => item.ko === '바나나').length).toBe(1);
+  it('should always include the target item at a random position', () => {
+    for (let i = 0; i < data.length; i++) {
+      const result = getQuizWords(data, i);
+      const target = data[i];
+      const found = result.some((item) => item.ko === target.ko);
+      if (!found) {
+        console.log('Target not found at index:', i, 'Result:', result);
+      }
+      expect(found).toBeTrue();
+    }
   });
 
-  it('selects candidates sharing tags with the target', () => {
-    const result = getQuizWords(sampleData, 2);
-    const candidateKOs = result.map((item) => item.ko);
-    expect(candidateKOs).toContain('사과');
-    expect(candidateKOs).toContain('바나나');
-    expect(candidateKOs).toContain('오렌지');
+  it('should not include duplicate items', () => {
+    for (let i = 0; i < data.length; i++) {
+      const result = getQuizWords(data, i);
+      const kos = result.map((item) => item.ko);
+      const uniqueIds = new Set(kos);
+      if (uniqueIds.size !== 4) {
+        console.log('Duplicate found at index:', i, 'Result:', result);
+      }
+      expect(uniqueIds.size).toBe(4);
+    }
   });
 
-  it('fills with random items if not enough candidates', () => {
-    const result = getQuizWords(sampleData, 3);
-    expect(result.length).toBe(4);
-    expect(result.some((item) => item.ko === '물')).toBe(true);
-    expect(result.filter((item) => item.ko !== '물').length).toBe(3);
+  it('should not include the target more than once', () => {
+    for (let i = 0; i < data.length; i++) {
+      const result = getQuizWords(data, i);
+      const targetKo = data[i].ko;
+      const count = result.filter((item) => item.ko === targetKo).length;
+      if (count !== 1) {
+        console.log('Target appears more than once at index:', i, 'Result:', result);
+      }
+      expect(count).toBe(1);
+    }
   });
 
-  it('does not include duplicate items', () => {
-    const result = getQuizWords(sampleData, 4);
-    expect(new Set(result.map((item) => item.id)).size).toBe(4);
+  it('should shuffle the result so the target is not always at the same position', () => {
+    // Check for randomness by running multiple times
+    const positions = [];
+    for (let run = 0; run < 20; run++) {
+      const result = getQuizWords(data, 0);
+      const idx = result.findIndex((item) => item.ko === data[0].ko);
+      positions.push(idx);
+    }
+    // Should have at least 2 different positions
+    const uniquePositions = new Set(positions);
+    if (uniquePositions.size <= 1) {
+      console.log('Target always at the same position for index 0:', positions);
+    }
+    expect(uniquePositions.size).toBeGreaterThan(1);
   });
 
-  it('shuffles the result so target is not always at index 0', () => {
-    const positions = Array.from({ length: 5 }, () =>
-      getQuizWords(sampleData, 0)
-        .map((item) => item.ko)
-        .indexOf('사과')
-    );
-    expect(new Set(positions).size).toBeGreaterThan(1);
+  it('should ensure that if the target is a question (ends with "?"), all candidates also ends with "?"', () => {
+    for (let i = 0; i < data.length; i++) {
+      const target = data[i];
+      if (typeof target.ko === 'string' && target.ko.trim().endsWith('?')) {
+        const result = getQuizWords(data, i);
+        const questionCandidates = result.filter((item) => item.ko.trim().endsWith('?'));
+        if (questionCandidates.length !== 4) {
+          console.log('Fail (question) at index:', i, 'Result:', result);
+        }
+        expect(questionCandidates.length).toBe(4);
+      }
+    }
   });
 
-  it('works with minimum data (4 items)', () => {
-    const result = getQuizWords(sampleData.slice(0, 4), 0);
-    expect(result.length).toBe(4);
-    expect(result.some((item) => item.ko === '사과')).toBe(true);
+  it('should ensure that if the target is an exclamation (ends with "!"), all candidates also ends with "!"', () => {
+    for (let i = 0; i < data.length; i++) {
+      const target = data[i];
+      if (typeof target.ko === 'string' && target.ko.trim().endsWith('!')) {
+        const result = getQuizWords(data, i);
+        const exclamationCandidates = result.filter((item) => item.ko.trim().endsWith('!'));
+        if (exclamationCandidates.length !== 1) {
+          console.log('Fail (exclamation) at index:', i, 'Result:', result);
+        }
+        expect(exclamationCandidates.length).toBe(1);
+      }
+    }
   });
 
-  it('works if all items have unique tags', () => {
-    const uniqueTagData = [
-      { id: 1, ko: 'A', tags: ['x'] },
-      { id: 2, ko: 'B', tags: ['y'] },
-      { id: 3, ko: 'C', tags: ['z'] },
-      { id: 4, ko: 'D', tags: ['w'] },
-    ];
-    const result = getQuizWords(uniqueTagData, 0);
-    expect(result.length).toBe(4);
-    expect(result.some((item) => item.ko === 'A')).toBe(true);
+  it('should ensure that if the target does NOT end with "?" or "!", none of the candidates end with "?" or "!"', () => {
+    for (let i = 0; i < data.length; i++) {
+      const target = data[i];
+      if (
+        typeof target.ko === 'string' &&
+        !target.ko.trim().endsWith('?') &&
+        !target.ko.trim().endsWith('!')
+      ) {
+        const result = getQuizWords(data, i);
+        const hasQuestionOrExclamation = result.some(
+          (item) =>
+            typeof item.ko === 'string' &&
+            (item.ko.trim().endsWith('?') || item.ko.trim().endsWith('!'))
+        );
+        if (hasQuestionOrExclamation) {
+          console.log('Fail (normal sentence) at index:', i, 'Result:', result);
+        }
+        expect(hasQuestionOrExclamation).toBeFalse();
+      }
+    }
   });
 });

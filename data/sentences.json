@@ -128,28 +128,28 @@
     "vi": ["Không được!", "Tôi không thể!"]
   },
   {
-    "en": ["Thank you."],
+    "en": ["Thank you (formal)."],
     "ko": "감사합니다.",
     "level": "A1",
     "rr": "gamsahamnida",
     "tags": ["manners", "formal"],
-    "vi": ["Xin cảm ơn."]
+    "vi": ["Xin cảm ơn (trang trọng, lễ phép)."]
   },
   {
-    "en": ["Thank you."],
+    "en": ["Thank you (polite, friendly)."],
     "ko": "고맙습니다.",
     "level": "A1",
     "rr": "gomapseumnida",
     "tags": ["manners", "formal"],
-    "vi": ["Cảm ơn."]
+    "vi": ["Cảm ơn (lịch sự nhưng gần gũi)."]
   },
   {
-    "en": ["Thanks."],
+    "en": ["Thanks (casual, friendly)."],
     "ko": "고마워.",
     "level": "A1",
     "rr": "gomawo",
     "tags": ["manners", "informal"],
-    "vi": ["Cảm ơn (thân mật)."]
+    "vi": ["Cảm ơn (thân mật - nói với bạn bè)."]
   },
   {
     "en": ["You're welcome."],
@@ -182,5 +182,101 @@
     "rr": "nai seumuldaseot",
     "tags": ["example", "native", "age"],
     "vi": ["Hai mươi lăm tuổi"]
+  },
+  {
+    "en": ["Nice to meet you (formal)."],
+    "ko": "만나서 반갑습니다.",
+    "rr": "mannaseo bangapseumnida",
+    "level": "A1",
+    "tags": ["greeting", "introduction", "formal"],
+    "vi": ["Rất vui được gặp bạn (trang trọng)."]
+  },
+  {
+    "en": ["Nice to meet you (polite casual)."],
+    "ko": "만나서 반가워요.",
+    "rr": "mannaseo bangawoyo",
+    "level": "A1",
+    "tags": ["greeting", "introduction", "polite"],
+    "vi": ["Rất vui được gặp bạn (lịch sự thân mật)."]
+  },
+  {
+    "en": ["What is your name? (very polite, honorific)."],
+    "ko": "성함이 뭐예요?",
+    "rr": "seonghami mwoyeyo",
+    "level": "A1",
+    "tags": ["question", "introduction", "formal"],
+    "vi": ["Tên của bạn là gì? (kính ngữ)."]
+  },
+  {
+    "en": ["What is your name? (neutral polite)."],
+    "ko": "이름이 뭐예요?",
+    "rr": "ireumi mwoyeyo",
+    "level": "A1",
+    "tags": ["question", "introduction", "polite"],
+    "vi": ["Tên bạn là gì? (lịch sự)."]
+  },
+  {
+    "en": ["What’s your name? (casual)."],
+    "ko": "이름이 뭐야?",
+    "rr": "ireumi mwoya",
+    "level": "A1",
+    "tags": ["question", "introduction", "informal"],
+    "vi": ["Tên bạn là gì? (thân mật)."]
+  },
+  {
+    "en": ["I am ... (formal)."],
+    "ko": "저는 ... 입니다.",
+    "rr": "jeoneun ... imnida",
+    "level": "A1",
+    "tags": ["introduction", "answer", "formal"],
+    "vi": ["Tôi là ... (trang trọng)."]
+  },
+  {
+    "en": ["I am called ... (polite)."],
+    "ko": "...라고 해요.",
+    "rr": "...rago haeyo",
+    "level": "A1",
+    "tags": ["introduction", "answer", "polite"],
+    "vi": ["Tôi được gọi là ... (lịch sự)."]
+  },
+  {
+    "en": ["My name is ... (polite)."],
+    "ko": "제 이름은 ... 입니다.",
+    "rr": "je ireumeun ... imnida",
+    "level": "A1",
+    "tags": ["introduction", "answer", "formal"],
+    "vi": ["Tên tôi là ... (lịch sự)."]
+  },
+  {
+    "en": ["How old are you? (polite)."],
+    "ko": "나이가 어떻게 되세요?",
+    "rr": "naiga eotteoke doeseyo",
+    "level": "A1",
+    "tags": ["question", "age", "polite"],
+    "vi": ["Bạn bao nhiêu tuổi? (lịch sự)."]
+  },
+  {
+    "en": ["How old are you? (casual polite, often to kids)."],
+    "ko": "몇 살이에요?",
+    "rr": "myeot sal-ieyo",
+    "level": "A1",
+    "tags": ["question", "age", "polite"],
+    "vi": ["Bạn bao nhiêu tuổi? (lịch sự, thường hỏi trẻ em)."]
+  },
+  {
+    "en": ["I am ... years old (polite)."],
+    "ko": "저는 ... 살이에요.",
+    "rr": "jeoneun ... sal-ieyo",
+    "level": "A1",
+    "tags": ["answer", "age"],
+    "vi": ["Tôi ... tuổi (lịch sự)."]
+  },
+  {
+    "en": ["I am 25 years old."],
+    "ko": "저는 스물다섯 살이에요.",
+    "rr": "jeoneun seumuldaseot sal-ieyo",
+    "level": "A1",
+    "tags": ["answer", "age", "example"],
+    "vi": ["Tôi 25 tuổi."]
   }
 ]
