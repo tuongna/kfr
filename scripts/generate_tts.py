@@ -22,7 +22,7 @@ def load_json(path):
 
 def shorten_rr(rr: str) -> str:
     """
-    Shorten the romanized word (Phiên âm) if it's longer than 20 characters.
+    Shorten the romanized word if it's longer than 20 characters.
     Similar logic to JS genIdFromRR function.
     """
     rr = rr.replace(" ", "_").replace(".", "_")
