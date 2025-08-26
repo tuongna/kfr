@@ -302,8 +302,14 @@ button[disabled] {
   cursor: pointer;
 }
 
+.global-action-buttons details button {
+  text-align: left;
+  width: 100%;
+}
+
 .global-action-buttons .data-actions {
-  padding-left: 0.8rem;
+  background-color: var(--gray-light);
+  padding: 0.4rem 0 0 0.8rem;
   position: absolute;
 }
 
