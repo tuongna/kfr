@@ -274,15 +274,16 @@ button[disabled] {
     LAYOUT
 ============================= */
 .global-action-buttons {
+  align-items: center;
   column-gap: var(--gap-md);
   display: flex;
   position: fixed;
-  right: 0;
+  right: var(--gap-xs);
   top: 0;
   z-index: 1;
 }
 
-.global-action-buttons > button {
+.global-action-buttons button {
   background-color: var(--gray-light);
   border-radius: var(--radius-md);
   border-width: 0;
@@ -291,6 +292,19 @@ button[disabled] {
   font-size: 1.1rem;
   height: 2.4rem;
   padding: 0 0.4rem;
+}
+
+.global-action-buttons details {
+  position: relative;
+}
+
+.global-action-buttons details summary {
+  cursor: pointer;
+}
+
+.global-action-buttons .data-actions {
+  padding-left: 0.8rem;
+  position: absolute;
 }
 
 #stats {
