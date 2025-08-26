@@ -277,6 +277,7 @@ button[disabled] {
   align-items: center;
   column-gap: var(--gap-md);
   display: flex;
+  min-height: 2.4rem;
   position: fixed;
   right: var(--gap-xs);
   top: 0;
@@ -413,8 +414,8 @@ button[disabled] {
 ============================= */
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+  outline: 0.2rem solid var(--primary);
+  outline-offset: 0.2rem;
 }
 
 /* =============================
@@ -442,7 +443,7 @@ button:focus-visible {
 }
 
 .marked td {
-  border: 1px solid var(--gray);
+  border: 0.1rem solid var(--gray);
   padding: 0.6rem;
   text-align: center;
 }
@@ -498,7 +499,7 @@ button:focus-visible {
 
 .marked hr {
   border: 0;
-  border-top: 1px solid var(--gray);
+  border-top: 0.1rem solid var(--gray);
   margin: 2rem 0;
 }
 
