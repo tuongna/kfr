@@ -3,8 +3,8 @@
   "short_name": "KfR",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1976d2",
-  "theme_color": "#1976d2",
+  "background_color": "#174ea6",
+  "theme_color": "#174ea6",
   "icons": [
     {
       "src": "/assets/icons/icon-72.png",

@@ -2,7 +2,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 
 # === CONFIG ===
-PRIMARY_COLOR = "#1976d2"
+PRIMARY_COLOR = "#174ea6"
 TEXT = "KfR"
 TEXT_COLOR = "#ffffff"
 
