@@ -39,8 +39,8 @@ button {
 ============================= */
 :root {
   /* Colors */
-  --primary: #0056b3;
-  --primary-dark: #003d80;
+  --primary: #1976d2;
+  --primary-dark: #1e5ab6;
   --secondary: #d3d3d3;
   --secondary-dark: #bfbfbf;
   --success: #2ecc71;
@@ -87,12 +87,28 @@ input[disabled] + label {
   color: var(--gray);
 }
 
-select {
+select,
+input,
+textarea {
   background-color: var(--gray-light);
   border: 0.1rem solid var(--gray);
-  color: var(--text-color);
+  border-radius: calc(var(--radius-md) * 1.5);
+  box-sizing: border-box;
   font-size: 1.4rem;
-  padding: 0.3rem;
+  padding: var(--gap-sm) var(--gap-md);
+}
+
+input,
+textarea {
+  /* TODO */
+}
+
+select {
+  /* TODO */
+}
+
+textarea {
+  resize: none;
 }
 
 /* =============================
@@ -142,8 +158,8 @@ select {
 
 .progress-item > span {
   flex-shrink: 0;
-  margin-top: -0.2rem;
   font-size: 1.2rem;
+  margin-top: -0.2rem;
 }
 
 .practice-container {
@@ -257,17 +273,24 @@ button[disabled] {
 /* =============================
     LAYOUT
 ============================= */
-#btn-update {
-  background-color: var(--gray-light);
-  border-radius: 999rem;
-  box-shadow: 0 0 0.2rem 0.2rem var(--gray-light);
-  height: 2.4rem;
+.global-action-buttons {
+  column-gap: var(--gap-md);
+  display: flex;
   position: fixed;
-  right: var(--gap-md);
-  top: var(--gap-sm);
-  width: 2.4rem;
+  right: 0;
+  top: 0;
   z-index: 1;
+}
+
+.global-action-buttons > button {
+  background-color: var(--gray-light);
+  border-radius: var(--radius-md);
   border-width: 0;
+  box-shadow: 0 0 0.2rem 0.2rem var(--gray-light);
+  cursor: pointer;
+  font-size: 1.1rem;
+  height: 2.4rem;
+  padding: 0 0.4rem;
 }
 
 #stats {
@@ -321,11 +344,16 @@ button[disabled] {
 }
 
 /* =============================
-    LESSON CARD
+    LESSON
 ============================= */
 #card.lesson-card {
   max-width: var(--w-md);
   padding: var(--gap-lg);
+}
+
+.lesson-selection {
+  margin: 0 auto;
+  max-width: var(--w-md);
 }
 
 /* =============================
@@ -345,26 +373,17 @@ button[disabled] {
   color: var(--text-light);
   display: block;
   font-weight: bold;
-  margin-bottom: var(--gap-xs);
+  margin: var(--gap-md) auto var(--gap-xs) auto;
 }
 
 #card.feedback-card input,
 #card.feedback-card textarea {
-  border: 0.1rem solid var(--gray);
-  border-radius: var(--radius-xs);
-  box-sizing: border-box;
-  font-size: 1.4rem;
-  margin-bottom: var(--gap-md);
-  padding: var(--gap-sm);
   width: 100%;
-}
-
-#card.feedback-card textarea {
-  resize: vertical;
 }
 
 #card.feedback-card button {
   font-size: 1.6rem;
+  margin-top: var(--gap-sm);
   padding: var(--gap-sm);
   width: 100%;
 }

@@ -80,12 +80,12 @@
     "vi": ["Tạm biệt (nói khi người khác rời đi)."]
   },
   {
-    "en": ["Hi!", "Bye! (informal)"],
+    "en": ["Hi!", "Bye (informal)!"],
     "ko": "안녕!",
     "level": "A1",
     "rr": "annyeong",
     "tags": ["greeting", "farewell", "informal"],
-    "vi": ["Chào!", "Tạm biệt! (thân mật)"]
+    "vi": ["Chào!", "Tạm biệt (thân mật)!"]
   },
   {
     "en": ["Yes."],
@@ -200,28 +200,28 @@
     "vi": ["Rất vui được gặp bạn (lịch sự thân mật)."]
   },
   {
-    "en": ["What is your name? (very polite, honorific)."],
+    "en": ["What is your name (very polite, honorific)?"],
     "ko": "성함이 뭐예요?",
     "rr": "seonghami mwoyeyo",
     "level": "A1",
     "tags": ["question", "introduction", "formal"],
-    "vi": ["Tên của bạn là gì? (kính ngữ)."]
+    "vi": ["Tên của bạn là gì (kính ngữ)?"]
   },
   {
-    "en": ["What is your name? (neutral polite)."],
+    "en": ["What is your name (neutral polite)?"],
     "ko": "이름이 뭐예요?",
     "rr": "ireumi mwoyeyo",
     "level": "A1",
     "tags": ["question", "introduction", "polite"],
-    "vi": ["Tên bạn là gì? (lịch sự)."]
+    "vi": ["Tên bạn là gì (lịch sự)?"]
   },
   {
-    "en": ["What’s your name? (casual)."],
+    "en": ["What's your name (casual)?"],
     "ko": "이름이 뭐야?",
     "rr": "ireumi mwoya",
     "level": "A1",
     "tags": ["question", "introduction", "informal"],
-    "vi": ["Tên bạn là gì? (thân mật)."]
+    "vi": ["Tên bạn là gì (thân mật)?"]
   },
   {
     "en": ["I am ... (formal)."],
@@ -253,15 +253,15 @@
     "rr": "naiga eotteoke doeseyo",
     "level": "A1",
     "tags": ["question", "age", "polite"],
-    "vi": ["Bạn bao nhiêu tuổi? (lịch sự)."]
+    "vi": ["Bạn bao nhiêu tuổi (lịch sự)?"]
   },
   {
-    "en": ["How old are you? (casual polite, often to kids)."],
+    "en": ["How old are you (casual polite, often to kids)?"],
     "ko": "몇 살이에요?",
     "rr": "myeot sal-ieyo",
     "level": "A1",
     "tags": ["question", "age", "polite"],
-    "vi": ["Bạn bao nhiêu tuổi? (lịch sự, thường hỏi trẻ em)."]
+    "vi": ["Bạn bao nhiêu tuổi (lịch sự, thường hỏi trẻ em)?"]
   },
   {
     "en": ["I am ... years old (polite)."],

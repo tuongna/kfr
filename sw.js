@@ -1,4 +1,5 @@
 import { APP_VERSION } from './version.js';
+import { genIdFromRR } from './js/utils.js';
 
 const CACHE_NAME = `pwa-cache-${APP_VERSION}`;
 
@@ -8,6 +9,7 @@ const coreFiles = [
   '/lessions.html',
   '/feedback.html',
   '/style.css',
+  '/js/vendors/marked.esm.js',
   '/js/app.js',
   '/js/feedback.js',
   '/js/lessions.js',
@@ -26,11 +28,29 @@ const icons = [
   '/assets/icons/icon-512.png',
 ];
 
-const urlsToCache = [...coreFiles, ...icons];
+const audioFilesToCache = [];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
+    (async () => {
+      // Fetch audio file list during install
+      try {
+        const vocabRes = await fetch('/data/vocab.json');
+        const vocab = await vocabRes.json();
+
+        const sentencesRes = await fetch('/data/sentences.json');
+        const sentences = await sentencesRes.json();
+
+        [...vocab, ...sentences].forEach((item) => {
+          const filePath = `/assets/audio/${genIdFromRR(item.rr)}.mp3`;
+          audioFilesToCache.push(filePath);
+        });
+      } catch (err) {
+        console.warn('Failed to fetch audio lists', err);
+      }
+
+      const urlsToCache = [...coreFiles, ...icons, ...audioFilesToCache];
+      const cache = await caches.open(CACHE_NAME);
       for (const url of urlsToCache) {
         try {
           await cache.add(url);
@@ -38,7 +58,7 @@ self.addEventListener('install', (event) => {
           console.warn('Failed to cache', url, err);
         }
       }
-    })
+    })()
   );
   self.skipWaiting();
 });

@@ -7,7 +7,13 @@
       name="description"
       content="Gửi góp ý cho 라이언의 한국어. Chúng tôi luôn lắng nghe ý kiến của bạn để cải thiện trải nghiệm học tiếng Hàn."
     />
+    <meta name="theme-color" content="#1976d2" />
     <title>KfR | Góp ý</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="manifest.json" />
   </head>
@@ -35,19 +41,27 @@
         <h2>Send Feedback</h2>
         <form action="https://formspree.io/f/xzzvwqpd" method="POST">
           <label for="name">Tên của bạn</label>
-          <input type="text" id="name" name="name" />
+          <input type="text" id="name" name="name" autocomplete="name" />
 
           <label for="email">Email của bạn</label>
-          <input type="email" id="email" name="_replyto" placeholder="Tùy chọn" />
+          <input
+            type="email"
+            id="email"
+            name="_replyto"
+            placeholder="Tùy chọn"
+            autocomplete="email"
+          />
 
           <label for="message">Góp ý của bạn</label>
-          <textarea id="message" name="message" rows="5" required></textarea>
+          <textarea id="message" name="message" rows="5" required autocomplete="off"></textarea>
 
           <button class="btn-primary" type="submit">Gửi</button>
         </form>
       </div>
     </div>
-    <button id="btn-update" style="display: none">🔄</button>
+    <div class="global-action-buttons">
+      <button id="btn-update" style="display: none">🔄 Update</button>
+    </div>
     <footer class="footer">
       <a href="https://github.com/tuongna/kfr" target="_blank" rel="noopener noreferrer">
         Xem trên GitHub
