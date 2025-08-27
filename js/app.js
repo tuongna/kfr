@@ -7,7 +7,7 @@ import {
   findMatchingIndex,
   getQuizWords,
 } from './utils.js';
-import { getLearned, saveLearned, migrateOldLearned } from './store.js';
+import { getLearned, saveLearned } from './store.js';
 
 // ==============================
 // CONFIG & CONSTANTS
@@ -72,7 +72,7 @@ function getUrlKey() {
     return VOCAB_KEY;
   }
 
-  return hash.replace('#', '');
+  return hash.replace('#/', '');
 }
 
 function getData() {
@@ -99,6 +99,10 @@ function getLearnedWords() {
 function canPractice(word) {
   const { nextReview } = getLearnedWords()[word] || {};
   return !nextReview || new Date(nextReview) <= new Date();
+}
+
+function canPractices() {
+  return getData().filter((item) => canPractice(item.ko));
 }
 
 function hasPractice() {
@@ -173,6 +177,11 @@ function render(index) {
   if (practiceMode.checked) {
     learnProgressList.style.display = '';
     renderQuiz(index, data, learnedWords);
+
+    if (canPractices() <= 1) {
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+    }
   }
 
   if (!hasPractice()) {
@@ -210,7 +219,10 @@ function renderQuiz(index, data, learnedWords) {
   renderProgress(data, learnedWords);
 
   quizEl.innerHTML = getQuizWords(getData(), getIndex())
-    .map((v) => `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE]}</button>`)
+    .map(
+      (v) =>
+        `<button class="btn-secondary" data-word="${v.ko}">${v[MOTHER_TONGUE].join('; ')}</button>`
+    )
     .join('');
 
   quizEl.querySelectorAll('button').forEach((btn) => {
@@ -225,11 +237,6 @@ function renderQuiz(index, data, learnedWords) {
       }
     });
   });
-
-  if (data.length - Object.keys(getLearnedWords()).length <= 1) {
-    prevBtn.disabled = true;
-    nextBtn.disabled = true;
-  }
 }
 
 function renderAndSave(index) {
@@ -252,8 +259,9 @@ function updateStats() {
 // ==============================
 function prevCard() {
   if (practiceMode.checked && hasPractice()) {
-    const data = getData(),
-      index = getIndex();
+    const data = getData();
+    const index = getIndex();
+
     for (let i = index - 1; i > index - data.length; i--) {
       const idx = (i + data.length) % data.length;
       if (canPractice(data[idx].ko)) {
@@ -261,21 +269,28 @@ function prevCard() {
         break;
       }
     }
-  } else decreaseIndex();
+  } else {
+    decreaseIndex();
+  }
+
   renderAndSave(getIndex());
 }
 
 function nextCard() {
   if (practiceMode.checked && hasPractice()) {
-    const data = getData(),
-      index = getIndex();
+    const data = getData();
+    const index = getIndex();
+
     for (let i = index + 1; i < index + data.length; i++) {
       if (canPractice(data[i % data.length].ko)) {
         setIndex(i % data.length);
         break;
       }
     }
-  } else increaseIndex();
+  } else {
+    increaseIndex();
+  }
+
   renderAndSave(getIndex());
 }
 
@@ -303,8 +318,10 @@ function activatePracticeMode() {
 function activateLinks() {
   const key = getUrlKey();
   document.querySelectorAll('a[data-link]').forEach((a) => {
-    const hash = a.getAttribute('href').replace('/', '');
-    const linkKey = hash.replace('#', '');
+    // Define regex to extract the route key from href (matches "#/vocab", "#/sentences", etc.)
+    const routeRegex = /^\/?#\/([^/]+(?:\/.*)?)$/;
+    const hash = a.getAttribute('href').replace(routeRegex, '$1');
+    const linkKey = hash.split('/')[0];
     a.classList.toggle('active', linkKey === key);
   });
 }
@@ -345,14 +362,18 @@ window.addEventListener('hashchange', onRouteChange);
 // ==============================
 (async () => {
   await loadData();
-  migrateOldLearned();
   renderAndSave(getIndex());
   initRouter(onRouteChange);
   practiceMode.checked = localStorage.getItem(PRACTICE_MODE_KEY) === '1';
 
-  // Set initial hash
-  if (!window.location.hash) {
-    window.location.hash = '#vocab';
+  // Ensure default route is set to vocab if no hash or on index.html
+  const path = window.location.pathname;
+  const hash = window.location.hash;
+  const isIndexPage = path === '/' || path.endsWith('/index.html');
+  const isEmptyHash = ['', '#', '#/'].includes(hash);
+  if (isIndexPage && isEmptyHash) {
+    window.location.hash = '#/vocab';
   }
+
   onRouteChange();
 })();

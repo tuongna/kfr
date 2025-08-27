@@ -3,7 +3,7 @@
 ```mermaid
 flowchart TD
     %% SPA
-    SPA1[User opens SPA page] --> SPA2[Check URL: / or /#vocab or /#sentences]
+    SPA1[User opens SPA page] --> SPA2[Check URL: / or /#/vocab or /#/sentences]
     SPA2 --> SPA3{Load Data from localStorage or fetch JSON}
     SPA3 --> SPA4[Set current index from localStorage or default 0]
     SPA4 --> SPA5[Render card]
@@ -51,8 +51,8 @@ flowchart TD
     F6 -- No --> F8[Show error message]
 
     %% Navigation between SSR pages
-    NAV1[Navigation bar links] --> NAV2[Từ vựng -> /#vocab]
-    NAV1 --> NAV3[Câu mẫu -> /#sentences]
+    NAV1[Navigation bar links] --> NAV2[Từ vựng -> /#/vocab]
+    NAV1 --> NAV3[Câu mẫu -> /#/sentences]
     NAV1 --> NAV4[Bài học -> lessons.html]
     NAV1 --> NAV5[Góp ý -> feedback.html]
 ```

@@ -275,7 +275,7 @@ button[disabled] {
 ============================= */
 .global-action-buttons {
   align-items: center;
-  column-gap: var(--gap-md);
+  column-gap: var(--gap-sm);
   display: flex;
   min-height: 2.4rem;
   position: fixed;
@@ -284,23 +284,21 @@ button[disabled] {
   z-index: 1;
 }
 
-.global-action-buttons button {
+.global-action-buttons button,
+.global-action-buttons details summary {
   background-color: var(--gray-light);
   border-radius: var(--radius-md);
   border-width: 0;
-  box-shadow: 0 0 0.2rem 0.2rem var(--gray-light);
   cursor: pointer;
   font-size: 1.1rem;
   height: 2.4rem;
+  line-height: 2.4rem;
   padding: 0 0.4rem;
+  user-select: none;
 }
 
 .global-action-buttons details {
   position: relative;
-}
-
-.global-action-buttons details summary {
-  cursor: pointer;
 }
 
 .global-action-buttons details button {
@@ -310,7 +308,7 @@ button[disabled] {
 
 .global-action-buttons .data-actions {
   background-color: var(--gray-light);
-  padding: 0.4rem 0 0 0.8rem;
+  padding: 0 0 0 1rem;
   position: absolute;
 }
 
