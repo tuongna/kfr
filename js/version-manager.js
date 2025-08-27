@@ -23,6 +23,17 @@ function checkAndUpdateVersion() {
       });
     }
 
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((regs) => {
+          regs.forEach((reg) => reg.unregister());
+        })
+        .finally(() => {
+          navigator.serviceWorker.register('/sw.js', { type: 'module' });
+        });
+    }
+
     localStorage.setItem(VERSION_KEY, APP_VERSION);
     window.location.reload();
   } else {
