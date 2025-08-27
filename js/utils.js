@@ -43,45 +43,40 @@ export function cloneDeep(obj) {
 }
 
 /**
- * Shuffles the data array while grouping items with similar tags together.
- * Each group (items with the same sorted tags) is shuffled internally, then the group order is shuffled.
- * The result is a new order where items with similar tags are close, but overall order is randomized.
+ * Shuffles an array deterministically based on its length.
+ * The order remains the same for the same array length on each call.
+ * Only when the array length changes, the shuffle order changes.
  *
- * @param {Array<Object>} data - The array of items to shuffle, each item should have a 'tags' property (array).
- * @returns {Array<Object>} The shuffled data array.
+ * @param {Array<any>} array - The array to shuffle.
+ * @returns {Array<any>} A new shuffled array.
  */
-export function shuffleData(data) {
-  // Group items by their sorted tags
-  const groups = {};
-  cloneDeep(data).forEach((item) => {
-    const key = item.tags.slice().sort().join('|');
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(item);
-  });
+export function shuffle(array) {
+  const arr = array.slice();
+  const len = arr.length;
+  let seed = len * 9973; // Use array length as seed, 9973 is a prime for better distribution
 
-  // Shuffle each group
-  Object.values(groups).forEach((group) => {
-    for (let idx = group.length - 1; idx > 0; idx--) {
-      const randIdx = Math.floor(Math.random() * (idx + 1));
-      [group[idx], group[randIdx]] = [group[randIdx], group[idx]];
-    }
-  });
-
-  // Shuffle group order
-  const groupKeys = Object.keys(groups);
-  for (let i = groupKeys.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [groupKeys[i], groupKeys[j]] = [groupKeys[j], groupKeys[i]];
+  // Simple deterministic pseudo-random number generator
+  function random() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
   }
 
-  // Concatenate groups so similar tags are close
-  let result = [];
-  groupKeys.forEach((key) => {
-    result = result.concat(groups[key]);
-  });
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
 
-  // Return the shuffled data
-  return result;
+  return arr;
+}
+
+/**
+ * Shuffles the elements of the provided data array.
+ *
+ * @param {Array} data - The array of data to shuffle.
+ * @returns {Array} The shuffled array.
+ */
+export function shuffleData(data) {
+  return shuffle(data);
 }
 
 /**
@@ -96,21 +91,6 @@ export function shuffleData(data) {
 export function findMatchingIndex(srcData, desData, srcIndex) {
   const srcItem = srcData[srcIndex];
   return desData.findIndex((item) => item.ko === srcItem.ko);
-}
-
-/**
- * Shuffles an array using the Fisher-Yates algorithm for unbiased randomization.
- *
- * @param {Array<any>} array - The array to shuffle.
- * @returns {Array<any>} A new shuffled array.
- */
-export function shuffle(array) {
-  const arr = array.slice();
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
 }
 
 /**

@@ -97,8 +97,8 @@ function getLearnedWords() {
 }
 
 function canPractice(word) {
-  const { nextReview } = getLearnedWords()[word] || {};
-  return !nextReview || new Date(nextReview) <= new Date();
+  const meta = getLearnedWords()[word];
+  return !meta?.nextReview || Date.now() >= new Date(meta?.nextReview).getTime();
 }
 
 function canPractices() {
@@ -174,16 +174,6 @@ function render(index) {
   prevBtn.disabled = false;
   nextBtn.disabled = false;
 
-  if (practiceMode.checked) {
-    learnProgressList.style.display = '';
-    renderQuiz(index, data, learnedWords);
-
-    if (canPractices() <= 1) {
-      prevBtn.disabled = true;
-      nextBtn.disabled = true;
-    }
-  }
-
   if (!hasPractice()) {
     practiceMode.disabled = true;
     practiceMode.checked = false;
@@ -192,6 +182,16 @@ function render(index) {
     renderProgress(data, learnedWords);
   } else {
     practiceMode.disabled = false;
+  }
+
+  if (practiceMode.checked) {
+    learnProgressList.style.display = '';
+    renderQuiz(index, data, learnedWords);
+
+    if ((canPractices()?.length || 0) <= 1) {
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+    }
   }
 
   const meta = learnedWords[item.ko];
@@ -296,10 +296,9 @@ function nextCard() {
 
 function activatePracticeMode() {
   const key = getUrlKey();
-  const isPracticeMode = practiceMode.checked;
-  localStorage.setItem(PRACTICE_MODE_KEY, isPracticeMode ? '1' : '0');
+  localStorage.setItem(PRACTICE_MODE_KEY, practiceMode.checked ? '1' : '0');
 
-  if (isPracticeMode) {
+  if (practiceMode.checked) {
     setIndex(findMatchingIndex(dataSource[key], dataSourcePractice[key], currentIndex[key]));
   } else {
     setIndex(findMatchingIndex(dataSourcePractice[key], dataSource[key], currentIndex[key]));
@@ -351,6 +350,7 @@ async function loadData() {
 // ==============================
 // EVENTS
 // ==============================
+// Attach event listeners for UI controls
 speakBtn.addEventListener('click', handleClickSpeak);
 prevBtn.addEventListener('click', prevCard);
 nextBtn.addEventListener('click', nextCard);
@@ -360,11 +360,22 @@ window.addEventListener('hashchange', onRouteChange);
 // ==============================
 // INIT
 // ==============================
+// Initialize app state and UI
 (async () => {
+  // Restore practice mode from localStorage
+  practiceMode.checked = localStorage.getItem(PRACTICE_MODE_KEY) === '1';
+
+  // Load vocabulary and sentences data
   await loadData();
+
+  // Render initial card and activate router
   renderAndSave(getIndex());
   initRouter(onRouteChange);
-  practiceMode.checked = localStorage.getItem(PRACTICE_MODE_KEY) === '1';
+
+  // If practice mode is enabled but current card can't be practiced, go to next card
+  if (practiceMode.checked && !canPractice(getData()[getIndex()].ko)) {
+    nextCard();
+  }
 
   // Ensure default route is set to vocab if no hash or on index.html
   const path = window.location.pathname;
@@ -375,5 +386,6 @@ window.addEventListener('hashchange', onRouteChange);
     window.location.hash = '#/vocab';
   }
 
+  // Activate links and update UI for current route
   onRouteChange();
 })();
