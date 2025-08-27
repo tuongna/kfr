@@ -28,28 +28,10 @@ const icons = [
   '/assets/icons/icon-512.png',
 ];
 
-const audioFilesToCache = [];
-
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
-      // Fetch audio file list during install
-      try {
-        const vocabRes = await fetch('/data/vocab.json');
-        const vocab = await vocabRes.json();
-
-        const sentencesRes = await fetch('/data/sentences.json');
-        const sentences = await sentencesRes.json();
-
-        [...vocab, ...sentences].forEach((item) => {
-          const filePath = `/assets/audio/${genIdFromRR(item.rr)}.mp3`;
-          audioFilesToCache.push(filePath);
-        });
-      } catch (err) {
-        console.warn('Failed to fetch audio lists', err);
-      }
-
-      const urlsToCache = [...coreFiles, ...icons, ...audioFilesToCache];
+      const urlsToCache = [...coreFiles, ...icons];
       const cache = await caches.open(CACHE_NAME);
       for (const url of urlsToCache) {
         try {
@@ -61,6 +43,40 @@ self.addEventListener('install', (event) => {
     })()
   );
   self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    (async () => {
+      // Remove old caches
+      const keys = await caches.keys();
+      await Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)));
+
+      // Cache audio files during activate
+      try {
+        const vocabRes = await fetch('/data/vocab.json');
+        const vocab = await vocabRes.json();
+
+        const sentencesRes = await fetch('/data/sentences.json');
+        const sentences = await sentencesRes.json();
+
+        const audioFiles = [...vocab, ...sentences].map(
+          (item) => `/assets/audio/${genIdFromRR(item.rr)}.mp3`
+        );
+        const cache = await caches.open(CACHE_NAME);
+        for (const url of audioFiles) {
+          try {
+            await cache.add(url);
+          } catch (err) {
+            console.warn('Failed to cache', url, err);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch audio lists', err);
+      }
+    })()
+  );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
@@ -92,15 +108,4 @@ self.addEventListener('fetch', (event) => {
         .catch(() => caches.match('/index.html'));
     })
   );
-});
-
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-      )
-  );
-  self.clients.claim();
 });

@@ -1,6 +1,9 @@
+export const VOCAB_KEY = 'vocab';
+export const SENTENCES_KEY = 'sentences';
+
 export const STORAGE_KEYS = {
-  vocab: 'learnedVocab',
-  sentences: 'learnedSentences',
+  [VOCAB_KEY]: 'learnedVocab',
+  [SENTENCES_KEY]: 'learnedSentences',
 };
 
 export function getLearned(key) {

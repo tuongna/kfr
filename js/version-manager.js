@@ -1,4 +1,4 @@
-import { STORAGE_KEYS, getLearned } from './store.js';
+import { STORAGE_KEYS, VOCAB_KEY, SENTENCES_KEY, getLearned } from './store.js';
 import { APP_VERSION } from '../version.js';
 
 const VERSION_KEY = 'appVersion';
@@ -44,19 +44,22 @@ function handleClickUpdate(e) {
 }
 
 function handleClickExportData() {
-  const data = {
+  const exportData = {
     version: APP_VERSION,
-    learnedVocab: getLearned(STORAGE_KEYS.vocab),
-    learnedSentences: getLearned(STORAGE_KEYS.sentences),
+    learnedVocab: getLearned(VOCAB_KEY),
+    learnedSentences: getLearned(SENTENCES_KEY),
   };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `kfr-export-${Date.now()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `kfr-export-${Date.now()}.json`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+
   URL.revokeObjectURL(url);
 }
 
@@ -64,36 +67,37 @@ function handleClickImportData() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'application/json';
-  input.onchange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const importedData = JSON.parse(event.target.result);
-          if (importedData.learnedVocab || importedData.learnedSentences) {
-            if (importedData.learnedVocab) {
-              localStorage.setItem(STORAGE_KEYS.vocab, JSON.stringify(importedData.learnedVocab));
-            }
-            if (importedData.learnedSentences) {
-              localStorage.setItem(
-                STORAGE_KEYS.sentences,
-                JSON.stringify(importedData.learnedSentences)
-              );
-            }
-            console.log('Data imported successfully! Reloading...');
-            window.location.reload();
-          } else {
-            console.log('Invalid data.');
-          }
-        } catch (err) {
-          console.error('Failed to import data', err);
-          console.log('An error occurred while importing data.');
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
+
+  input.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      let importedData;
+      try {
+        importedData = JSON.parse(event.target.result);
+      } catch (err) {
+        console.error('Failed to parse imported data:', err);
+        alert('Invalid JSON file.');
+        return;
+      }
+
+      const { learnedVocab, learnedSentences } = importedData;
+      const isValidVocab = true; // TODO: Implement validation logic
+      const isValidSentences = true; // TODO: Implement validation logic
+      if (isValidVocab && isValidSentences) {
+        localStorage.setItem(STORAGE_KEYS.vocab, JSON.stringify(learnedVocab));
+        localStorage.setItem(STORAGE_KEYS.sentences, JSON.stringify(learnedSentences));
+        console.log('Data imported successfully. Reloading...');
+        window.location.reload();
+      } else {
+        alert('Imported file does not contain valid data.');
+      }
+    };
+    reader.readAsText(file);
+  });
+
   input.click();
 }
 

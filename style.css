@@ -236,6 +236,10 @@ button[disabled] {
   background-color: var(--secondary);
 }
 
+.btn-text {
+  color: var(--text-color);
+}
+
 .btn-icon {
   background-color: transparent;
   border: 0;
