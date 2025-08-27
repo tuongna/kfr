@@ -312,7 +312,6 @@ button[disabled] {
 
 .global-action-buttons .data-actions {
   background-color: var(--gray-light);
-  padding: 0 0 0 1rem;
   position: absolute;
 }
 
