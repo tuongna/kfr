@@ -1,6 +1,7 @@
 import { getQuizWords } from './utils.js';
 import fs from 'fs';
 
+// const data = JSON.parse(fs.readFileSync('./data/vocab.json', 'utf8'));
 const data = JSON.parse(fs.readFileSync('./data/sentences.json', 'utf8'));
 
 describe('getQuizWords', () => {
@@ -50,20 +51,24 @@ describe('getQuizWords', () => {
     }
   });
 
-  it('should shuffle the result so the target is not always at the same position', () => {
-    // Check for randomness by running multiple times
+  it('should not have the target appear at the same position more than 50% of the time', () => {
     const positions = [];
-    for (let run = 0; run < 20; run++) {
-      const result = getQuizWords(data, 0);
-      const idx = result.findIndex((item) => item.ko === data[0].ko);
+    const runs = data.length;
+    for (let run = 0; run < runs; run++) {
+      const result = getQuizWords(data, run);
+      const idx = result.findIndex((item) => item.ko === data[run].ko);
       positions.push(idx);
     }
-    // Should have at least 2 different positions
-    const uniquePositions = new Set(positions);
-    if (uniquePositions.size <= 1) {
-      console.log('Target always at the same position for index 0:', positions);
+    // Count occurrences of each position
+    const counts = positions.reduce((acc, pos) => {
+      acc[pos] = (acc[pos] || 0) + 1;
+      return acc;
+    }, {});
+    const maxCount = Math.max(...Object.values(counts));
+    if (maxCount > runs / 2) {
+      console.log('Target appears at the same position too often:', positions);
     }
-    expect(uniquePositions.size).toBeGreaterThan(1);
+    expect(maxCount).toBeLessThanOrEqual(runs / 2);
   });
 
   it('should ensure that if the target is a question (ends with "?"), all candidates also ends with "?"', () => {
@@ -86,9 +91,7 @@ describe('getQuizWords', () => {
       if (typeof target.ko === 'string' && target.ko.trim().endsWith('!')) {
         const result = getQuizWords(data, i);
         const exclamationCandidates = result.filter((item) => item.ko.trim().endsWith('!'));
-        if (exclamationCandidates.length !== 1) {
-          console.log('Fail (exclamation) at index:', i, 'Result:', result);
-        }
+        console.log('Fail (exclamation) at index:', i, 'Result:', result);
         expect(exclamationCandidates.length).toBe(1);
       }
     }
@@ -112,6 +115,23 @@ describe('getQuizWords', () => {
           console.log('Fail (normal sentence) at index:', i, 'Result:', result);
         }
         expect(hasQuestionOrExclamation).toBeFalse();
+      }
+    }
+  });
+
+  it('should not include candidates with overlapping Vietnamese meanings with the target', () => {
+    for (let i = 0; i < data.length; i++) {
+      const result = getQuizWords(data, i);
+      const target = data[i];
+      // All candidates except target should not have overlapping 'vi' meanings
+      for (const item of result) {
+        if (item.ko !== target.ko && Array.isArray(item.vi) && Array.isArray(target.vi)) {
+          const overlap = item.vi.some((mean) => target.vi.includes(mean));
+          if (overlap) {
+            console.log('Overlapping vi meanings at index:', i, 'Result:', result);
+          }
+          expect(overlap).toBeFalse();
+        }
       }
     }
   });

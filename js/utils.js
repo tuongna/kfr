@@ -6,7 +6,7 @@
  * @returns {string} The generated ID.
  */
 export function genIdFromRR(rr = '') {
-  rr = rr.replace(/[.]/g, '_').replace(/\s+/g, '_');
+  rr = rr.toLowerCase().replace(/[.]/g, '_').replace(/\s+/g, '_');
 
   if (rr.length <= 20) {
     return rr;
@@ -50,10 +50,9 @@ export function cloneDeep(obj) {
  * @param {Array<any>} array - The array to shuffle.
  * @returns {Array<any>} A new shuffled array.
  */
-export function shuffle(array) {
+export function shuffle(array, num) {
   const arr = array.slice();
-  const len = arr.length;
-  let seed = len * 9973; // Use array length as seed, 9973 is a prime for better distribution
+  let seed = num * 9973; // Use array length as seed, 9973 is a prime for better distribution
 
   // Simple deterministic pseudo-random number generator
   function random() {
@@ -76,7 +75,7 @@ export function shuffle(array) {
  * @returns {Array} The shuffled array.
  */
 export function shuffleData(data) {
-  return shuffle(data);
+  return shuffle(data, data.length);
 }
 
 /**
@@ -116,7 +115,13 @@ export function getQuizWords(data, index) {
   const isExclaim = koStr.endsWith('!');
   const isNormal = !isQuestion && !isExclaim;
 
-  // Candidates sharing at least one tag, excluding the target
+  // Helper to check if two items have overlapping Vietnamese meanings
+  function hasSameVi(a, b) {
+    if (!Array.isArray(a.vi) || !Array.isArray(b.vi)) return false;
+    return a.vi.some((mean) => b.vi.includes(mean));
+  }
+
+  // Candidates sharing at least one tag, excluding the target and same Vietnamese meaning
   let candidates = data
     .map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => {
@@ -125,6 +130,7 @@ export function getQuizWords(data, index) {
       if (isQuestion && !itemKo.endsWith('?')) return false;
       if (isExclaim && !itemKo.endsWith('!')) return false;
       if (isNormal && (itemKo.endsWith('?') || itemKo.endsWith('!'))) return false;
+      if (hasSameVi(item, target)) return false;
       return item.tags.some((tag) => targetTags.has(tag));
     });
 
@@ -139,10 +145,10 @@ export function getQuizWords(data, index) {
     }
   }
 
-  // If not enough, fill from other items (excluding duplicates and the target)
+  // If not enough, fill from other items (excluding duplicates, the target, and same Vietnamese meaning)
   if (selected.length < 3) {
     for (let i = 0; i < data.length && selected.length < 3; i++) {
-      if (!usedIdx.has(i)) {
+      if (!usedIdx.has(i) && !hasSameVi(data[i], target)) {
         const item = data[i];
         const itemKo = typeof item.ko === 'string' ? item.ko.trim() : '';
         // If target is a question, prefer candidates ending with "?"
@@ -165,7 +171,7 @@ export function getQuizWords(data, index) {
     // If still not enough, allow mixing in other answers (not ending with "?" or "!")
     if (selected.length < 3 && isNormal) {
       for (let i = 0; i < data.length && selected.length < 3; i++) {
-        if (!usedIdx.has(i)) {
+        if (!usedIdx.has(i) && !hasSameVi(data[i], target)) {
           const itemKo = typeof data[i].ko === 'string' ? data[i].ko.trim() : '';
           if (!itemKo.endsWith('?') && !itemKo.endsWith('!')) {
             selected.push(data[i]);
@@ -174,10 +180,10 @@ export function getQuizWords(data, index) {
         }
       }
     }
-    // If still not enough, allow any remaining items
+    // If still not enough, allow any remaining items (excluding same Vietnamese meaning)
     if (selected.length < 3) {
       for (let i = 0; i < data.length && selected.length < 3; i++) {
-        if (!usedIdx.has(i)) {
+        if (!usedIdx.has(i) && !hasSameVi(data[i], target)) {
           selected.push(data[i]);
           usedIdx.add(i);
         }
@@ -186,5 +192,6 @@ export function getQuizWords(data, index) {
   }
 
   // Merge target and selected, then shuffle once
-  return shuffle([target, ...selected]);
+  return shuffle([target, ...selected], index);
 }
+``;

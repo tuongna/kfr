@@ -600,14 +600,6 @@
     "vi": ["Cá"]
   },
   {
-    "en": ["Car", "Vehicle"],
-    "ko": "차",
-    "level": "A1",
-    "rr": "cha",
-    "tags": ["transportation"],
-    "vi": ["Xe"]
-  },
-  {
     "en": ["Bus"],
     "ko": "버스",
     "level": "A1",
@@ -1344,20 +1336,20 @@
     "vi": ["Tên (kính ngữ)"]
   },
   {
-    "en": ["Age"],
+    "en": ["Age (general concept of age)"],
     "ko": "나이",
     "rr": "nai",
     "level": "A1",
     "tags": ["noun", "age"],
-    "vi": ["Tuổi"]
+    "vi": ["Tuổi (khái niệm chung về tuổi, dùng trong câu hỏi hoặc nói chung)"]
   },
   {
-    "en": ["Years old (counter for age)"],
+    "en": ["Years old (used when counting someone's age)"],
     "ko": "살",
     "rr": "sal",
     "level": "A1",
     "tags": ["counter", "age"],
-    "vi": ["Tuổi"]
+    "vi": ["Tuổi (số tuổi cụ thể, dùng khi trả lời hoặc nói về tuổi ai đó)"]
   },
   {
     "en": ["I (humble)"],
