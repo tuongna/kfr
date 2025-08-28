@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 # === CONFIG ===
 PRIMARY_COLOR = "#174ea6"
-TEXT = "KfR"
+TEXT = "KᵒR"
 TEXT_COLOR = "#ffffff"
 
 PNG_SIZES = [72, 128, 144, 192, 512]
