@@ -64,12 +64,10 @@ self.addEventListener('activate', (event) => {
           (item) => `/assets/audio/${genIdFromRR(item.rr)}.mp3`
         );
         const cache = await caches.open(CACHE_NAME);
-        for (const url of audioFiles) {
-          try {
-            await cache.add(url);
-          } catch (err) {
-            console.warn('Failed to cache', url, err);
-          }
+        try {
+          await cache.addAll(audioFiles);
+        } catch (err) {
+          console.warn('Failed to cache audio files', err);
         }
       } catch (err) {
         console.warn('Failed to fetch audio lists', err);

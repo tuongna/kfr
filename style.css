@@ -94,6 +94,7 @@ textarea {
   border: 0.1rem solid var(--gray);
   border-radius: calc(var(--radius-md) * 1.5);
   box-sizing: border-box;
+  color: var(--text-color);
   font-size: 1.4rem;
   padding: var(--gap-sm) var(--gap-md);
 }
@@ -288,8 +289,7 @@ button[disabled] {
   z-index: 1;
 }
 
-.global-action-buttons button,
-.global-action-buttons details summary {
+.global-action-buttons button {
   background-color: var(--gray-light);
   border-radius: var(--radius-md);
   border-width: 0;
@@ -299,15 +299,6 @@ button[disabled] {
   line-height: 2.4rem;
   padding: 0 0.4rem;
   user-select: none;
-}
-
-.global-action-buttons details {
-  position: relative;
-}
-
-.global-action-buttons details button {
-  text-align: left;
-  width: 100%;
 }
 
 .global-action-buttons .data-actions {
