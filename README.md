@@ -1,9 +1,12 @@
 # KfR
 
+![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.0.1-lightgrey.svg)
+![Demo](https://img.shields.io/badge/demo-live-brightgreen)
+
 🔗 Live App: [https://tuongna.github.io](https://tuongna.github.io)
 
-Version: 0.0.1  
-Developed under the MIT License.
+This project is licensed under the Apache License 2.0.
 
 ## About
 
@@ -35,14 +38,15 @@ npm test              # run all tests
 ## Content and Audio License
 
 - **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
-- **Audio files:** generated using **gTTS**, licensed under **MIT License**.
-- **Source code:** MIT License
+- **Audio files:** generated using **gTTS** (MIT licensed).
+- **Source code:** licensed under the **Apache License 2.0**.
+- **Dependencies:** this project uses [Vosk API](https://github.com/alphacep/vosk-api), licensed under the **Apache License 2.0**.
 
 > ⚠ **Important:** Use of the content is at your own discretion. Attribution is encouraged when possible.
 
 ## License
 
-This project’s **source code** is licensed under the MIT License — see [LICENSE.md](LICENSE.md) for details.
+This project’s **source code** is licensed under the Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE) for details.
 
 ## How to Contribute
 
