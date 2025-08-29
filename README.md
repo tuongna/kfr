@@ -12,6 +12,24 @@ This project is licensed under the Apache License 2.0.
 
 KfR is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
 
+## Features
+
+### Speech-to-Text (STT) with Vosk
+
+KfR uses [Vosk API](https://github.com/alphacep/vosk-api) for offline speech recognition.
+
+- Converts user’s spoken Korean into text in real-time.
+- Lightweight and fast; works directly in the browser (via WASM) or Node.js environment.
+- Supports multi-platform usage without needing cloud APIs, ensuring privacy of user audio.
+
+### User Authentication and Data Storage with Firebase
+
+KfR integrates [Firebase](https://firebase.google.com/) to manage user accounts and progress:
+
+- **Authentication:** Users can sign in with Google or email/password.
+- **Progress Tracking:** User vocabulary and sentence learning progress are stored in Firestore.
+- **Secure Storage:** Data is encrypted and associated with each user account.
+
 ## SPA Routing
 
 This app uses a **hash-based SPA router**:
