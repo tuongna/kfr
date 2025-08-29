@@ -1,7 +1,10 @@
 async function init() {
-  const { pipeline } = await import(
-    'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.4.0/dist/transformers.min.js'
+  const { pipeline, env } = await import(
+    'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.2/dist/transformers.min.js'
   );
+
+  env.useBrowserCache = false;
+  env.allowLocalModels = false;
 
   const SILENCE_TIME = 0.8; // seconds
   const SAMPLE_RATE = 48000;
@@ -12,9 +15,9 @@ async function init() {
 
   function getConfidenceColor(conf) {
     if (conf < 0.2) return 'red';
-    if (conf < 0.4) return 'orange';
-    if (conf < 0.6) return 'yellow';
-    if (conf < 0.8) return 'green';
+    if (conf < 0.4) return 'red';
+    if (conf < 0.6) return 'red';
+    if (conf < 0.8) return 'blue';
     return 'blue';
   }
 
@@ -22,7 +25,7 @@ async function init() {
   const translator = await pipeline('translation', 'Xenova/opus-mt-ko-en');
 
   const channel = new MessageChannel();
-  const model = await Vosk.createModel('models/vosk-model-small-ko-0.22');
+  const model = await Vosk.createModel('models/vosk-model-small-ko-0.22.tar.gz');
   model.registerPort(channel.port1);
 
   const recognizer = new model.KaldiRecognizer(SAMPLE_RATE);
@@ -31,14 +34,16 @@ async function init() {
   let latestFirstResult = { start: 0 };
   let lineBuffer = '';
 
-  recognizer.on('result', async ({ result }) => {
+  recognizer.on('result', async (message) => {
+    const messageResult = message.result;
+    const { result } = messageResult;
+
     if (!result || result.length === 0) return;
 
     const isNextLine = result[0].start - latestFirstResult.start > SILENCE_TIME;
     latestFirstResult = { ...result[0] };
 
     if (isNextLine && lineBuffer.trim() !== '') {
-      // dịch dòng cũ
       const translation = await translator(lineBuffer);
       const transDiv = document.createElement('div');
       transDiv.style.color = 'purple';

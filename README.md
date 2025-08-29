@@ -14,6 +14,14 @@ KfR is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
 
 ## Features
 
+### User Authentication and Data Storage with Firebase
+
+KfR integrates [Firebase](https://firebase.google.com/) to manage user accounts and progress:
+
+- **Authentication:** Users can sign in with Google or email/password.
+- **Progress Tracking:** User vocabulary and sentence learning progress are stored in Firestore.
+- **Secure Storage:** Data is encrypted and associated with each user account.
+
 ### Speech-to-Text (STT) with Vosk
 
 KfR uses [Vosk API](https://github.com/alphacep/vosk-api) for offline speech recognition.
@@ -22,13 +30,14 @@ KfR uses [Vosk API](https://github.com/alphacep/vosk-api) for offline speech rec
 - Lightweight and fast; works directly in the browser (via WASM) or Node.js environment.
 - Supports multi-platform usage without needing cloud APIs, ensuring privacy of user audio.
 
-### User Authentication and Data Storage with Firebase
+### Korean-to-English Translation with Hugging Face Models
 
-KfR integrates [Firebase](https://firebase.google.com/) to manage user accounts and progress:
+KfR uses [Hugging Face](https://huggingface.co/) transformer models to provide Korean-to-English translation:
 
-- **Authentication:** Users can sign in with Google or email/password.
-- **Progress Tracking:** User vocabulary and sentence learning progress are stored in Firestore.
-- **Secure Storage:** Data is encrypted and associated with each user account.
+- Translates Korean sentences and vocabulary to English directly in the app.
+- Runs locally in the browser using ONNX or TensorFlow.js, ensuring user privacy.
+- No external API calls required; translation is fast and secure.
+- Model sources and configuration details are available in the documentation.
 
 ## SPA Routing
 
