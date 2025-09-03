@@ -2,42 +2,40 @@ async function init() {
   const { pipeline, env } = await import(
     'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.2/dist/transformers.min.js'
   );
+  const [vocab, sentences] = await Promise.all([
+    fetch('../data/vocab.json').then((r) => r.json()),
+    fetch('../data/sentences.json').then((r) => r.json()),
+  ]);
+  const phrases = [...vocab, ...sentences].map((item) => item.ko);
 
-  env.useBrowserCache = false;
+  env.useBrowserCache = false; // To fix fi cache issues
   env.allowLocalModels = false;
 
-  const SILENCE_TIME = 0.8; // seconds
-  const SAMPLE_RATE = 48000;
+  const SILENCE_TIME = 0.8;
+  const SAMPLE_RATE = 16000;
 
   const resultsContainer = document.getElementById('recognition-result');
   const partialContainer = document.getElementById('partial');
   partialContainer.textContent = 'Loading...';
 
   function getConfidenceColor(conf) {
-    if (conf < 0.2) return 'red';
-    if (conf < 0.4) return 'red';
-    if (conf < 0.6) return 'red';
-    if (conf < 0.8) return 'blue';
-    return 'blue';
+    return conf < 0.6 ? 'red' : 'blue';
   }
 
-  // Hugging Face translation pipeline
   const translator = await pipeline('translation', 'Xenova/opus-mt-ko-en');
 
   const channel = new MessageChannel();
   const model = await Vosk.createModel('models/vosk-model-small-ko-0.22.tar.gz');
   model.registerPort(channel.port1);
 
-  const recognizer = new model.KaldiRecognizer(SAMPLE_RATE);
+  const recognizer = new model.KaldiRecognizer(SAMPLE_RATE, JSON.stringify(phrases));
   recognizer.setWords(true);
 
   let latestFirstResult = { start: 0 };
   let lineBuffer = '';
 
   recognizer.on('result', async (message) => {
-    const messageResult = message.result;
-    const { result } = messageResult;
-
+    const { result } = message.result;
     if (!result || result.length === 0) return;
 
     const isNextLine = result[0].start - latestFirstResult.start > SILENCE_TIME;
@@ -49,7 +47,6 @@ async function init() {
       transDiv.style.color = 'purple';
       transDiv.textContent = translation[0].translation_text;
       resultsContainer.appendChild(transDiv);
-
       resultsContainer.appendChild(document.createElement('br'));
       lineBuffer = '';
     }
@@ -67,8 +64,8 @@ async function init() {
     partialContainer.textContent = '';
   });
 
-  recognizer.on('partialresult', ({ result }) => {
-    partialContainer.textContent = result.partial || '';
+  recognizer.on('partialresult', (message) => {
+    partialContainer.textContent = message.result.partial || '';
   });
 
   partialContainer.textContent = 'Ready';
@@ -82,7 +79,7 @@ async function init() {
     },
   });
 
-  const audioContext = new AudioContext();
+  const audioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
   await audioContext.audioWorklet.addModule('js/stt/recognizer-processor.js');
 
   const recognizerProcessor = new AudioWorkletNode(audioContext, 'recognizer-processor', {
@@ -94,6 +91,7 @@ async function init() {
   recognizerProcessor.port.postMessage({ action: 'init', recognizerId: recognizer.id }, [
     channel.port2,
   ]);
+
   recognizerProcessor.connect(audioContext.destination);
 
   const source = audioContext.createMediaStreamSource(mediaStream);
