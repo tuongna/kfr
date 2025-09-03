@@ -1,17 +1,18 @@
 async function init() {
-  const { pipeline, env } = await import(
-    'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.2/dist/transformers.min.js'
-  );
+  const { pipeline, env } = await import('../vendors/transformers.min.js');
   const [vocab, sentences, itBias] = await Promise.all([
-    fetch('../data/vocab.json').then((r) => r.json()),
-    fetch('../data/sentences.json').then((r) => r.json()),
-    fetch('../data/it-bias.json').then((r) => r.json()),
+    fetch('./data/vocab.json').then((r) => r.json()),
+    fetch('./data/sentences.json').then((r) => r.json()),
+    fetch('./data/it-bias.json').then((r) => r.json()),
   ]);
 
   const phrases = [...vocab, ...sentences, ...itBias].map((item) => item.ko);
 
   env.useBrowserCache = true;
-  env.allowLocalModels = false;
+  env.allowLocalModels = true;
+  env.backends.onnx.wasm.wasmPaths = {
+    'ort-wasm-simd.wasm': 'models/opus-mt-ko-en/ort-wasm-simd.wasm',
+  };
 
   const SILENCE_TIME = 0.8;
   const SAMPLE_RATE = 16000;
@@ -24,8 +25,9 @@ async function init() {
     return conf < 0.6 ? 'red' : 'blue';
   }
 
-  // Enable translator
-  const translator = await pipeline('translation', 'Xenova/opus-mt-ko-en');
+  const translator = await pipeline('translation', 'opus-mt-ko-en', {
+    localFilesOnly: true,
+  });
 
   const channel = new MessageChannel();
   const model = await Vosk.createModel('models/vosk-model-small-ko-0.22.tar.gz');
