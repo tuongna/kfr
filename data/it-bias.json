@@ -1,0 +1,594 @@
+[
+  {
+    "en": ["Code"],
+    "ko": "코드",
+    "level": "A2",
+    "rr": "kodeu",
+    "tags": ["it", "programming"],
+    "vi": ["Mã nguồn"]
+  },
+  {
+    "en": ["Bug"],
+    "ko": "버그",
+    "level": "A2",
+    "rr": "beogeu",
+    "tags": ["it", "programming"],
+    "vi": ["Lỗi phần mềm"]
+  },
+  {
+    "en": ["Error"],
+    "ko": "에러",
+    "level": "A2",
+    "rr": "ereo",
+    "tags": ["it", "programming"],
+    "vi": ["Lỗi"]
+  },
+  {
+    "en": ["Debug"],
+    "ko": "디버그",
+    "level": "A2",
+    "rr": "dibeogeu",
+    "tags": ["it", "programming"],
+    "vi": ["Gỡ lỗi"]
+  },
+  {
+    "en": ["Deploy"],
+    "ko": "배포",
+    "level": "A2",
+    "rr": "baepo",
+    "tags": ["it", "devops"],
+    "vi": ["Triển khai"]
+  },
+  {
+    "en": ["Server"],
+    "ko": "서버",
+    "level": "A2",
+    "rr": "seobeo",
+    "tags": ["it", "infrastructure"],
+    "vi": ["Máy chủ"]
+  },
+  {
+    "en": ["Client"],
+    "ko": "클라이언트",
+    "level": "A2",
+    "rr": "keullaieonteu",
+    "tags": ["it", "infrastructure"],
+    "vi": ["Máy khách"]
+  },
+  {
+    "en": ["Frontend"],
+    "ko": "프론트엔드",
+    "level": "A2",
+    "rr": "peuronteuendeu",
+    "tags": ["it", "web"],
+    "vi": ["Frontend"]
+  },
+  {
+    "en": ["Backend"],
+    "ko": "백엔드",
+    "level": "A2",
+    "rr": "baegendeu",
+    "tags": ["it", "web"],
+    "vi": ["Backend"]
+  },
+  {
+    "en": ["Fullstack"],
+    "ko": "풀스택",
+    "level": "A2",
+    "rr": "pulseutaek",
+    "tags": ["it", "web"],
+    "vi": ["Fullstack"]
+  },
+  {
+    "en": ["API"],
+    "ko": "API",
+    "level": "A2",
+    "rr": "API",
+    "tags": ["it", "web"],
+    "vi": ["Giao diện lập trình ứng dụng"]
+  },
+  {
+    "en": ["Database"],
+    "ko": "데이터베이스",
+    "level": "A2",
+    "rr": "deiteobeiseu",
+    "tags": ["it", "web"],
+    "vi": ["Cơ sở dữ liệu"]
+  },
+  {
+    "en": ["Git"],
+    "ko": "깃",
+    "level": "A2",
+    "rr": "git",
+    "tags": ["it", "vcs"],
+    "vi": ["Git"]
+  },
+  {
+    "en": ["Commit"],
+    "ko": "커밋",
+    "level": "A2",
+    "rr": "keomit",
+    "tags": ["it", "vcs"],
+    "vi": ["Commit"]
+  },
+  {
+    "en": ["Push"],
+    "ko": "푸시",
+    "level": "A2",
+    "rr": "pusi",
+    "tags": ["it", "vcs"],
+    "vi": ["Đẩy code"]
+  },
+  {
+    "en": ["Pull"],
+    "ko": "풀",
+    "level": "A2",
+    "rr": "pul",
+    "tags": ["it", "vcs"],
+    "vi": ["Kéo code"]
+  },
+  {
+    "en": ["Merge"],
+    "ko": "머지",
+    "level": "A2",
+    "rr": "meoji",
+    "tags": ["it", "vcs"],
+    "vi": ["Gộp nhánh"]
+  },
+  {
+    "en": ["Framework"],
+    "ko": "프레임워크",
+    "level": "A2",
+    "rr": "peureimeuwokeu",
+    "tags": ["it", "web"],
+    "vi": ["Khung phát triển"]
+  },
+  {
+    "en": ["Library"],
+    "ko": "라이브러리",
+    "level": "A2",
+    "rr": "raibeureori",
+    "tags": ["it", "web"],
+    "vi": ["Thư viện"]
+  },
+  {
+    "en": ["Function"],
+    "ko": "함수",
+    "level": "A2",
+    "rr": "hamsu",
+    "tags": ["it", "programming"],
+    "vi": ["Hàm"]
+  },
+  {
+    "en": ["Variable"],
+    "ko": "변수",
+    "level": "A2",
+    "rr": "byeonsu",
+    "tags": ["it", "programming"],
+    "vi": ["Biến"]
+  },
+  {
+    "en": ["Loop"],
+    "ko": "루프",
+    "level": "A2",
+    "rr": "rupeu",
+    "tags": ["it", "programming"],
+    "vi": ["Vòng lặp"]
+  },
+  {
+    "en": ["Condition"],
+    "ko": "조건",
+    "level": "A2",
+    "rr": "jogeon",
+    "tags": ["it", "programming"],
+    "vi": ["Điều kiện"]
+  },
+  {
+    "en": ["Interface"],
+    "ko": "인터페이스",
+    "level": "A2",
+    "rr": "inteopeiseu",
+    "tags": ["it", "programming"],
+    "vi": ["Giao diện"]
+  },
+  {
+    "en": ["Object"],
+    "ko": "객체",
+    "level": "A2",
+    "rr": "gaegche",
+    "tags": ["it", "programming"],
+    "vi": ["Đối tượng"]
+  },
+  {
+    "en": ["Class"],
+    "ko": "클래스",
+    "level": "A2",
+    "rr": "keullaeseu",
+    "tags": ["it", "programming"],
+    "vi": ["Lớp"]
+  },
+  {
+    "en": ["Instance"],
+    "ko": "인스턴스",
+    "level": "A2",
+    "rr": "inseuteonseu",
+    "tags": ["it", "programming"],
+    "vi": ["Thể hiện của lớp"]
+  },
+  {
+    "en": ["Serverless"],
+    "ko": "서버리스",
+    "level": "A2",
+    "rr": "seobeoriseu",
+    "tags": ["it", "devops"],
+    "vi": ["Không máy chủ"]
+  },
+  {
+    "en": ["Container"],
+    "ko": "컨테이너",
+    "level": "A2",
+    "rr": "keonteineo",
+    "tags": ["it", "devops"],
+    "vi": ["Container"]
+  },
+  {
+    "en": ["Docker"],
+    "ko": "도커",
+    "level": "A2",
+    "rr": "dokeo",
+    "tags": ["it", "devops"],
+    "vi": ["Docker"]
+  },
+  {
+    "en": ["Kubernetes"],
+    "ko": "쿠버네티스",
+    "level": "A2",
+    "rr": "kubeone-tiseu",
+    "tags": ["it", "devops"],
+    "vi": ["Kubernetes"]
+  },
+  {
+    "en": ["Cloud"],
+    "ko": "클라우드",
+    "level": "A2",
+    "rr": "keuraudeu",
+    "tags": ["it", "devops"],
+    "vi": ["Điện toán đám mây"]
+  },
+  {
+    "en": ["CI/CD"],
+    "ko": "CI/CD",
+    "level": "A2",
+    "rr": "CI/CD",
+    "tags": ["it", "devops"],
+    "vi": ["Liên tục tích hợp / Triển khai"]
+  },
+  {
+    "en": ["Branch"],
+    "ko": "브랜치",
+    "level": "A2",
+    "rr": "beuraenchi",
+    "tags": ["it", "vcs"],
+    "vi": ["Nhánh"]
+  },
+  {
+    "en": ["Merge conflict"],
+    "ko": "머지 충돌",
+    "level": "A2",
+    "rr": "meoji chungdol",
+    "tags": ["it", "vcs"],
+    "vi": ["Xung đột merge"]
+  },
+  {
+    "en": ["Pull request"],
+    "ko": "풀 리퀘스트",
+    "level": "A2",
+    "rr": "pul li-kwe-seuteu",
+    "tags": ["it", "vcs"],
+    "vi": ["Yêu cầu merge"]
+  },
+  {
+    "en": ["Commit message"],
+    "ko": "커밋 메시지",
+    "level": "A2",
+    "rr": "keomit mesiji",
+    "tags": ["it", "vcs"],
+    "vi": ["Tin nhắn commit"]
+  },
+  {
+    "en": ["Laptop"],
+    "ko": "노트북",
+    "level": "A1",
+    "rr": "noteubuk",
+    "tags": ["it", "office"],
+    "vi": ["Máy tính xách tay"]
+  },
+  {
+    "en": ["Keyboard"],
+    "ko": "키보드",
+    "level": "A1",
+    "rr": "kibodeu",
+    "tags": ["it", "office"],
+    "vi": ["Bàn phím"]
+  },
+  {
+    "en": ["Mouse"],
+    "ko": "마우스",
+    "level": "A1",
+    "rr": "mauseu",
+    "tags": ["it", "office"],
+    "vi": ["Chuột máy tính"]
+  },
+  {
+    "en": ["Monitor"],
+    "ko": "모니터",
+    "level": "A1",
+    "rr": "moniteo",
+    "tags": ["it", "office"],
+    "vi": ["Màn hình"]
+  },
+  {
+    "en": ["Email"],
+    "ko": "이메일",
+    "level": "A1",
+    "rr": "imeil",
+    "tags": ["it", "office"],
+    "vi": ["Thư điện tử"]
+  },
+  {
+    "en": ["Meeting"],
+    "ko": "회의",
+    "level": "A1",
+    "rr": "hoeui",
+    "tags": ["it", "office"],
+    "vi": ["Cuộc họp"]
+  },
+  {
+    "en": ["Project"],
+    "ko": "프로젝트",
+    "level": "A2",
+    "rr": "peurojekteu",
+    "tags": ["it", "office"],
+    "vi": ["Dự án"]
+  },
+  {
+    "en": ["Deadline"],
+    "ko": "마감일",
+    "level": "A2",
+    "rr": "magamil",
+    "tags": ["it", "office"],
+    "vi": ["Hạn chót"]
+  },
+  {
+    "en": ["Report"],
+    "ko": "보고서",
+    "level": "A2",
+    "rr": "bogoseo",
+    "tags": ["it", "office"],
+    "vi": ["Báo cáo"]
+  },
+  {
+    "en": ["Task"],
+    "ko": "업무",
+    "level": "A2",
+    "rr": "eobmu",
+    "tags": ["it", "office"],
+    "vi": ["Nhiệm vụ"]
+  },
+  {
+    "en": ["Team"],
+    "ko": "팀",
+    "level": "A1",
+    "rr": "tim",
+    "tags": ["it", "office"],
+    "vi": ["Đội nhóm"]
+  },
+  {
+    "en": ["Client"],
+    "ko": "클라이언트",
+    "level": "A2",
+    "rr": "keullaieonteu",
+    "tags": ["it", "office"],
+    "vi": ["Khách hàng"]
+  },
+  {
+    "en": ["Server"],
+    "ko": "서버",
+    "level": "A2",
+    "rr": "seobeo",
+    "tags": ["it", "office"],
+    "vi": ["Máy chủ"]
+  },
+  {
+    "en": ["VPN"],
+    "ko": "VPN",
+    "level": "A2",
+    "rr": "VPN",
+    "tags": ["it", "network"],
+    "vi": ["Mạng riêng ảo"]
+  },
+  {
+    "en": ["Wi-Fi"],
+    "ko": "와이파이",
+    "level": "A1",
+    "rr": "waipai",
+    "tags": ["it", "network"],
+    "vi": ["Wi-Fi"]
+  },
+  {
+    "en": ["Router"],
+    "ko": "라우터",
+    "level": "A2",
+    "rr": "rauteo",
+    "tags": ["it", "network"],
+    "vi": ["Bộ định tuyến"]
+  },
+  {
+    "en": ["Switch"],
+    "ko": "스위치",
+    "level": "A2",
+    "rr": "seuwichi",
+    "tags": ["it", "network"],
+    "vi": ["Bộ chuyển mạch"]
+  },
+  {
+    "en": ["Password"],
+    "ko": "비밀번호",
+    "level": "A1",
+    "rr": "bimilbeonho",
+    "tags": ["it", "security"],
+    "vi": ["Mật khẩu"]
+  },
+  {
+    "en": ["Encryption"],
+    "ko": "암호화",
+    "level": "A2",
+    "rr": "amhohwa",
+    "tags": ["it", "security"],
+    "vi": ["Mã hóa"]
+  },
+  {
+    "en": ["Backup"],
+    "ko": "백업",
+    "level": "A2",
+    "rr": "baegeop",
+    "tags": ["it", "office"],
+    "vi": ["Sao lưu"]
+  },
+  {
+    "en": ["Cloud storage"],
+    "ko": "클라우드 스토리지",
+    "level": "A2",
+    "rr": "keuraudeu seutoriji",
+    "tags": ["it", "cloud"],
+    "vi": ["Lưu trữ đám mây"]
+  },
+  {
+    "en": ["Git"],
+    "ko": "깃",
+    "level": "A2",
+    "rr": "git",
+    "tags": ["it", "vcs"],
+    "vi": ["Git"]
+  },
+  {
+    "en": ["GitHub"],
+    "ko": "깃허브",
+    "level": "A2",
+    "rr": "githobeu",
+    "tags": ["it", "vcs"],
+    "vi": ["GitHub"]
+  },
+  {
+    "en": ["Commit"],
+    "ko": "커밋",
+    "level": "A2",
+    "rr": "keomit",
+    "tags": ["it", "vcs"],
+    "vi": ["Commit"]
+  },
+  {
+    "en": ["Pull request"],
+    "ko": "풀 리퀘스트",
+    "level": "A2",
+    "rr": "pul li-kwe-seuteu",
+    "tags": ["it", "vcs"],
+    "vi": ["Yêu cầu merge"]
+  },
+  {
+    "en": ["Branch"],
+    "ko": "브랜치",
+    "level": "A2",
+    "rr": "beuraenchi",
+    "tags": ["it", "vcs"],
+    "vi": ["Nhánh"]
+  },
+  {
+    "en": ["Merge"],
+    "ko": "머지",
+    "level": "A2",
+    "rr": "meoji",
+    "tags": ["it", "vcs"],
+    "vi": ["Gộp nhánh"]
+  },
+  {
+    "en": ["Deploy"],
+    "ko": "배포",
+    "level": "A2",
+    "rr": "baepo",
+    "tags": ["it", "devops"],
+    "vi": ["Triển khai"]
+  },
+  {
+    "en": ["Server error"],
+    "ko": "서버 오류",
+    "level": "A2",
+    "rr": "seobeo olyu",
+    "tags": ["it", "devops"],
+    "vi": ["Lỗi máy chủ"]
+  },
+  {
+    "en": ["Debug"],
+    "ko": "디버그",
+    "level": "A2",
+    "rr": "dibeogeu",
+    "tags": ["it", "programming"],
+    "vi": ["Gỡ lỗi"]
+  },
+  {
+    "en": ["Stack trace"],
+    "ko": "스택 트레이스",
+    "level": "A2",
+    "rr": "seutaek teureiseu",
+    "tags": ["it", "programming"],
+    "vi": ["Dấu vết stack"]
+  },
+  {
+    "en": ["Log"],
+    "ko": "로그",
+    "level": "A1",
+    "rr": "rogeu",
+    "tags": ["it", "programming"],
+    "vi": ["Nhật ký"]
+  },
+  {
+    "en": ["Patch"],
+    "ko": "패치",
+    "level": "A2",
+    "rr": "paechi",
+    "tags": ["it", "devops"],
+    "vi": ["Bản vá"]
+  },
+  {
+    "en": ["Ticket"],
+    "ko": "티켓",
+    "level": "A2",
+    "rr": "tiket",
+    "tags": ["it", "office"],
+    "vi": ["Phiếu công việc"]
+  },
+  {
+    "en": ["Workflow"],
+    "ko": "워크플로",
+    "level": "A2",
+    "rr": "wokeupeullo",
+    "tags": ["it", "office"],
+    "vi": ["Luồng công việc"]
+  },
+  {
+    "en": ["Sprint"],
+    "ko": "스프린트",
+    "level": "A2",
+    "rr": "seupeurinteu",
+    "tags": ["it", "office"],
+    "vi": ["Sprint"]
+  },
+  {
+    "en": ["Kanban"],
+    "ko": "칸반",
+    "level": "A2",
+    "rr": "kanban",
+    "tags": ["it", "office"],
+    "vi": ["Kanban"]
+  }
+]

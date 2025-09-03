@@ -12,13 +12,47 @@
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="stylesheet" href="style.css" />
+    <style>
+      #recognition-result {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 0.8rem;
+        padding: 1.2rem 0;
+      }
+
+      .line {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 1.2rem;
+        padding: 0.8rem 1.2rem;
+        border-radius: 1.2rem;
+        background-color: #f0f0f0;
+        max-width: 80%;
+        width: fit-content;
+        word-break: break-word;
+        transition: background-color 0.3s;
+      }
+
+      .line.latest {
+        background-color: #d1eaff;
+      }
+
+      .ko {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .en {
+        color: #555;
+        font-style: italic;
+      }
+    </style>
   </head>
   <body>
     <div id="wrapper">
       <button id="trigger" type="button">Start recognition</button>
-      <p id="recognition-result">
-        <span id="partial"></span>
-      </p>
+      <div id="partial"></div>
+      <div id="recognition-result"></div>
     </div>
     <script type="application/javascript" src="js/stt/vosk.js"></script>
     <script type="application/javascript" type="module" src="js/stt/index.js"></script>

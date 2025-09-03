@@ -91,4 +91,30 @@ flowchart TD
         FB_DB -->|Realtime update + merge| DB_CACHE
     end
 
+    %% ================= Speech Recognition / Translation (Standalone) =================
+    subgraph STT_Translation["Speech Recognition + Translation"]
+        U1[User speaks into microphone] --> A1[Capture MediaStream]
+        A1 --> A2[AudioContext sampleRate=16kHz]
+        A2 --> A3[AudioWorkletNode - recognizer-processor.js]
+        A3 --> M1[Vosk WASM Model: vosk-model-small-ko-0.22]
+
+        M1 --> R1[KaldiRecognizer]
+        R1 -->|partialresult| P1[Update #partial container - temp display]
+        R1 -->|result| L1[Process line with SILENCE_TIME]
+
+        L1 --> L2[Create / update .line div]
+        L2 --> D1[Left column: .ko → display Korean text]
+
+        %% Translation flow
+        L1 --> T1[Send recognized Ko text to Xenova Translation pipeline]
+        T1 --> T2[Receive English translation]
+        T2 --> D2[Right column: .en → display translated text]
+
+        L2 -->|UI update| D1
+        T2 -->|UI update| D2
+
+        %% Highlighting latest line
+        L2 --> H1[Add .latest class to newest line]
+    end
+
 ```
