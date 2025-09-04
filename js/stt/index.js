@@ -71,8 +71,10 @@ function createRecognizer(
   let latestFirstResult = { start: 0 };
   let lineId = 0;
 
-  recognizer.on('result', async ({ result }) => {
-    if (!result?.length) return;
+  recognizer.on('result', async (message) => {
+    const { result } = message.result;
+    if (!result || result.length === 0) return;
+
     const isNextLine = result[0].start - latestFirstResult.start > SILENCE_TIME;
     latestFirstResult = { ...result[0] };
 
