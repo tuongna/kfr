@@ -1,40 +1,80 @@
-async function init() {
-  const { pipeline, env } = await import('../vendors/transformers.min.js');
-  const [vocab, sentences, itBias] = await Promise.all([
-    fetch('./data/vocab.json').then((r) => r.json()),
-    fetch('./data/sentences.json').then((r) => r.json()),
-    fetch('./data/it-bias.json').then((r) => r.json()),
-  ]);
+let recognizer;
+let phrases = [];
 
-  const phrases = [...vocab, ...sentences, ...itBias].map((item) => item.ko);
+const SILENCE_TIME = 0.8;
+const SAMPLE_RATE = 16000;
 
-  env.useBrowserCache = true;
-  env.allowLocalModels = true;
-  env.backends.onnx.wasm.wasmPaths = {
-    'ort-wasm-simd.wasm': 'models/opus-mt-ko-en/ort-wasm-simd.wasm',
-  };
+function getConfidenceColor(conf) {
+  return conf < 0.6 ? 'red' : 'blue';
+}
 
-  const SILENCE_TIME = 0.8;
-  const SAMPLE_RATE = 16000;
-
-  const resultsContainer = document.getElementById('recognition-result');
-  const partialContainer = document.getElementById('partial');
-  partialContainer.textContent = 'Loading...';
-
-  function getConfidenceColor(conf) {
-    return conf < 0.6 ? 'red' : 'blue';
+async function setupBiasSelect(recBias) {
+  const biasSelect = document.getElementById('bias-select');
+  const biasKeys = Object.keys(recBias);
+  if (biasSelect.parentNode) {
+    biasSelect.parentNode.style.display = '';
   }
-
-  const translator = await pipeline('translation', 'opus-mt-ko-en', {
-    localFilesOnly: true,
+  biasSelect.innerHTML = '';
+  biasKeys.forEach((key) => {
+    const option = document.createElement('option');
+    option.value = key;
+    option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+    biasSelect.appendChild(option);
   });
+  return biasKeys;
+}
 
-  const channel = new MessageChannel();
-  const model = await Vosk.createModel('models/vosk-model-small-ko-0.22.tar.gz');
-  model.registerPort(channel.port1);
+function updatePartial(partialContainer, text) {
+  partialContainer.textContent = text;
+}
 
-  const recognizer = new model.KaldiRecognizer(SAMPLE_RATE, JSON.stringify(phrases));
+function appendResultLine(resultsContainer, fragment, textBuffer, translator, lineId) {
+  const lineDiv = document.createElement('div');
+  lineDiv.className = 'line latest';
+  lineDiv.id = `line-${lineId}`;
+
+  const koDiv = document.createElement('div');
+  koDiv.className = 'ko';
+  koDiv.appendChild(fragment);
+
+  const enDiv = document.createElement('div');
+  enDiv.className = 'en';
+  enDiv.textContent = 'Translating...';
+
+  lineDiv.appendChild(koDiv);
+  lineDiv.appendChild(enDiv);
+
+  resultsContainer.appendChild(lineDiv);
+  resultsContainer.scrollTop = resultsContainer.scrollHeight;
+
+  (async () => {
+    try {
+      const inputText = textBuffer.join(' ').trim();
+      enDiv.textContent = inputText ? (await translator(inputText))[0].translation_text : '';
+    } catch (err) {
+      console.error('Translation error:', err);
+      enDiv.textContent = '(translation failed)';
+    }
+  })();
+}
+
+function appendToCurrentKo(resultsContainer, fragment) {
+  const currentKo = resultsContainer.querySelector('.line.latest .ko');
+  if (currentKo) currentKo.appendChild(fragment);
+}
+
+function createRecognizer(
+  model,
+  recBias,
+  selectedBias,
+  resultsContainer,
+  partialContainer,
+  translator
+) {
+  phrases = recBias[selectedBias];
+  recognizer = new model.KaldiRecognizer(SAMPLE_RATE, JSON.stringify(phrases));
   recognizer.setWords(true);
+  console.log('Bias set to:', selectedBias, phrases);
 
   let latestFirstResult = { start: 0 };
   let lineId = 0;
@@ -46,7 +86,6 @@ async function init() {
     const isNextLine = result[0].start - latestFirstResult.start > SILENCE_TIME;
     latestFirstResult = { ...result[0] };
 
-    // Create Korean fragment
     const fragment = document.createDocumentFragment();
     const textBuffer = [];
     result.forEach((w) => {
@@ -58,58 +97,60 @@ async function init() {
     });
 
     if (isNextLine) {
-      lineId++;
-
-      // Remove old highlight
       const oldLatest = resultsContainer.querySelector('.line.latest');
       if (oldLatest) oldLatest.classList.remove('latest');
-
-      // New bubble with 2 columns
-      const lineDiv = document.createElement('div');
-      lineDiv.className = 'line latest';
-      lineDiv.id = `line-${lineId}`;
-
-      const koDiv = document.createElement('div');
-      koDiv.className = 'ko';
-      koDiv.appendChild(fragment);
-
-      const enDiv = document.createElement('div');
-      enDiv.className = 'en';
-      enDiv.textContent = 'Translating...';
-
-      lineDiv.appendChild(koDiv);
-      lineDiv.appendChild(enDiv);
-
-      resultsContainer.appendChild(lineDiv);
-      resultsContainer.scrollTop = resultsContainer.scrollHeight;
-
-      // Call translation → update enDiv
-      try {
-        const inputText = textBuffer.join(' ').trim();
-        if (inputText) {
-          const output = await translator(inputText);
-          enDiv.textContent = output[0].translation_text;
-        } else {
-          enDiv.textContent = '';
-        }
-      } catch (err) {
-        console.error('Translation error:', err);
-        enDiv.textContent = '(translation failed)';
-      }
+      lineId++;
+      appendResultLine(resultsContainer, fragment, textBuffer, translator, lineId);
     } else {
-      // Append to current ko column
-      const currentKo = resultsContainer.querySelector('.line.latest .ko');
-      if (currentKo) {
-        currentKo.appendChild(fragment);
-      }
+      appendToCurrentKo(resultsContainer, fragment);
     }
   });
 
   recognizer.on('partialresult', (message) => {
-    partialContainer.textContent = message.result.partial || '';
+    updatePartial(partialContainer, message.result.partial || '');
   });
 
-  partialContainer.textContent = 'Ready';
+  return recognizer;
+}
+
+async function init() {
+  const { pipeline, env } = await import('../vendors/transformers.min.js');
+  const recBias = await fetch('./data/recognition-bias.json').then((r) => r.json());
+
+  env.useBrowserCache = true;
+  env.allowLocalModels = true;
+  env.backends.onnx.wasm.wasmPaths = {
+    'ort-wasm-simd.wasm': 'models/opus-mt-ko-en/ort-wasm-simd.wasm',
+  };
+
+  const resultsContainer = document.getElementById('recognition-result');
+  const partialContainer = document.getElementById('partial');
+  updatePartial(partialContainer, 'Loading...');
+
+  const translator = await pipeline('translation', 'opus-mt-ko-en', { localFilesOnly: true });
+
+  const biasKeys = await setupBiasSelect(recBias);
+
+  const channel = new MessageChannel();
+  const model = await Vosk.createModel('models/vosk-model-small-ko-0.22.tar.gz');
+  model.registerPort(channel.port1);
+
+  function setRecognizer(biasKey) {
+    recognizer = createRecognizer(
+      model,
+      recBias,
+      biasKey,
+      resultsContainer,
+      partialContainer,
+      translator
+    );
+  }
+
+  setRecognizer(biasKeys[0]);
+  document.getElementById('bias-select').onchange = (e) => setRecognizer(e.target.value);
+
+  updatePartial(partialContainer, 'Ready');
+  resultsContainer.style.display = '';
 
   const mediaStream = await navigator.mediaDevices.getUserMedia({
     audio: {
@@ -135,9 +176,7 @@ async function init() {
   ]);
 
   recognizerProcessor.connect(audioContext.destination);
-
-  const source = audioContext.createMediaStreamSource(mediaStream);
-  source.connect(recognizerProcessor);
+  audioContext.createMediaStreamSource(mediaStream).connect(recognizerProcessor);
 }
 
 window.onload = () => {
