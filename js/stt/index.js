@@ -8,7 +8,7 @@ const getConfidenceColor = (conf) => (conf < 0.6 ? 'red' : 'blue');
 
 async function setupBiasSelect(recBias) {
   const biasSelect = document.getElementById('bias-select');
-  const biasKeys = Object.keys(recBias);
+  const biasKeys = ['none', ...Object.keys(recBias)];
 
   if (biasSelect.parentNode) biasSelect.parentNode.style.display = '';
   biasSelect.innerHTML = biasKeys
@@ -64,8 +64,13 @@ function createRecognizer(
   partialContainer,
   translator
 ) {
-  phrases = recBias[selectedBias];
-  recognizer = new model.KaldiRecognizer(SAMPLE_RATE, JSON.stringify(phrases));
+  phrases = recBias[selectedBias] || [];
+  console.log('Using phrases:', phrases);
+
+  recognizer = phrases?.length
+    ? new model.KaldiRecognizer(SAMPLE_RATE, JSON.stringify(phrases))
+    : new model.KaldiRecognizer(SAMPLE_RATE);
+
   recognizer.setWords(true);
 
   let latestFirstResult = { start: 0 };
