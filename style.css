@@ -556,7 +556,7 @@ button:focus-visible {
 #recognition-wrapper #partial {
   animation: pulse 1s infinite;
   font-style: italic;
-  padding: 0.8rem 0;
+  padding: 0.4rem 0;
 }
 
 #recognition-result {
