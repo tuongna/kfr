@@ -5,17 +5,23 @@ const CACHE_NAME = `pwa-cache-${APP_VERSION}`;
 
 const coreFiles = [
   '/',
-  '/index.html',
-  '/lessions.html',
+  '/data/recognition-bias.json',
+  '/data/sentences.json',
+  '/data/vocab.json',
   '/feedback.html',
-  '/style.css',
-  '/js/vendors/marked.esm.js',
+  '/index.html',
   '/js/app.js',
   '/js/lessons.js',
   '/js/router.js',
   '/js/store.js',
+  '/js/stt/index.js',
+  '/js/stt/recognizer-processor.js',
   '/js/utils.js',
+  '/js/vendors/marked.esm.js',
+  '/js/version.js',
+  '/lessions.html',
   '/manifest.json',
+  '/style.css',
 ];
 
 const icons = [

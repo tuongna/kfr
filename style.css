@@ -114,6 +114,21 @@ textarea {
 }
 
 /* =============================
+    ANIMATIONS 
+============================= */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* =============================
     CARD
 ============================= */
 #card {
@@ -533,6 +548,8 @@ button:focus-visible {
 }
 
 #recognition-wrapper #partial {
+  animation: pulse 1s infinite;
+  font-style: italic;
   padding: 0.8rem 0;
 }
 
