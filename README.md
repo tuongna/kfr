@@ -12,6 +12,13 @@ This project is licensed under the Apache License 2.0.
 
 KfR is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
 
+> ⚠ **Note:** KfR uses **specialized AI models**, not general-purpose LLMs.
+>
+> - `vosk-model-small-ko-0.22` → speech-to-text (STT)
+> - `opus-mt-ko-en` → Korean-to-English translation
+
+All AI models run **locally in the browser via WASM**, ensuring **privacy** and **no external API calls**.
+
 ## Features
 
 ### User Authentication and Data Storage with Firebase
