@@ -113,7 +113,20 @@ function createRecognizer(
   return recognizer;
 }
 
+function isMobile() {
+  return /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+}
+
 async function init() {
+  const sttTrigger = document.getElementById('stt-trigger');
+  const partialContainer = document.getElementById('partial');
+  if (isMobile()) {
+    sttTrigger.disabled = true;
+    partialContainer.innerHTML =
+      '<p style="color: red; font-weight: bold;">Xin lỗi, trợ lý ngôn ngữ chưa hỗ trợ trên thiết bị di động.</p>';
+    return;
+  }
+
   const { pipeline, env } = await import('../vendors/transformers.min.js');
   const recBias = await fetch('./data/recognition-bias.json').then((r) => r.json());
 
@@ -124,7 +137,6 @@ async function init() {
   };
 
   const resultsContainer = document.getElementById('recognition-result');
-  const partialContainer = document.getElementById('partial');
   updatePartial(partialContainer, 'Loading...');
 
   const translator = await pipeline('translation', 'opus-mt-ko-en', { localFilesOnly: true });
@@ -180,7 +192,7 @@ async function init() {
 }
 
 window.onload = () => {
-  document.getElementById('trigger').onclick = function () {
+  document.getElementById('stt-trigger').onclick = function () {
     this.disabled = true;
     init();
   };
