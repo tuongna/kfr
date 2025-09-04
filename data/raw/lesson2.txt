@@ -1,0 +1,44 @@
+* Bố cục
+Hai hệ thống số đếm trong tiếng Hàn
+Korean Numbers (Thuần Hàn) → dùng cho tuổi, giờ, counters.
+Chinese Numbers (Hán-Hàn / Sino-Korean) → dùng cho ngày, tiền, số điện thoại, số lớn hơn 99…
+Korean Numbers
+Singles (1–10)
+Teens (11–19)
+Tens (20–90)
+Kết hợp 21–99
+Chinese Numbers
+Singles (1–10)
+Teens (11–19)
+Tens (20–90)
+Kết hợp 21–99
+Ghi chú
+Korean Numbers dừng ở 99, muốn nói trên 100 phải dùng Chinese Numbers.
+Hai hệ thống không trộn lẫn (trừ khi nói giờ).
+*Ví dụ
+Korean Numbers (thuần Hàn)
+하나 (hana) – 1
+둘 (dul) – 2
+셋 (set) – 3
+넷 (net) – 4
+다섯 (daseot) – 5
+스물 (seumul) – 20
+서른 (seoreun) – 30
+마흔 (maheun) – 40
+쉰 (swin) – 50
+예순 (yesun) – 60
+일흔 (ilheun) – 70
+여든 (yeodeun) – 80
+아흔 (aheun) – 90
+Chinese Numbers (Hán-Hàn)
+일 (il) – 1
+이 (i) – 2
+삼 (sam) – 3
+사 (sa) – 4
+오 (o) – 5
+십 (sip) – 10
+이십 (isip) – 20
+삼십 (samsip) – 30
+사십 (sasip) – 40
+오십 (osip) – 50
+구십구 (gusipgu) – 99

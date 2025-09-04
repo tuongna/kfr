@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "node spec/support/jasmine.mjs"
+  },
+  "devDependencies": {
+    "jasmine": "^5.9.0"
+  }
+}

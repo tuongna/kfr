@@ -1,0 +1,14 @@
+KfR
+Copyright 2025 Nguyen Anh Tuong
+
+This product includes software developed by:
+
+Vosk API
+Copyright 2019-2022 Alpha Cephei Inc.
+Licensed under the Apache License, Version 2.0
+https://github.com/alphacep/vosk-api
+
+Kaldi
+See AUTHORS file and original repository for contributor details.
+Licensed under the Apache License, Version 2.0
+https://github.com/kaldi-asr/kaldi
