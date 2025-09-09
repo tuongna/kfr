@@ -6,7 +6,7 @@ const btnUpdate = document.getElementById('btn-update');
 
 function isNewVersionAvailable() {
   const storedVersion = localStorage.getItem(VERSION_KEY);
-  return storedVersion !== APP_VERSION;
+  return !!storedVersion && storedVersion !== APP_VERSION;
 }
 
 function checkAndUpdateVersion() {

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Real-time Mic Audio Recognition with Silence Detection</title>
+    <style>
+      .sentence-pair {
+        margin-bottom: 1em;
+      }
+
+      .original {
+        font-weight: bold;
+      }
+
+      .translation {
+        margin-left: 1em;
+        color: #555;
+      }
+
+      .no-speech {
+        color: red;
+        font-style: italic;
+        margin-top: 1em;
+        font-weight: bold;
+      }
+
+      #start {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      #visualizer {
+        display: inline-block;
+        vertical-align: middle;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <button id="start">Start</button>
+      <canvas id="visualizer" width="240" height="48"></canvas>
+    </div>
+    <div id="status"></div>
+    <div id="results"></div>
+
+    <script type="module">
+      import * as transformers from './js/vendors/transformers.min.js';
+
+      const CHUNK_LENGTH_S = 30;
+      const STRIDE_LENGTH_S = 1;
+
+      const startBtn = document.getElementById('start');
+      const resultsDiv = document.getElementById('results');
+      const canvas = document.getElementById('visualizer');
+      const canvasCtx = canvas.getContext('2d');
+
+      let transcriber, translator;
+      let mediaRecorder;
+      let stream;
+      let isRecording = false;
+
+      let audioContext;
+      let analyser;
+      let dataArray;
+      let animationId;
+
+      async function initModels() {
+        // Detect if running on desktop (PC) or other (mobile, raspberry, etc.)
+        const isPC = /Win|Mac|Linux/i.test(navigator.platform);
+        const modelName = isPC ? 'Xenova/whisper-small' : 'Xenova/whisper-tiny';
+        transcriber = await transformers.pipeline('automatic-speech-recognition', modelName);
+        translator = await transformers.pipeline('translation', 'Xenova/opus-mt-ko-en');
+        startBtn.disabled = false;
+        console.log('Models loaded');
+      }
+
+      async function blobToFloat32Array(blob) {
+        const arrayBuffer = await blob.arrayBuffer();
+        const audioCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(
+          1,
+          16000,
+          16000
+        );
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        return audioBuffer.getChannelData(0);
+      }
+
+      function splitIntoSentences(text) {
+        return text
+          .split(/(?<=[.?!\u3002])\s+/)
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
+      }
+
+      function containsKorean(text) {
+        return /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7AF]/.test(text);
+      }
+
+      async function processChunk(blob) {
+        startBtn.disabled = true;
+        startBtn.textContent = 'Analyzing...';
+
+        const noSpeechEl = document.querySelector('.no-speech');
+        if (noSpeechEl) noSpeechEl.remove();
+
+        const float32Audio = await blobToFloat32Array(blob);
+        try {
+          const res = await transcriber(float32Audio);
+          if (!res.text || res.text.trim() === '') {
+            showNoSpeechMessage();
+            throw new Error('No speech detected');
+          }
+
+          const sentences = splitIntoSentences(res.text);
+          for (const sentence of sentences) {
+            let translation;
+            if (containsKorean(sentence)) {
+              translation = await translator(sentence);
+            } else {
+              translation = [{ translation_text: sentence }];
+            }
+
+            const container = document.createElement('div');
+            container.className = 'sentence-pair';
+
+            const originalP = document.createElement('p');
+            originalP.className = 'original';
+            originalP.textContent = sentence;
+
+            const transP = document.createElement('p');
+            transP.className = 'translation';
+            transP.textContent = translation?.[0]?.translation_text || '';
+
+            container.appendChild(originalP);
+            container.appendChild(transP);
+            resultsDiv.appendChild(container);
+          }
+        } catch (e) {
+          console.error('Recognition error:', e);
+        } finally {
+          startBtn.disabled = false;
+          startBtn.textContent = 'Start';
+        }
+      }
+
+      function showNoSpeechMessage() {
+        if (!document.querySelector('.no-speech')) {
+          const p = document.createElement('p');
+          p.className = 'no-speech';
+          p.textContent = '[No speech detected]';
+          resultsDiv.appendChild(p);
+        }
+      }
+
+      function setupVisualizer() {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 64;
+        const bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+      }
+
+      function drawVisualizer() {
+        animationId = requestAnimationFrame(drawVisualizer);
+        analyser.getByteTimeDomainData(dataArray);
+
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+        canvasCtx.lineWidth = 2;
+        canvasCtx.strokeStyle = '#174ea6';
+        canvasCtx.beginPath();
+
+        const sliceWidth = (canvas.width * 1.0) / dataArray.length;
+        let x = 0;
+        const middleY = canvas.height / 2;
+
+        for (let i = 0; i < dataArray.length; i++) {
+          const v = dataArray[i] / 128.0; // normalize byte value (0-255) to (0-2)
+          const y = v * middleY; // scale to half canvas height
+
+          if (i === 0) {
+            canvasCtx.moveTo(x, y);
+            canvasCtx.moveTo(x, y);
+          } else {
+            canvasCtx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
+        }
+
+        canvasCtx.lineTo(canvas.width, middleY);
+        canvasCtx.stroke();
+      }
+
+      async function startRecording() {
+        if (!transcriber || !translator) {
+          alert('Models are not loaded yet - please wait.');
+          return;
+        }
+        if (isRecording) return;
+
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        setupVisualizer();
+        drawVisualizer();
+
+        let mimeType = '';
+        if (MediaRecorder.isTypeSupported('audio/wav')) {
+          mimeType = 'audio/wav';
+        } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          mimeType = 'audio/webm;codecs=opus';
+        } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+          mimeType = 'audio/webm';
+        }
+
+        mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            processChunk(event.data);
+          }
+        };
+        mediaRecorder.start();
+
+        isRecording = true;
+        startBtn.textContent = 'Stop';
+        console.log('Recording started');
+      }
+
+      function stopRecording() {
+        if (!isRecording) return;
+
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+        if (stream) {
+          stream.getTracks().forEach((t) => t.stop());
+          stream = null;
+        }
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+        if (audioContext) {
+          audioContext.close();
+          audioContext = null;
+        }
+        isRecording = false;
+        startBtn.textContent = 'Start';
+        console.log('Recording stopped');
+      }
+
+      startBtn.addEventListener('click', () => {
+        if (!isRecording) {
+          startRecording();
+        } else {
+          stopRecording();
+        }
+      });
+
+      startBtn.disabled = true;
+      initModels();
+    </script>
+  </body>
+</html>
