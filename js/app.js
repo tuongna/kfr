@@ -258,6 +258,10 @@ function updateStats() {
 // NAVIGATION
 // ==============================
 function prevCard() {
+  if (wrong) {
+    improveLearned(getData()[getIndex()].ko);
+  }
+
   if (practiceMode.checked && hasPractice()) {
     const data = getData();
     const index = getIndex();
@@ -277,6 +281,10 @@ function prevCard() {
 }
 
 function nextCard() {
+  if (wrong) {
+    improveLearned(getData()[getIndex()].ko);
+  }
+
   if (practiceMode.checked && hasPractice()) {
     const data = getData();
     const index = getIndex();
