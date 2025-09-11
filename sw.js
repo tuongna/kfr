@@ -10,6 +10,7 @@ const coreFiles = [
   '/data/vocab.json',
   '/feedback.html',
   '/index.html',
+  '/js/stt.js',
   '/js/app.js',
   '/js/lessons.js',
   '/js/router.js',
