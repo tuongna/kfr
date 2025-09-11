@@ -30,9 +30,7 @@ function updateProgressUI({ status, name, file, progress }) {
     progressObj[path] = 1;
     statusDiv.innerHTML = Array.from(fileProgressMap.entries())
       .map(([fname, prog]) =>
-        prog === 100
-          ? `Model ${fname} loaded`
-          : `Loading model file: ${fname} (${prog.toFixed(2)}%)`
+        prog === 100 ? `Model ${fname} loaded` : `${fname} (${prog.toFixed(2)}%)`
       )
       .join('<br>');
     setTimeout(() => {
@@ -192,8 +190,8 @@ async function startRecording() {
     alert('Models are not loaded yet - please wait.');
     return;
   }
-  if (isRecording) return;
 
+  isRecording = true;
   stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   let mimeType = '';
   if (MediaRecorder.isTypeSupported('audio/wav')) {
@@ -233,20 +231,15 @@ async function startRecording() {
   }, 1000);
 
   recordingTimeout = setTimeout(() => {
-    if (isRecording) {
-      stopRecording();
-    }
+    stopRecording();
   }, RECORDING_TIMEOUT_MS);
 
-  isRecording = true;
   startBtn.disabled = false;
   startBtn.textContent = 'Stop';
   console.log('Recording started');
 }
 
 function stopRecording() {
-  if (!isRecording) return;
-
   if (mediaRecorder && mediaRecorder.state !== 'inactive') {
     mediaRecorder.stop();
   }
@@ -254,6 +247,7 @@ function stopRecording() {
     stream.getTracks().forEach((t) => t.stop());
     stream = null;
   }
+  isRecording = false;
   startBtn.textContent = 'Start';
   console.log('Recording stopped');
   if (recordingTimeout) {
@@ -309,10 +303,16 @@ class AutomaticSpeechRecognitionPipelineFactory extends PipelineFactory {
 }
 
 async function initModels() {
-  // Korean
-  AutomaticSpeechRecognitionPipelineFactory.model = 'Xenova/whisper-small';
+  // Simple example: detect desktop vs others
+  const isDesktop = /Windows|Macintosh|Linux/.test(navigator.userAgent);
+
+  AutomaticSpeechRecognitionPipelineFactory.model = isDesktop
+    ? 'Xenova/whisper-small'
+    : 'Xenova/whisper-tiny';
+
   AutomaticSpeechRecognitionPipelineFactory.quantized = false;
   transcriber = await AutomaticSpeechRecognitionPipelineFactory.getInstance(updateProgressUI);
+
   translator = await pipeline('translation', 'Xenova/opus-mt-ko-en', {
     progress_callback: updateProgressUI,
   });
