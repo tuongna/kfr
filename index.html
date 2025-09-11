@@ -83,13 +83,16 @@
       </div>
     </div>
     <div id="recognition-wrapper">
-      <button id="stt-trigger" type="button" class="btn-secondary">Trợ lý ngôn ngữ (mini)</button>
-      <div class="select-bias-wrapper" style="display: none">
-        <label for="bias-select"></label>
-        <select id="bias-select"></select>
+      <div>
+        <button id="start" disabled>Start</button>
+        <canvas id="visualizer" width="128" height="48"></canvas>
+        <p id="countdown-timer"></p>
       </div>
-      <div id="partial"></div>
-      <div id="recognition-result" style="display: none"></div>
+      <div id="status"></div>
+      <div id="results"></div>
+      <div id="model-loading-bar">
+        <div id="progress"></div>
+      </div>
     </div>
     <div class="global-action-buttons">
       <button id="btn-update" class="btn-text" style="display: none">🔄 Update</button>
@@ -100,10 +103,9 @@
         Xem trên GitHub
       </a>
     </footer>
-    <script src="js/stt/vosk.js"></script>
     <script type="module" src="js/version-manager.js"></script>
     <script type="module" src="js/app.js"></script>
-    <script type="module" src="js/stt/index.js"></script>
+    <script type="module" src="js/stt.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker
