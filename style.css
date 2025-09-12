@@ -536,6 +536,10 @@ button:focus-visible {
 /* =============================
     STT
 ============================= */
+.stt-container {
+  margin: 0 auto;
+  max-width: var(--w-sm);
+}
 .sentence-pair {
   margin-bottom: 1em;
 }
