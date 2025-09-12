@@ -303,13 +303,7 @@ class AutomaticSpeechRecognitionPipelineFactory extends PipelineFactory {
 }
 
 async function initModels() {
-  // Simple example: detect desktop vs others
-  const isDesktop = /Windows|Macintosh|Linux/.test(navigator.userAgent);
-
-  AutomaticSpeechRecognitionPipelineFactory.model = isDesktop
-    ? 'Xenova/whisper-small'
-    : 'Xenova/whisper-tiny';
-
+  AutomaticSpeechRecognitionPipelineFactory.model = 'Xenova/whisper-base';
   AutomaticSpeechRecognitionPipelineFactory.quantized = false;
   transcriber = await AutomaticSpeechRecognitionPipelineFactory.getInstance(updateProgressUI);
 
