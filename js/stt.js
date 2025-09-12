@@ -283,7 +283,7 @@ class PipelineFactory {
       this.instance = await pipeline(this.task, this.model, {
         quantized: this.quantized,
         progress_callback,
-        revision: this.model && this.model.includes('/whisper-medium') ? 'no_attentions' : 'main',
+        revision: this.model && this.model.includes('/whisper-base') ? 'no_attentions' : 'main',
       });
     }
     return this.instance;
@@ -302,8 +302,17 @@ class AutomaticSpeechRecognitionPipelineFactory extends PipelineFactory {
   static quantized = null;
 }
 
+function isMobileBrowser() {
+  const userAgent = navigator.userAgent;
+  const mobileKeywords =
+    /(iPhone|iPod|iPad|Android|BlackBerry|IEMobile|Windows Phone|webOS|Opera Mini|Mobile|Tablet)/i;
+  return mobileKeywords.test(userAgent);
+}
+
 async function initModels() {
-  AutomaticSpeechRecognitionPipelineFactory.model = 'Xenova/whisper-base';
+  AutomaticSpeechRecognitionPipelineFactory.model = isMobileBrowser()
+    ? 'Xenova/whisper-tiny'
+    : 'Xenova/whisper-base';
   AutomaticSpeechRecognitionPipelineFactory.quantized = false;
   transcriber = await AutomaticSpeechRecognitionPipelineFactory.getInstance(updateProgressUI);
 
