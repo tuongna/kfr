@@ -1,87 +1,53 @@
-# KfR
+# KfR — Scrum Learning
 
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
-![Version](https://img.shields.io/badge/version-0.0.1-lightgrey.svg)
-![Demo](https://img.shields.io/badge/demo-live-brightgreen)
+![Version](https://img.shields.io/badge/version-0.1.0-lightgrey.svg)
 
 🔗 Live App: [https://tuongna.github.io](https://tuongna.github.io)
 
-This project is licensed under the Apache License 2.0.
-
 ## About
 
-KfR is a Progressive Web App (PWA) for learning Korean grammar and vocabulary.
+KfR là Progressive Web App (PWA) học tiếng Anh chuyên ngành **Scrum**, phục vụ luyện thi **PSM I** và **PSPO I**.
 
-> ⚠ **Note:** KfR uses **specialized AI models**, not general-purpose LLMs.
->
-> - `vosk-model-small-ko-0.22` → speech-to-text (STT)
-> - `opus-mt-ko-en` → Korean-to-English translation
-
-All AI models run **locally in the browser via WASM**, ensuring **privacy** and **no external API calls**.
+Mục tiêu: giúp người học người Việt hiểu đúng cách diễn đạt tiếng Anh trong câu hỏi và đáp án thi Scrum — tập trung vào từ đơn, cụm từ, và sắc thái ngữ nghĩa trong từng ngữ cảnh.
 
 ## Features
 
-### User Authentication and Data Storage with Firebase
+- **Tap-to-gloss**: nhấn vào thuật ngữ bất kỳ để xem đa nghĩa (nghĩa đời thường + nghĩa Scrum chính xác)
+- **Flashcard + SRS**: hệ thống ôn tập lặp lại cách quãng (Spaced Repetition) với XP và huy hiệu
+- **Quiz PSM/PSPO**: câu hỏi 4 đáp án phong cách thi thật, có giải thích chi tiết + liên kết thuật ngữ
+- **Glossary**: tra cứu toàn bộ thuật ngữ, lọc theo tag, xem đa nghĩa ngay trong danh sách
+- **Offline-first PWA**: content cache trong IndexedDB, Service Worker cache app shell
+- **Đồng bộ đa thiết bị**: tiến độ học lưu trên Supabase, merge thông minh (level=max, xp=max, nextReview=min)
+- **Nội dung private**: chỉ tài khoản được uỷ quyền (owner) đọc được content, bảo vệ bằng Supabase RLS
 
-KfR integrates [Firebase](https://firebase.google.com/) to manage user accounts and progress:
+## Tech Stack
 
-- **Authentication:** Users can sign in with Google or email/password.
-- **Progress Tracking:** User vocabulary and sentence learning progress are stored in Firestore.
-- **Secure Storage:** Data is encrypted and associated with each user account.
+| Lớp | Công nghệ |
+|-----|-----------|
+| Frontend | SvelteKit 2 + adapter-static |
+| Build | Vite 5 |
+| PWA | vite-plugin-pwa (Workbox) |
+| Local DB | Dexie (IndexedDB) |
+| Backend | Supabase (Auth + Postgres + Edge Functions) |
+| AI proxy | Supabase Edge Function → OpenRouter |
+| Test | Vitest |
+| CI/CD | GitHub Actions → GitHub Pages |
 
-### Speech-to-Text (STT) with Vosk
+## Setup
 
-KfR uses [Vosk API](https://github.com/alphacep/vosk-api) for offline speech recognition.
+Xem [`SETUP.md`](SETUP.md) để biết cách cấu hình Supabase, GitHub Secrets, biên soạn nội dung, và deploy.
 
-- Converts user’s spoken Korean into text in real-time.
-- Lightweight and fast; works directly in the browser (via WASM) or Node.js environment.
-- Supports multi-platform usage without needing cloud APIs, ensuring privacy of user audio.
-
-### Korean-to-English Translation with Hugging Face Models
-
-KfR uses [Hugging Face](https://huggingface.co/) transformer models to provide Korean-to-English translation:
-
-- Translates Korean sentences and vocabulary to English directly in the app.
-- Runs locally in the browser using ONNX or TensorFlow.js, ensuring user privacy.
-- No external API calls required; translation is fast and secure.
-- Model sources and configuration details are available in the documentation.
-
-## SPA Routing
-
-This app uses a **hash-based SPA router**:
-
-- URLs: `/#/vocab` or `/#/sentences`
-- Navigation is handled by `data-link` attributes on `<a>` elements:
-
-```html
-<a href="/#/vocab" data-link>Vocabulary</a>
-<a href="/#/sentences" data-link>Sentences</a>
-```
-
-## Running Unit Tests
-
-This project uses **Jasmine** for unit testing.
-
-### Run tests
+## Dev
 
 ```bash
-npm install           # install dependencies
-npm test              # run all tests
+cp .env.example .env   # fill in Supabase keys
+npm install
+npm run dev            # http://localhost:5173
+npm test               # vitest
+npm run build          # production build
 ```
-
-## Content and Audio License
-
-- **Text data (Korean, English, Vietnamese sentences):** collected from multiple public sources; no specific license applies.
-- **Audio files:** generated using **gTTS** (MIT licensed).
-- **Source code:** licensed under the **Apache License 2.0**.
-- **Dependencies:** this project uses [Vosk API](https://github.com/alphacep/vosk-api), licensed under the **Apache License 2.0**.
-
-> ⚠ **Important:** Use of the content is at your own discretion. Attribution is encouraged when possible.
 
 ## License
 
-This project’s **source code** is licensed under the Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE) for details.
-
-## How to Contribute
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+Source code: Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
