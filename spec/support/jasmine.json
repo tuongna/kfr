@@ -1,5 +1,0 @@
-{
-  "spec_dir": "js",
-  "spec_files": ["**/*.spec.js", "**/*.test.js"],
-  "helpers": ["../spec/support/jasmine.mjs"]
-}
