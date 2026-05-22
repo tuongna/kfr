@@ -173,10 +173,19 @@
     }
   }
 
+  function blurAnswerFocus() {
+    if (typeof document === 'undefined') return;
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && active.closest('.quiz-options')) {
+      active.blur();
+    }
+  }
+
   async function selectOption(opt: QuestionOption) {
     if (answered) return;
     answered = true;
     selectedOptionId = opt.id;
+    blurAnswerFocus();
     if (opt.correct) sessionCorrect++;
     if (currentQ) {
       await saveProgress(improveProgress(progress, 'question', currentQ.id, !opt.correct));
@@ -184,6 +193,7 @@
   }
 
   async function nextQuestion() {
+    blurAnswerFocus();
     if (sessionIndex >= sessionQuestions.length - 1) {
       await finishSession();
     } else {
