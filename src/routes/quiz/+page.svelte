@@ -3,44 +3,91 @@
   import { db } from '$lib/db';
   import { progressMap, getProgress, saveProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, shuffleByIndex, getBadge } from '$lib/srs';
+  import { sessionLookups } from '$lib/stores/session';
   import type { Question, QuestionOption, Term } from '$lib/types';
   import TermPopup from '$lib/components/TermPopup.svelte';
 
   type ExamFilter = 'all' | 'PSM-I' | 'PSPO-I';
   const EXAM_FILTERS: ExamFilter[] = ['all', 'PSM-I', 'PSPO-I'];
 
-  let questions: Question[] = [];
+  let allQuestions: Question[] = [];
   let examFilter: ExamFilter = 'all';
-  let currentIndex = 0;
+
+  // Session snapshot — linear flow, not an infinite loop
+  let sessionQuestions: Question[] = [];
+  let sessionIndex = 0;
+  let sessionCorrect = 0;
+  let sessionDone = false;
+  let lookedUpTermsData: Term[] = [];
+
+  // Per-question UI state
   let selectedOptionId: string | null = null;
   let answered = false;
-  let wrongAnswer = false;
   let options: QuestionOption[] = [];
   let termRefs: Term[] = [];
-  let selectedTermId: string | null = null;
   let showExplanation = false;
+  let showHint = false;
+  let highlightedStem = '';
+  let selectedTermId: string | null = null;
 
-  $: filtered = questions.filter(
-    (q) => examFilter === 'all' || q.exam === examFilter
-  );
-
-  $: dueQuestions = filtered.filter((q) => canPractice(getProgress($progressMap, 'question', q.id)));
-
-  $: currentQ = dueQuestions[currentIndex] ?? null;
-
+  $: currentQ = sessionQuestions[sessionIndex] ?? null;
   $: progress = currentQ ? getProgress($progressMap, 'question', currentQ.id) : undefined;
+  $: selectedOpt = options.find((o) => o.id === selectedOptionId);
+  $: isCorrect = selectedOpt?.correct ?? false;
+  $: vocabCount = $sessionLookups.size;
+  $: progressPct = sessionQuestions.length
+    ? Math.round((sessionIndex / sessionQuestions.length) * 100)
+    : 0;
+
+  // Results derived
+  $: scorePercent = sessionQuestions.length
+    ? Math.round((sessionCorrect / sessionQuestions.length) * 100)
+    : 0;
+  $: adjustedReadiness = Math.max(0, scorePercent - (vocabCount > 4 ? 15 : 0));
+  $: readinessVariant =
+    adjustedReadiness >= 85 ? 'ready' : adjustedReadiness >= 60 ? 'warn' : 'danger';
+  $: readinessLabel =
+    adjustedReadiness >= 85
+      ? 'ĐÃ SẴN SÀNG'
+      : adjustedReadiness >= 60
+        ? 'CẦN LUYỆN THÊM'
+        : 'CHƯA SẴN SÀNG';
 
   $: if (currentQ) loadQuestion(currentQ);
 
   onMount(async () => {
-    questions = await db.questions.toArray();
+    allQuestions = await db.questions.toArray();
+    initSession();
   });
+
+  function buildPool(filter: ExamFilter): Question[] {
+    const filtered = allQuestions.filter((q) => filter === 'all' || q.exam === filter);
+    const due = filtered.filter((q) => canPractice(getProgress($progressMap, 'question', q.id)));
+    return due.length ? due : filtered;
+  }
+
+  function initSession() {
+    sessionQuestions = buildPool(examFilter);
+    sessionIndex = 0;
+    sessionCorrect = 0;
+    sessionDone = false;
+    lookedUpTermsData = [];
+    answered = false;
+    selectedOptionId = null;
+    showHint = false;
+    sessionLookups.set(new Map());
+  }
+
+  function changeFilter(f: ExamFilter) {
+    examFilter = f;
+    if (allQuestions.length > 0) initSession();
+  }
 
   async function loadQuestion(q: Question) {
     answered = false;
     selectedOptionId = null;
-    wrongAnswer = false;
     showExplanation = false;
+    showHint = false;
 
     const [opts, refs] = await Promise.all([
       db.questionOptions.where('questionId').equals(q.id).toArray(),
@@ -49,41 +96,71 @@
         : Promise.resolve([]),
     ]);
 
-    // Shuffle options deterministically
-    options = shuffleByIndex(opts.sort((a, b) => a.sortOrder - b.sortOrder), currentIndex);
+    options = shuffleByIndex(opts.sort((a, b) => a.sortOrder - b.sortOrder), sessionIndex);
     termRefs = refs;
+    highlightedStem = buildHighlightedStem(q.stem, refs);
+  }
+
+  // Wraps term matches in the stem with clickable spans.
+  // Uses null-byte placeholders so shorter terms don't re-match inside already-wrapped longer ones.
+  function buildHighlightedStem(stem: string, terms: Term[]): string {
+    const sorted = [...terms].sort((a, b) => b.text.length - a.text.length);
+    const replacements: string[] = [];
+    let result = stem;
+    for (const term of sorted) {
+      const esc = term.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const rx = new RegExp(`\\b(${esc})\\b`, 'gi');
+      result = result.replace(rx, (match) => {
+        const ph = `\x00${replacements.length}\x00`;
+        replacements.push(
+          `<span class="glossary-term" data-term-id="${term.id}" tabindex="0" role="button">${match}</span>`
+        );
+        return ph;
+      });
+    }
+    return result.replace(/\x00(\d+)\x00/g, (_, i) => replacements[+i]);
+  }
+
+  function handleStemInteraction(e: MouseEvent | KeyboardEvent) {
+    if (e instanceof KeyboardEvent && e.key !== 'Enter' && e.key !== ' ') return;
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-term-id]');
+    if (el?.dataset.termId) selectedTermId = el.dataset.termId;
   }
 
   async function selectOption(opt: QuestionOption) {
     if (answered) return;
     answered = true;
     selectedOptionId = opt.id;
-
-    if (!opt.correct) {
-      wrongAnswer = true;
-    }
-
+    if (opt.correct) sessionCorrect++;
     if (currentQ) {
-      const updated = improveProgress(progress, 'question', currentQ.id, !opt.correct);
-      await saveProgress(updated);
+      await saveProgress(improveProgress(progress, 'question', currentQ.id, !opt.correct));
     }
   }
 
-  function nextQuestion() {
-    if (!dueQuestions.length) return;
-    currentIndex = (currentIndex + 1) % dueQuestions.length;
-    answered = false;
-    selectedOptionId = null;
-    wrongAnswer = false;
-    showExplanation = false;
+  async function nextQuestion() {
+    if (sessionIndex >= sessionQuestions.length - 1) {
+      await finishSession();
+    } else {
+      sessionIndex++;
+      answered = false;
+      selectedOptionId = null;
+      showExplanation = false;
+      showHint = false;
+    }
+  }
+
+  async function finishSession() {
+    sessionDone = true;
+    if ($sessionLookups.size > 0) {
+      const ids = [...$sessionLookups.keys()];
+      lookedUpTermsData = await db.terms.where('id').anyOf(ids).toArray();
+    }
   }
 
   function optionClass(opt: QuestionOption): string {
     if (!answered) return '';
-    if (opt.id === selectedOptionId) {
-      return opt.correct ? 'correct' : 'incorrect';
-    }
-    if (opt.correct) return 'correct'; // show correct after wrong answer
+    if (opt.id === selectedOptionId) return opt.correct ? 'correct' : 'incorrect';
+    if (opt.correct) return 'correct';
     return '';
   }
 </script>
@@ -93,99 +170,214 @@
 </svelte:head>
 
 <!-- Filter bar -->
-<div class="flex gap-1 mb-2">
+<div class="quiz-filter-bar">
   {#each EXAM_FILTERS as f}
     <button
       class="btn btn-sm {examFilter === f ? 'btn-primary' : 'btn-ghost'}"
-      on:click={() => { examFilter = f; currentIndex = 0; }}
+      on:click={() => changeFilter(f)}
     >
       {f === 'all' ? 'Tất cả' : f}
     </button>
   {/each}
-  <span class="counter-badge" style="margin-left:auto;align-self:center">{dueQuestions.length} câu cần ôn</span>
-</div>
-
-{#if dueQuestions.length === 0}
-  <div class="empty-state">
-    {#if filtered.length === 0}
-      <p>Chưa có câu hỏi nào. Hãy thêm qua Supabase Studio.</p>
-    {:else}
-      <p>🎉 Tuyệt vời! Không còn câu nào cần ôn tập hôm nay.</p>
-      <p class="mt-1 text-secondary" style="font-size:0.85rem">Tổng {filtered.length} câu trong bộ đề.</p>
+  <div class="quiz-filter-meta">
+    {#if vocabCount > 0}
+      <span class="vocab-counter-badge">📖 {vocabCount} từ</span>
+    {/if}
+    {#if !sessionDone}
+      <span class="counter-badge">{sessionQuestions.length} câu</span>
     {/if}
   </div>
-{:else if currentQ}
-  <!-- Progress indicator -->
-  <div class="flex items-center justify-between mt-1 mb-2">
-    <span class="text-secondary" style="font-size:0.85rem">{currentIndex + 1} / {dueQuestions.length}</span>
-    <span class="tag">{currentQ.exam}</span>
-    <span>{getBadge(progress?.level ?? -1)}</span>
+</div>
+
+<!-- ── RESULTS CARD ── -->
+{#if sessionDone}
+  <div class="card">
+    <div class="result-header">
+      <div class="result-icon">🎓</div>
+      <h2 style="margin:0.5rem 0 0.25rem">Kết quả phiên luyện tập</h2>
+      <p class="text-secondary" style="font-size:0.9rem">
+        Đánh giá mức độ sẵn sàng đọc hiểu tiếng Anh chuyên ngành Scrum
+      </p>
+    </div>
+
+    <!-- Score grid -->
+    <div class="result-grid">
+      <div class="result-stat">
+        <div class="result-stat-value">{sessionCorrect}/{sessionQuestions.length}</div>
+        <div class="result-stat-label">Kết quả</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value" style="color:var(--success)">{scorePercent}%</div>
+        <div class="result-stat-label">Tỷ lệ đúng</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value" style="color:var(--warning)">{vocabCount}</div>
+        <div class="result-stat-label">Từ đã tra</div>
+      </div>
+    </div>
+
+    <!-- Readiness meter -->
+    <div class="readiness-section">
+      <div class="readiness-header">
+        <span style="font-size:0.9rem;font-weight:600">Đánh giá Readiness:</span>
+        <span class="readiness-badge readiness-badge-{readinessVariant}">{readinessLabel}</span>
+      </div>
+      <div class="readiness-track">
+        <div
+          class="readiness-fill readiness-fill-{readinessVariant}"
+          style="width:{adjustedReadiness}%"
+        ></div>
+      </div>
+      <p class="text-secondary" style="font-size:0.85rem;margin-top:0.75rem;line-height:1.5">
+        {#if adjustedReadiness >= 85}
+          🎉 Tuyệt vời! Khả năng đọc hiểu vững vàng, ít phụ thuộc tra từ. Bạn sẵn sàng thi thật!
+        {:else if adjustedReadiness >= 60}
+          📚 Nền tảng tư duy tốt, nhưng tần suất tra từ còn cao. Hãy ôn lại từ vựng dưới đây.
+        {:else}
+          🔄 Cần luyện thêm. Hãy ôn Scrum Guide song ngữ và thực hành thêm câu hỏi tình huống.
+        {/if}
+      </p>
+    </div>
+
+    <!-- Vocab reinforcement list -->
+    {#if lookedUpTermsData.length > 0}
+      <div class="vocab-reinforce-section">
+        <p class="vocab-reinforce-title">
+          📌 Từ vựng bạn đã tra trong phiên này (click để xem lại):
+        </p>
+        <div class="tags">
+          {#each lookedUpTermsData as t}
+            <button class="tag" on:click={() => (selectedTermId = t.id)}>
+              {t.text}{#if ($sessionLookups.get(t.id) ?? 0) > 1}<span
+                  style="opacity:0.6;margin-left:0.2rem">×{$sessionLookups.get(t.id)}</span
+                >{/if}
+            </button>
+          {/each}
+        </div>
+      </div>
+    {/if}
+
+    <button class="btn btn-primary mt-2" style="width:100%" on:click={initSession}>
+      🔄 Bắt đầu phiên mới
+    </button>
   </div>
 
-  <!-- Question card -->
-  <div class="card">
-    <p style="font-size:1.05rem;line-height:1.6;margin-bottom:1rem">{currentQ.stem}</p>
+<!-- ── EMPTY STATE ── -->
+{:else if sessionQuestions.length === 0}
+  <div class="empty-state">
+    {#if allQuestions.length === 0}
+      <p>Chưa có câu hỏi nào. Hãy thêm qua Supabase Studio.</p>
+    {:else}
+      <p>Không có câu hỏi nào cho bộ lọc này.</p>
+    {/if}
+  </div>
 
+<!-- ── QUIZ CARD ── -->
+{:else if currentQ}
+  <!-- Progress bar -->
+  <div class="quiz-progress-section">
+    <div class="quiz-progress-meta">
+      <span class="text-secondary" style="font-size:0.82rem">
+        Câu {sessionIndex + 1} / {sessionQuestions.length}
+      </span>
+      <div class="flex items-center gap-1">
+        <span class="tag" style="cursor:default">{currentQ.exam}</span>
+        <span>{getBadge(progress?.level ?? -1)}</span>
+      </div>
+    </div>
+    <div class="quiz-progress-track">
+      <div class="quiz-progress-fill" style="width:{progressPct}%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <!-- Question stem with inline glossary highlights -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div
+      class="question-stem"
+      on:click={handleStemInteraction}
+      on:keydown={handleStemInteraction}
+      role="presentation"
+    >
+      {@html highlightedStem}
+    </div>
+
+    {#if termRefs.length > 0}
+      <p class="glossary-hint-label">
+        💡 Click vào <span class="glossary-term-demo">từ gạch chân</span> để xem nghĩa tiếng Việt
+      </p>
+    {/if}
+
+    <!-- Hint toggle (only visible before answering) -->
+    {#if currentQ.explanationVi && !answered}
+      <div class="hint-section">
+        <button class="btn btn-ghost btn-sm" on:click={() => (showHint = !showHint)}>
+          {showHint ? '▲ Ẩn gợi ý' : '💡 Gợi ý tư duy'}
+        </button>
+        {#if showHint}
+          <div class="hint-box">{currentQ.explanationVi}</div>
+        {/if}
+      </div>
+    {/if}
+
+    <!-- Answer options with A/B/C/D letter labels -->
     <div class="quiz-options">
-      {#each options as opt}
+      {#each options as opt, i}
         <button
           class="quiz-option {optionClass(opt)}"
           on:click={() => selectOption(opt)}
           disabled={answered}
         >
-          {opt.text}
+          <span class="option-letter">{String.fromCharCode(65 + i)}</span>
+          <span class="option-text">{opt.text}</span>
         </button>
       {/each}
     </div>
 
-    <!-- Explanation & key terms (shown after answering) -->
+    <!-- Post-answer feedback -->
     {#if answered}
-      <div class="mt-2">
-        {#if wrongAnswer}
-          <p style="color:var(--error);font-weight:600;margin-bottom:0.5rem">✗ Sai rồi!</p>
-        {:else}
-          <p style="color:var(--success);font-weight:600;margin-bottom:0.5rem">✓ Chính xác!</p>
-        {/if}
+      <div class="answer-feedback answer-feedback-{isCorrect ? 'correct' : 'incorrect'}">
+        <span class="answer-feedback-icon">{isCorrect ? '✓' : '✗'}</span>
+        <span>{isCorrect ? 'Chính xác!' : 'Sai rồi!'}</span>
+        <span class="session-live-score">{sessionCorrect}/{sessionIndex + 1}</span>
+      </div>
 
-        <!-- Toggle explanation -->
-        {#if currentQ.explanationVi || currentQ.explanationEn}
-          <button
-            class="btn btn-ghost btn-sm"
-            on:click={() => (showExplanation = !showExplanation)}
-          >
-            {showExplanation ? '▲ Ẩn giải thích' : '▼ Xem giải thích'}
-          </button>
-
-          {#if showExplanation}
-            <div class="card mt-1" style="background:var(--primary-light);box-shadow:none;padding:1rem">
-              {#if currentQ.explanationVi}
-                <p style="font-size:0.9rem">{currentQ.explanationVi}</p>
-              {/if}
-              {#if currentQ.explanationEn}
-                <p class="text-secondary mt-1" style="font-size:0.85rem">{currentQ.explanationEn}</p>
-              {/if}
-            </div>
-          {/if}
-        {/if}
-
-        <!-- Key terms referenced in this question (tap to gloss) -->
-        {#if termRefs.length}
-          <div class="mt-2">
-            <p class="text-secondary" style="font-size:0.8rem;margin-bottom:0.4rem">📌 Thuật ngữ trong câu hỏi:</p>
-            <div class="tags">
-              {#each termRefs as term}
-                <button class="tag" on:click={() => (selectedTermId = term.id)}>
-                  {term.text}
-                </button>
-              {/each}
-            </div>
+      {#if currentQ.explanationVi || currentQ.explanationEn}
+        <button
+          class="btn btn-ghost btn-sm"
+          on:click={() => (showExplanation = !showExplanation)}
+          style="margin-top:0.75rem"
+        >
+          {showExplanation ? '▲ Ẩn giải thích' : '▼ Xem giải thích đầy đủ'}
+        </button>
+        {#if showExplanation}
+          <div class="explanation-box">
+            {#if currentQ.explanationVi}
+              <p style="font-size:0.9rem">{currentQ.explanationVi}</p>
+            {/if}
+            {#if currentQ.explanationEn}
+              <p class="text-secondary mt-1" style="font-size:0.85rem">{currentQ.explanationEn}</p>
+            {/if}
           </div>
         {/if}
+      {/if}
 
-        <button class="btn btn-primary mt-2" style="width:100%" on:click={nextQuestion}>
-          Câu tiếp theo ▶
-        </button>
-      </div>
+      {#if termRefs.length}
+        <div class="mt-2">
+          <p class="text-secondary" style="font-size:0.8rem;margin-bottom:0.4rem">
+            📌 Thuật ngữ trong câu hỏi:
+          </p>
+          <div class="tags">
+            {#each termRefs as term}
+              <button class="tag" on:click={() => (selectedTermId = term.id)}>{term.text}</button>
+            {/each}
+          </div>
+        </div>
+      {/if}
+
+      <button class="btn btn-primary mt-2" style="width:100%" on:click={nextQuestion}>
+        {sessionIndex < sessionQuestions.length - 1 ? 'Câu tiếp theo ▶' : '🎓 Xem kết quả phiên'}
+      </button>
     {/if}
   </div>
 {/if}
