@@ -33,6 +33,8 @@
   let selectedTermId: string | null = null;
   let allTermsForTokenize: Term[] = [];
   let translatingWord: string | null = null;
+  let translateError: string | null = null;
+  let phraseSelection: string | null = null;
 
   $: currentUserId = $authUser?.id;
   $: currentQ = sessionQuestions[sessionIndex] ?? null;
@@ -96,6 +98,7 @@
     selectedOptionId = null;
     showExplanation = false;
     showHint = false;
+    phraseSelection = null;
 
     const [opts, refs] = await Promise.all([
       db.questionOptions.where('questionId').equals(q.id).toArray(),
@@ -115,6 +118,7 @@
     const termEl = (e.target as HTMLElement).closest<HTMLElement>('[data-term-id]');
     if (termEl?.dataset.termId) {
       selectedTermId = termEl.dataset.termId;
+      phraseSelection = null;
       return;
     }
 
@@ -122,14 +126,48 @@
     const wordEl = (e.target as HTMLElement).closest<HTMLElement>('[data-word]');
     if (!wordEl?.dataset.word) return;
 
+    phraseSelection = null;
     const word = wordEl.dataset.word;
     translatingWord = word;
+    translateError = null;
     try {
       const termId = await lookupOrTranslate(word, currentUserId);
       allTermsForTokenize = await db.terms.toArray();
       selectedTermId = termId;
     } catch (err) {
       console.error('Translation failed:', err);
+      translateError = 'Dịch thất bại — thử lại sau';
+      setTimeout(() => (translateError = null), 3000);
+    } finally {
+      translatingWord = null;
+    }
+  }
+
+  function handleStemMouseUp() {
+    const sel = window.getSelection();
+    const text = sel?.toString().trim() ?? '';
+    if (text.length > 2 && /\s/.test(text)) {
+      phraseSelection = text.replace(/\s+/g, ' ');
+    } else {
+      phraseSelection = null;
+    }
+  }
+
+  async function translatePhrase() {
+    if (!phraseSelection || !currentUserId || translatingWord) return;
+    const phrase = phraseSelection;
+    phraseSelection = null;
+    window.getSelection()?.removeAllRanges();
+    translatingWord = phrase;
+    translateError = null;
+    try {
+      const termId = await lookupOrTranslate(phrase, currentUserId);
+      allTermsForTokenize = await db.terms.toArray();
+      selectedTermId = termId;
+    } catch (err) {
+      console.error('Phrase translation failed:', err);
+      translateError = 'Dịch thất bại — thử lại sau';
+      setTimeout(() => (translateError = null), 3000);
     } finally {
       translatingWord = null;
     }
@@ -305,15 +343,24 @@
       class="question-stem"
       on:click={handleStemInteraction}
       on:keydown={handleStemInteraction}
+      on:mouseup={handleStemMouseUp}
       role="presentation"
     >
       {@html highlightedStem}
     </div>
 
     <p class="glossary-hint-label">
-      💡 Click vào <span class="glossary-term-demo">thuật ngữ</span> hoặc bất kỳ từ nào để tra nghĩa
+      💡 Click từ đơn hoặc <em>bôi chọn cụm từ</em> để tra nghĩa
       {#if translatingWord}<span class="translate-loading">· Đang dịch "{translatingWord}"…</span>{/if}
+      {#if translateError}<span class="translate-error">· {translateError}</span>{/if}
     </p>
+    {#if phraseSelection && currentUserId && !translatingWord}
+      <div class="phrase-translate-bar">
+        <span class="phrase-preview">"{phraseSelection}"</span>
+        <button class="btn btn-sm btn-primary" on:click={translatePhrase}>Dịch cụm</button>
+        <button class="btn btn-sm btn-ghost" on:click={() => { phraseSelection = null; window.getSelection()?.removeAllRanges(); }}>✕</button>
+      </div>
+    {/if}
 
     <!-- Hint toggle (only visible before answering) -->
     {#if currentQ.explanationVi && !answered}
