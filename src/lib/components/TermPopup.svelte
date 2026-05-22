@@ -80,6 +80,9 @@
             </div>
             <div class="sense-en">{sense.en}</div>
             <div class="sense-vi">{sense.vi}</div>
+            {#if sense.note}
+              <div class="sense-note">{sense.note}</div>
+            {/if}
           </div>
         {/each}
       </div>
@@ -88,7 +91,7 @@
       {#if term.tags.length}
         <div class="tags">
           {#each term.tags as tag}
-            <span class="tag">{tag}</span>
+            <span class="tag {tag === 'ai-dịch' ? 'tag-ai' : ''}">{tag}</span>
           {/each}
         </div>
       {/if}
