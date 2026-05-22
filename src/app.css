@@ -872,6 +872,32 @@ progress::-webkit-progress-value {
   font-style: italic;
 }
 
+.translate-error {
+  color: var(--error);
+  font-style: italic;
+}
+
+/* Phrase selection → translate bar */
+.phrase-translate-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--primary-light);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  margin-top: 0.4rem;
+}
+
+.phrase-preview {
+  flex: 1;
+  font-style: italic;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Note field inside a TermSense */
 .sense-note {
   font-size: 0.82rem;
