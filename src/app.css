@@ -311,6 +311,9 @@ body {
   font-size: 0.95rem;
   transition: all 0.15s;
   width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
 }
 
 .quiz-option:hover:not(:disabled) {
@@ -534,4 +537,316 @@ progress::-webkit-progress-value {
   padding: 0.15rem 0.5rem;
   border-radius: 20px;
   font-weight: 600;
+}
+
+/* ========================
+   Quiz enhancements
+   ======================== */
+
+/* Inline clickable glossary terms in question stem */
+.glossary-term {
+  color: var(--primary-dark);
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: var(--primary);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 0 1px;
+  transition: background 0.15s;
+}
+
+.glossary-term:hover {
+  background: var(--primary-light);
+}
+
+/* Question stem */
+.question-stem {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
+}
+
+/* Hint label below stem when termRefs exist */
+.glossary-hint-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.glossary-term-demo {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: var(--primary);
+  text-underline-offset: 3px;
+  color: var(--primary);
+}
+
+/* Pre-answer hint box */
+.hint-section {
+  margin-bottom: 0.75rem;
+}
+
+.hint-box {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #5d4037;
+  line-height: 1.5;
+}
+
+/* Letter chip on each quiz option */
+.option-letter {
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  margin-top: 1px;
+}
+
+.quiz-option:hover:not(:disabled) .option-letter {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.quiz-option.correct .option-letter {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.quiz-option.incorrect .option-letter {
+  background: var(--error);
+  color: white;
+  border-color: var(--error);
+}
+
+.option-text {
+  flex: 1;
+  text-align: left;
+}
+
+/* Session progress bar (above quiz card) */
+.quiz-progress-section {
+  margin-bottom: 0.75rem;
+}
+
+.quiz-progress-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.quiz-progress-track {
+  width: 100%;
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Post-answer feedback row */
+.answer-feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.answer-feedback-correct {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.answer-feedback-incorrect {
+  background: var(--error-light);
+  color: var(--error);
+}
+
+.answer-feedback-icon {
+  font-size: 1rem;
+}
+
+.session-live-score {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* Post-answer explanation box */
+.explanation-box {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--primary-light);
+  border-radius: 8px;
+}
+
+/* Filter bar enhancements */
+.quiz-filter-bar {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.quiz-filter-meta {
+  margin-left: auto;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.vocab-counter-badge {
+  font-size: 0.78rem;
+  background: #fff8e1;
+  color: var(--warning);
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  font-weight: 600;
+  border: 1px solid #ffe082;
+}
+
+/* End-of-session results card */
+.result-header {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.result-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.result-stat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.result-stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.result-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* Readiness meter */
+.readiness-section {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.readiness-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.readiness-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.readiness-badge-ready {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.readiness-badge-warn {
+  background: #fff8e1;
+  color: var(--warning);
+}
+
+.readiness-badge-danger {
+  background: var(--error-light);
+  color: var(--error);
+}
+
+.readiness-track {
+  width: 100%;
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.readiness-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+.readiness-fill-ready {
+  background: var(--success);
+}
+
+.readiness-fill-warn {
+  background: var(--warning);
+}
+
+.readiness-fill-danger {
+  background: var(--error);
+}
+
+/* Vocab reinforcement list in results */
+.vocab-reinforce-section {
+  margin-bottom: 1rem;
+}
+
+.vocab-reinforce-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
 }
