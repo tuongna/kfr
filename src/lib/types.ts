@@ -15,6 +15,7 @@ export interface TermSense {
   register: 'general' | 'scrum';
   en: string;
   vi: string;
+  note?: string;
   sortOrder: number;
 }
 

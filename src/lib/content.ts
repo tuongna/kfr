@@ -40,6 +40,7 @@ async function syncTerms(): Promise<void> {
       register: s.register,
       en: s.en,
       vi: s.vi,
+      note: s.note ?? undefined,
       sortOrder: s.sort_order ?? 0,
     }))
   );
