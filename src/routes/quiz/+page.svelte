@@ -4,6 +4,8 @@
   import { progressMap, getProgress, saveProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, shuffleByIndex, getBadge } from '$lib/srs';
   import { sessionLookups } from '$lib/stores/session';
+  import { authUser } from '$lib/stores/auth';
+  import { tokenizeStem, lookupOrTranslate } from '$lib/translate';
   import type { Question, QuestionOption, Term } from '$lib/types';
   import TermPopup from '$lib/components/TermPopup.svelte';
 
@@ -29,7 +31,10 @@
   let showHint = false;
   let highlightedStem = '';
   let selectedTermId: string | null = null;
+  let allTermsForTokenize: Term[] = [];
+  let translatingWord: string | null = null;
 
+  $: currentUserId = $authUser?.id;
   $: currentQ = sessionQuestions[sessionIndex] ?? null;
   $: progress = currentQ ? getProgress($progressMap, 'question', currentQ.id) : undefined;
   $: selectedOpt = options.find((o) => o.id === selectedOptionId);
@@ -56,7 +61,10 @@
   $: if (currentQ) loadQuestion(currentQ);
 
   onMount(async () => {
-    allQuestions = await db.questions.toArray();
+    [allQuestions, allTermsForTokenize] = await Promise.all([
+      db.questions.toArray(),
+      db.terms.toArray(),
+    ]);
     initSession();
   });
 
@@ -98,33 +106,33 @@
 
     options = shuffleByIndex(opts.sort((a, b) => a.sortOrder - b.sortOrder), sessionIndex);
     termRefs = refs;
-    highlightedStem = buildHighlightedStem(q.stem, refs);
+    highlightedStem = tokenizeStem(q.stem, allTermsForTokenize);
   }
 
-  // Wraps term matches in the stem with clickable spans.
-  // Uses null-byte placeholders so shorter terms don't re-match inside already-wrapped longer ones.
-  function buildHighlightedStem(stem: string, terms: Term[]): string {
-    const sorted = [...terms].sort((a, b) => b.text.length - a.text.length);
-    const replacements: string[] = [];
-    let result = stem;
-    for (const term of sorted) {
-      const esc = term.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const rx = new RegExp(`\\b(${esc})\\b`, 'gi');
-      result = result.replace(rx, (match) => {
-        const ph = `\x00${replacements.length}\x00`;
-        replacements.push(
-          `<span class="glossary-term" data-term-id="${term.id}" tabindex="0" role="button">${match}</span>`
-        );
-        return ph;
-      });
-    }
-    return result.replace(/\x00(\d+)\x00/g, (_, i) => replacements[+i]);
-  }
-
-  function handleStemInteraction(e: MouseEvent | KeyboardEvent) {
+  async function handleStemInteraction(e: MouseEvent | KeyboardEvent) {
     if (e instanceof KeyboardEvent && e.key !== 'Enter' && e.key !== ' ') return;
-    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-term-id]');
-    if (el?.dataset.termId) selectedTermId = el.dataset.termId;
+
+    const termEl = (e.target as HTMLElement).closest<HTMLElement>('[data-term-id]');
+    if (termEl?.dataset.termId) {
+      selectedTermId = termEl.dataset.termId;
+      return;
+    }
+
+    if (!currentUserId || translatingWord) return;
+    const wordEl = (e.target as HTMLElement).closest<HTMLElement>('[data-word]');
+    if (!wordEl?.dataset.word) return;
+
+    const word = wordEl.dataset.word;
+    translatingWord = word;
+    try {
+      const termId = await lookupOrTranslate(word, currentUserId);
+      allTermsForTokenize = await db.terms.toArray();
+      selectedTermId = termId;
+    } catch (err) {
+      console.error('Translation failed:', err);
+    } finally {
+      translatingWord = null;
+    }
   }
 
   async function selectOption(opt: QuestionOption) {
@@ -302,11 +310,10 @@
       {@html highlightedStem}
     </div>
 
-    {#if termRefs.length > 0}
-      <p class="glossary-hint-label">
-        💡 Click vào <span class="glossary-term-demo">từ gạch chân</span> để xem nghĩa tiếng Việt
-      </p>
-    {/if}
+    <p class="glossary-hint-label">
+      💡 Click vào <span class="glossary-term-demo">thuật ngữ</span> hoặc bất kỳ từ nào để tra nghĩa
+      {#if translatingWord}<span class="translate-loading">· Đang dịch "{translatingWord}"…</span>{/if}
+    </p>
 
     <!-- Hint toggle (only visible before answering) -->
     {#if currentQ.explanationVi && !answered}

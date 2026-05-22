@@ -56,8 +56,9 @@ serve(async (req: Request) => {
     );
   }
 
-  // Default to a lightweight free model
-  const model = body.model ?? 'meta-llama/llama-3.2-3b-instruct:free';
+  // Default to a capable free multilingual model (good Vietnamese + domain terms).
+  // Swap this single line to try another model, e.g. 'openai/gpt-oss-20b:free'.
+  const model = body.model ?? 'google/gemini-2.0-flash-exp:free';
 
   const response = await fetch(OPENROUTER_URL, {
     method: 'POST',
