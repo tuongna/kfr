@@ -65,7 +65,6 @@
   const navLinks = [
     { href: `${base}/learn`, label: 'Học từ vựng' },
     { href: `${base}/quiz`, label: 'Kiểm tra' },
-    { href: `${base}/glossary`, label: 'Tra cứu' },
   ];
 </script>
 
@@ -82,7 +81,13 @@
       {#if $authLoading}
         <div class="loading-spinner" style="width:20px;height:20px;border-width:2px"></div>
       {:else if $authUser}
-        <span style="color:rgba(255,255,255,0.9);font-size:0.8rem">{$authUser.name ?? $authUser.email}</span>
+        {#if $authUser.avatarUrl}
+          <img class="navbar-avatar" src={$authUser.avatarUrl} alt="" referrerpolicy="no-referrer" />
+        {:else}
+          <span class="navbar-avatar navbar-avatar-fallback" aria-hidden="true">
+            {($authUser.name ?? $authUser.email).trim().charAt(0).toUpperCase()}
+          </span>
+        {/if}
         <button class="btn btn-ghost btn-sm" style="color:white;border-color:rgba(255,255,255,0.4)" on:click={signOut}>Đăng xuất</button>
       {:else}
         <button class="btn btn-ghost btn-sm" style="color:white;border-color:rgba(255,255,255,0.4)" on:click={signIn}>Đăng nhập</button>
