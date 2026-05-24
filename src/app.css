@@ -376,10 +376,10 @@ body {
   background: var(--primary-light);
 }
 
-/* Distinct focus ring so keyboard focus isn't mistaken for a selection */
+/* Subtle border-only focus — clearly weaker than the correct/incorrect states */
 .quiz-option:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--primary);
 }
 
 .quiz-option.correct {
