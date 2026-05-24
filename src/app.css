@@ -117,6 +117,25 @@ body {
   font-size: 0.85rem;
 }
 
+.navbar-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-avatar-fallback {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
 /* ========================
    Stats bar
    ======================== */
@@ -164,16 +183,7 @@ body {
   }
 
   .navbar-user {
-    min-width: 0;
-    max-width: 60%;
     gap: 0.4rem;
-  }
-
-  /* Truncate long names/emails instead of overflowing */
-  .navbar-user span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .navbar-user .btn-sm {
