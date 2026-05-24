@@ -362,7 +362,6 @@ body {
   border-radius: 8px;
   padding: 0.75rem 1rem;
   text-align: left;
-  cursor: pointer;
   font-size: 0.95rem;
   transition: all 0.15s;
   width: 100%;
@@ -371,14 +370,8 @@ body {
   gap: 0.75rem;
 }
 
-.quiz-option:hover:not(:disabled) {
-  border-color: var(--primary);
-  background: var(--primary-light);
-}
-
-/* Subtle border-only focus — clearly weaker than the correct/incorrect states */
-.quiz-option:focus-visible {
-  outline: none;
+/* Hover only while no answer has been picked yet */
+.quiz-option:not(.correct):not(.incorrect):not(.selected):hover {
   border-color: var(--primary);
 }
 
@@ -392,6 +385,17 @@ body {
   border-color: var(--error);
   background: var(--error-light);
   color: var(--error);
+}
+
+/* Mark the option the user actually picked */
+.quiz-option.selected {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+.quiz-option.selected.correct {
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.3);
+}
+.quiz-option.selected.incorrect {
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.3);
 }
 
 /* ========================
@@ -660,11 +664,12 @@ progress::-webkit-progress-value {
   line-height: 1.5;
 }
 
-/* Letter chip on each quiz option */
+/* Letter chip — the select-answer button */
 .option-letter {
   flex-shrink: 0;
   width: 1.6rem;
   height: 1.6rem;
+  padding: 0;
   border-radius: 6px;
   background: var(--bg);
   border: 1.5px solid var(--border);
@@ -676,9 +681,21 @@ progress::-webkit-progress-value {
   color: var(--text-secondary);
   transition: all 0.15s;
   margin-top: 1px;
+  cursor: pointer;
+  font-family: inherit;
 }
 
-.quiz-option:hover:not(:disabled) .option-letter {
+.option-letter:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.option-letter:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.quiz-option:not(.correct):not(.incorrect):not(.selected):hover .option-letter {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
