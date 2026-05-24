@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { db } from '$lib/db';
   import { progressMap, getProgress, saveProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, shuffleByIndex, getBadge } from '$lib/srs';
@@ -69,6 +69,13 @@
       db.terms.toArray(),
     ]);
     initSession();
+    document.addEventListener('selectionchange', updatePhraseSelection);
+  });
+
+  onDestroy(() => {
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('selectionchange', updatePhraseSelection);
+    }
   });
 
   function buildPool(filter: ExamFilter): Question[] {
@@ -137,16 +144,27 @@
       selectedTermId = termId;
     } catch (err) {
       console.error('Translation failed:', err);
-      translateError = 'Dịch thất bại — thử lại sau';
-      setTimeout(() => (translateError = null), 3000);
+      const msg = err instanceof Error ? err.message : String(err);
+      translateError = `Dịch thất bại: ${msg.slice(0, 120)}`;
+      setTimeout(() => (translateError = null), 6000);
     } finally {
       translatingWord = null;
     }
   }
 
-  function handleStemMouseUp() {
+  function updatePhraseSelection() {
     const sel = window.getSelection();
     const text = sel?.toString().trim() ?? '';
+    if (!text || !sel || sel.rangeCount === 0) {
+      phraseSelection = null;
+      return;
+    }
+    const node = sel.getRangeAt(0).commonAncestorContainer;
+    const el = node instanceof Element ? node : node.parentElement;
+    if (!el?.closest('.question-stem, .quiz-options')) {
+      phraseSelection = null;
+      return;
+    }
     if (text.length > 2 && /\s/.test(text)) {
       phraseSelection = text.replace(/\s+/g, ' ');
     } else {
@@ -356,7 +374,6 @@
       class="question-stem"
       on:click={handleStemInteraction}
       on:keydown={handleStemInteraction}
-      on:mouseup={handleStemMouseUp}
       role="presentation"
     >
       {@html highlightedStem}
@@ -395,7 +412,6 @@
           class="quiz-option {optionClass(opt)}"
           on:click={handleStemInteraction}
           on:keydown={handleStemInteraction}
-          on:mouseup={handleStemMouseUp}
         >
           <button
             class="option-letter"
