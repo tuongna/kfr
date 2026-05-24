@@ -26,6 +26,7 @@
   let selectedOptionId: string | null = null;
   let answered = false;
   let options: QuestionOption[] = [];
+  $: optionStems = options.map((o) => tokenizeStem(o.text, allTermsForTokenize));
   let termRefs: Term[] = [];
   let showExplanation = false;
   let showHint = false;
@@ -215,9 +216,11 @@
 
   function optionClass(opt: QuestionOption): string {
     if (!answered) return '';
-    if (opt.id === selectedOptionId) return opt.correct ? 'correct' : 'incorrect';
-    if (opt.correct) return 'correct';
-    return '';
+    const classes: string[] = [];
+    if (opt.id === selectedOptionId) classes.push('selected');
+    if (opt.correct) classes.push('correct');
+    else if (opt.id === selectedOptionId) classes.push('incorrect');
+    return classes.join(' ');
   }
 </script>
 
@@ -384,17 +387,26 @@
       </div>
     {/if}
 
-    <!-- Answer options with A/B/C/D letter labels -->
+    <!-- Answer options: chip button selects, text supports word lookup -->
     <div class="quiz-options">
       {#each options as opt, i}
-        <button
+        <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+        <div
           class="quiz-option {optionClass(opt)}"
-          on:click={() => selectOption(opt)}
-          disabled={answered}
+          on:click={handleStemInteraction}
+          on:keydown={handleStemInteraction}
+          on:mouseup={handleStemMouseUp}
         >
-          <span class="option-letter">{String.fromCharCode(65 + i)}</span>
-          <span class="option-text">{opt.text}</span>
-        </button>
+          <button
+            class="option-letter"
+            on:click|stopPropagation={() => selectOption(opt)}
+            disabled={answered}
+            aria-label="Chọn đáp án {String.fromCharCode(65 + i)}"
+          >
+            {String.fromCharCode(65 + i)}
+          </button>
+          <span class="option-text">{@html optionStems[i] ?? opt.text}</span>
+        </div>
       {/each}
     </div>
 
