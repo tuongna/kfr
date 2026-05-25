@@ -7,7 +7,7 @@
   import { saveProgress } from '$lib/stores/mastery';
   import { progressMap, getProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, getBadge } from '$lib/srs';
-  import { auditTermSenses, type AuditResult } from '$lib/ai';
+  import { auditTermSenses, MODELS, MODEL_DISPLAY, type AuditResult, type ModelAttempt } from '$lib/ai';
 
   export let termId: string | null = null;
   /** When true, show a "Chọn cụm khác…" link that lets the parent open the slider. */
@@ -44,6 +44,30 @@
   let auditing: boolean = false;
   let auditResult: AuditResult | null = null;
   let auditError: string = '';
+  let auditAttempts: ModelAttempt[] = [];
+  let auditElapsed = 0;
+  let auditFinalElapsed = 0;
+  let auditElapsedInterval: ReturnType<typeof setInterval> | null = null;
+
+  function isFreeModel(id: string): boolean {
+    return id.endsWith(':free');
+  }
+
+  function friendlyModel(id: string): string {
+    return MODEL_DISPLAY[id] ?? id.replace(/:free$/, '').split('/').pop() ?? id;
+  }
+
+  function startAuditTimer() {
+    auditElapsed = 0;
+    auditElapsedInterval = setInterval(() => { auditElapsed += 1; }, 1000);
+  }
+
+  function stopAuditTimer() {
+    if (auditElapsedInterval !== null) {
+      clearInterval(auditElapsedInterval);
+      auditElapsedInterval = null;
+    }
+  }
 
   $: if (termId) loadTerm(termId);
 
@@ -246,15 +270,27 @@
     auditing = true;
     auditError = '';
     auditResult = null;
+    auditAttempts = [];
+    startAuditTimer();
     try {
       auditResult = await auditTermSenses(
         term.text,
-        senses.map((s) => ({ register: s.register, en: s.en, vi: s.vi }))
+        senses.map((s) => ({ register: s.register, en: s.en, vi: s.vi })),
+        (a) => {
+          const last = auditAttempts[auditAttempts.length - 1];
+          if (last && last.model === a.model && last.status === 'trying') {
+            auditAttempts = [...auditAttempts.slice(0, -1), a];
+          } else {
+            auditAttempts = [...auditAttempts, a];
+          }
+        }
       );
     } catch (e: unknown) {
       auditError = e instanceof Error ? e.message : String(e);
     } finally {
+      auditFinalElapsed = auditElapsed;
       auditing = false;
+      stopAuditTimer();
     }
   }
 
@@ -416,6 +452,58 @@
 
           {#if auditError}
             <p style="color:var(--error);font-size:0.82rem;margin-top:0.4rem">{auditError}</p>
+          {/if}
+
+          <!-- Audit model-progress panel (mirrors NgramPopup translate progress) -->
+          {#if auditing || auditAttempts.length}
+            <div class="audit-progress" class:audit-progress--done={!auditing && auditAttempts.length > 0}>
+              <div class="ap-header">
+                <span class="ap-status">
+                  {#if auditing}
+                    <span class="ap-spinner" aria-hidden="true"></span>
+                    Đang audit…
+                  {:else}
+                    <span style="color:var(--success)">✓</span>
+                    Audit xong
+                  {/if}
+                </span>
+                {#if auditing && auditElapsed >= 1}
+                  <span class="ap-elapsed" class:ap-elapsed--slow={auditElapsed >= 8}>⏱ {auditElapsed}s</span>
+                {:else if !auditing && auditFinalElapsed >= 1}
+                  <span class="ap-elapsed" style="opacity:0.5">⏱ {auditFinalElapsed}s</span>
+                {/if}
+              </div>
+              <div class="ap-track">
+                {#each MODELS as m, i}
+                  {@const st = i < auditAttempts.length ? auditAttempts[i].status : 'pending'}
+                  <div class="ap-dot ap-dot--{st}" class:ap-dot--free={isFreeModel(m)} title="{friendlyModel(m)}"></div>
+                {/each}
+                <span class="ap-fraction">{auditAttempts.length}/{MODELS.length}</span>
+              </div>
+              <ul class="ap-list">
+                {#each auditAttempts as a (a.model + a.status)}
+                  <li class="ap-row ap-row--{a.status}">
+                    <span class="ap-icon">
+                      {#if a.status === 'trying'}<span class="ap-spin">↻</span>
+                      {:else if a.status === 'failed'}✗
+                      {:else}✓{/if}
+                    </span>
+                    <span class="ap-badge" class:ap-badge--paid={!isFreeModel(a.model)}>
+                      {isFreeModel(a.model) ? 'F' : '$'}
+                    </span>
+                    <code class="ap-model">{friendlyModel(a.model)}</code>
+                    {#if a.status === 'trying'}
+                      <span class="ap-running">xử lý…</span>
+                    {:else if a.error}
+                      <span class="ap-err">— {a.error.slice(0, 50)}</span>
+                    {/if}
+                  </li>
+                {/each}
+              </ul>
+              {#if auditing && auditElapsed >= 8}
+                <p class="ap-slow">⏳ Hơi lâu rồi — vẫn đang xử lý, xin chờ thêm chút…</p>
+              {/if}
+            </div>
           {/if}
 
           {#if auditResult}
@@ -628,5 +716,179 @@
     font-size: 0.72rem;
     color: var(--text-secondary);
     font-style: italic;
+  }
+
+  /* ─── Audit model-progress panel ─────────────────────────────────────────── */
+
+  .audit-progress {
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.65rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+  }
+
+  .audit-progress--done {
+    border-color: var(--success);
+  }
+
+  .ap-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .ap-status {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .ap-spinner {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: ap-spin 0.75s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes ap-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .ap-elapsed {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }
+
+  .ap-elapsed--slow {
+    color: #d97706;
+    font-weight: 700;
+    opacity: 1;
+  }
+
+  .ap-track {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ap-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .ap-dot--pending { opacity: 0.3; }
+
+  .ap-dot--trying {
+    background: var(--primary);
+    border-color: var(--primary);
+    animation: ap-dot-pulse 0.9s ease-in-out infinite;
+  }
+
+  @keyframes ap-dot-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.65; }
+  }
+
+  .ap-dot--failed {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+    opacity: 0.4;
+  }
+
+  .ap-dot--succeeded {
+    background: var(--success);
+    border-color: var(--success);
+  }
+
+  .ap-fraction {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    margin-left: 4px;
+    opacity: 0.65;
+  }
+
+  .ap-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .ap-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+
+  .ap-icon { width: 0.9rem; text-align: center; flex-shrink: 0; }
+
+  .ap-spin { display: inline-block; animation: ap-spin 0.9s linear infinite; }
+
+  .ap-badge {
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 0.02rem 0.22rem;
+    border-radius: 3px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .ap-badge--paid {
+    color: var(--primary);
+    border-color: var(--primary);
+    opacity: 0.8;
+  }
+
+  .ap-model {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.72rem;
+    background: var(--surface);
+    padding: 0.03rem 0.28rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .ap-running { font-size: 0.7rem; color: var(--primary); font-style: italic; }
+  .ap-err     { font-size: 0.7rem; color: var(--text-secondary); font-style: italic; }
+
+  .ap-row--trying .ap-model { border-color: var(--primary); color: var(--primary); }
+  .ap-row--failed { color: var(--text-secondary); }
+  .ap-row--failed .ap-model { text-decoration: line-through; opacity: 0.6; }
+  .ap-row--succeeded { color: var(--success); font-weight: 600; }
+  .ap-row--succeeded .ap-model { border-color: var(--success); background: var(--success-light); color: var(--success); }
+
+  .ap-slow {
+    font-size: 0.74rem;
+    color: #d97706;
+    margin: 0;
+    padding: 0.25rem 0.4rem;
+    border-left: 2.5px solid #d97706;
+    border-radius: 0 4px 4px 0;
+    background: rgba(217, 119, 6, 0.08);
   }
 </style>
