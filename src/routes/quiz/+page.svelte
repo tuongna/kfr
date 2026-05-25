@@ -156,6 +156,9 @@
     // Words/terms always win over the option toggle so the user can tap a word
     // inside an answer to translate it instead of accidentally picking that answer.
     if (handleStemInteraction(e)) return;
+    // While a popup is open the user is interacting with the popup, not the
+    // option — drop any straggler keyboard events that bubbled through.
+    if (ngramSentence || selectedTermId) return;
     if (e instanceof KeyboardEvent) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       e.preventDefault();

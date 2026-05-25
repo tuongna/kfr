@@ -863,13 +863,17 @@ progress::-webkit-progress-value {
   text-decoration-color: var(--primary);
   text-underline-offset: 3px;
   cursor: pointer;
-  border-radius: 3px;
-  padding: 0 1px;
+  border-radius: 4px;
+  /* Enlarged hit area so taps on phones land reliably even at line edges. */
+  padding: 0.15em 0.2em;
+  margin: 0 -0.05em;
   transition: background 0.15s;
 }
 
-.glossary-term:hover {
+.glossary-term:hover,
+.glossary-term:focus-visible {
   background: var(--primary-light);
+  outline: none;
 }
 
 /* Question stem */
@@ -1083,12 +1087,25 @@ progress::-webkit-progress-value {
   text-decoration-color: #b0bec5;
   text-underline-offset: 3px;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 3px;
+  /* Enlarged hit area so a tap that lands a few pixels off still hits the
+     word instead of falling through to the answer option's toggle. */
+  padding: 0.15em 0.15em;
+  margin: 0 -0.05em;
   transition: background 0.15s;
 }
 
-.any-word:hover {
+.any-word:hover,
+.any-word:focus-visible {
   background: #eceff1;
+  outline: none;
+}
+
+/* Stem/options need slightly looser line-height to absorb the extra hit-area
+   padding on words without rows colliding. */
+.question-stem,
+.option-text {
+  line-height: 1.85;
 }
 
 /* Inline loading indicator while AI translates */
