@@ -529,14 +529,16 @@
     sentence={ngramSentence}
     charIdx={ngramCharIdx}
     ownerId={currentUserId}
+    context="scrum"
     on:select={(e) => onNgramSelect(e.detail)}
     on:close={() => (ngramSentence = null)}
   />
 {/if}
 
-<!-- Term detail popup -->
+<!-- Term detail popup — scrum context so Scrum senses appear first -->
 <TermPopup
   termId={selectedTermId}
+  context="scrum"
   canPickPhrase={!!lastClickedSentence && !!currentUserId}
   on:close={() => {
     selectedTermId = null;

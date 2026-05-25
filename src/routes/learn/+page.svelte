@@ -134,13 +134,26 @@
     {#if !revealed}
       <p class="text-secondary mt-2" style="font-size:0.9rem">👆 Nhấn để xem nghĩa</p>
     {:else}
-      <!-- Multiple meanings shown together -->
+      <!-- Multiple meanings shown together — Scrum sense surfaced first -->
       <div class="senses mt-2">
-        {#each senses as sense}
-          <div class="sense register-{sense.register}">
-            <div class="sense-register">{sense.register === 'scrum' ? '📋 Scrum' : '📖 General'}</div>
+        {#each [...senses].sort((a, b) => {
+          // Scrum sense first (lower sortKey = earlier)
+          const aKey = a.register === 'scrum' ? 0 : 1;
+          const bKey = b.register === 'scrum' ? 0 : 1;
+          return aKey !== bKey ? aKey - bKey : a.sortOrder - b.sortOrder;
+        }) as sense, i}
+          <div class="sense register-{sense.register}" class:sense-primary={i === 0}>
+            <div class="sense-register-badge register-badge-{sense.register}">
+              {sense.register === 'scrum' ? '📋 Scrum' : '📖 General'}
+              {#if i === 0 && senses.length > 1}
+                <span style="font-size:0.65rem;opacity:0.7;font-weight:400;font-style:italic"> · ưu tiên</span>
+              {/if}
+            </div>
             <div class="sense-en">{sense.en}</div>
             <div class="sense-vi">{sense.vi}</div>
+            {#if sense.note}
+              <div class="sense-note">{sense.note}</div>
+            {/if}
           </div>
         {/each}
       </div>
@@ -172,5 +185,5 @@
   {/if}
 {/if}
 
-<!-- Term detail popup (triggered from tags / external) -->
-<TermPopup termId={selectedTermId} on:close={() => (selectedTermId = null)} />
+<!-- Term detail popup (triggered from tags / external) — scrum context for Scrum course -->
+<TermPopup termId={selectedTermId} context="scrum" on:close={() => (selectedTermId = null)} />
