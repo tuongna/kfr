@@ -10,19 +10,30 @@ const SYSTEM_PROMPT = `You are a Vietnamese-English expert specializing in Scrum
 Given a word or phrase (typically from a Scrum context), respond with JSON only — no markdown fences:
 {"en": "<concise English definition, 1-2 sentences>", "vi": "<Vietnamese translation/explanation, 1-2 sentences>", "note": "<optional usage tip in Vietnamese, or empty string>"}`;
 
-export async function translateTerm(word: string): Promise<TranslateResult> {
-  try {
-    return await callModel('google/gemini-2.0-flash-exp:free', word);
-  } catch {
-    // Rate-limit or error on free model — fall back to cheap paid model
-    return await callModel('google/gemini-flash-1.5-8b', word);
-  }
+// Tried in order server-side. Free models first, paid 8b as last resort.
+const MODELS = [
+  'google/gemini-2.0-flash-exp:free',
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'google/gemma-2-9b-it:free',
+  'google/gemini-flash-1.5-8b',
+];
+
+interface OpenRouterChoice {
+  message?: { content?: string };
+}
+interface OpenRouterResponse {
+  choices?: OpenRouterChoice[];
+}
+interface ProxyEnvelope {
+  data?: OpenRouterResponse;
+  model?: string;
+  errors?: string[];
 }
 
-async function callModel(model: string, word: string): Promise<TranslateResult> {
-  const { data, error } = await supabase.functions.invoke('openrouter', {
+export async function translateTerm(word: string): Promise<TranslateResult> {
+  const { data, error } = await supabase.functions.invoke<ProxyEnvelope>('openrouter', {
     body: {
-      model,
+      models: MODELS,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `Translate: "${word}"` },
@@ -31,12 +42,13 @@ async function callModel(model: string, word: string): Promise<TranslateResult> 
     },
   });
 
-  if (error) throw new Error(error.message);
-  if (data?.error) throw new Error(String(data.error?.message ?? data.error));
+  if (error) throw new Error(`Edge function not reachable: ${error.message}`);
+  if (!data) throw new Error('Edge function returned empty response');
+  if (data.errors?.length) throw new Error(data.errors.join(' | '));
 
-  const content: string = data?.choices?.[0]?.message?.content ?? '';
+  const content: string = data.data?.choices?.[0]?.message?.content ?? '';
   try {
-    const parsed = JSON.parse(content.trim());
+    const parsed = JSON.parse(content.trim()) as Partial<TranslateResult>;
     return {
       en: String(parsed.en ?? word),
       vi: String(parsed.vi ?? word),

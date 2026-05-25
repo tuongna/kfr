@@ -36,6 +36,8 @@
   let allTermsForTokenize: Term[] = [];
   let ngramSentence: string | null = null;
   let ngramCharIdx = 0;
+  let lastClickedSentence = '';
+  let lastClickedCharIdx = 0;
 
   $: currentUserId = $authUser?.id;
   $: currentQ = sessionQuestions[sessionIndex] ?? null;
@@ -119,37 +121,60 @@
     highlightedStem = tokenizeStem(q.stem, allTermsForTokenize);
   }
 
-  function handleStemInteraction(e: MouseEvent | KeyboardEvent) {
-    if (e instanceof KeyboardEvent && e.key !== 'Enter' && e.key !== ' ') return;
-
+  function handleStemInteraction(e: MouseEvent | KeyboardEvent): boolean {
+    if (e instanceof KeyboardEvent && e.key !== 'Enter' && e.key !== ' ') return false;
     const target = e.target as HTMLElement;
     const termEl = target.closest<HTMLElement>('[data-term-id]');
     const wordEl = target.closest<HTMLElement>('[data-word]');
-    if (!termEl && !wordEl) return;
-
-    // Stop the click from reaching the surrounding <label>, which would
-    // otherwise toggle the answer's radio/checkbox.
+    if (!termEl && !wordEl) return false;
     e.preventDefault();
     e.stopPropagation();
+    openWordOrTerm(termEl, wordEl);
+    return true;
+  }
 
-    // Glossary term → open its detail popup directly (skip n-gram picker)
+  function openWordOrTerm(termEl: HTMLElement | null, wordEl: HTMLElement | null) {
     if (termEl?.dataset.termId) {
+      // Glossary term → remember context (so TermPopup can offer "Chọn cụm khác…")
+      const sEl = termEl.closest<HTMLElement>('[data-sentence]');
+      lastClickedSentence = sEl?.dataset.sentence ?? '';
+      lastClickedCharIdx = parseInt(termEl.dataset.charIdx ?? '0', 10);
       selectedTermId = termEl.dataset.termId;
       return;
     }
-
     if (!currentUserId || !wordEl) return;
     const sentenceEl = wordEl.closest<HTMLElement>('[data-sentence]');
     const sentence = sentenceEl?.dataset.sentence ?? wordEl.dataset.word ?? '';
     const charIdx = parseInt(wordEl.dataset.charIdx ?? '0', 10);
+    lastClickedSentence = sentence;
+    lastClickedCharIdx = charIdx;
     ngramSentence = sentence;
     ngramCharIdx = charIdx;
+  }
+
+  function handleOptionInteraction(e: MouseEvent | KeyboardEvent, opt: QuestionOption) {
+    // Words/terms always win over the option toggle so the user can tap a word
+    // inside an answer to translate it instead of accidentally picking that answer.
+    if (handleStemInteraction(e)) return;
+    if (e instanceof KeyboardEvent) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+    }
+    if (answered) return;
+    toggleOption(opt);
   }
 
   async function onNgramSelect(termId: string) {
     ngramSentence = null;
     allTermsForTokenize = await db.terms.toArray();
     selectedTermId = termId;
+  }
+
+  function openSliderFromTerm() {
+    if (!lastClickedSentence) return;
+    selectedTermId = null;
+    ngramSentence = lastClickedSentence;
+    ngramCharIdx = lastClickedCharIdx;
   }
 
   async function toggleOption(opt: QuestionOption) {
@@ -363,31 +388,46 @@
     {/if}
 
     <!-- Answer options -->
-    <div class="quiz-options">
+    <div class="quiz-options" role={isMulti ? 'group' : 'radiogroup'}>
       {#each options as opt, i}
-        <label class="quiz-option {optionClass(opt)}" class:disabled={answered}>
-          <input
-            type={isMulti ? 'checkbox' : 'radio'}
-            name="quiz-answer-{currentQ.id}"
-            class="option-input"
-            checked={selectedIds.has(opt.id)}
-            disabled={answered}
-            on:change={() => toggleOption(opt)}
-          />
+        <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+        <div
+          class="quiz-option {optionClass(opt)}"
+          class:disabled={answered}
+          role={isMulti ? 'checkbox' : 'radio'}
+          aria-checked={selectedIds.has(opt.id)}
+          aria-disabled={answered}
+          tabindex={answered ? -1 : 0}
+          data-sentence={opt.text}
+          on:click={(e) => handleOptionInteraction(e, opt)}
+          on:keydown={(e) => handleOptionInteraction(e, opt)}
+        >
+          <span class="option-input-visual" class:multi={isMulti}>
+            {#if selectedIds.has(opt.id)}
+              {#if isMulti}
+                <svg viewBox="0 0 16 16" class="check-tick" aria-hidden="true">
+                  <path
+                    d="M3 8.5l3 3 6.5-7"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              {:else}
+                <span class="radio-dot"></span>
+              {/if}
+            {/if}
+          </span>
           <span class="option-letter-label">{String.fromCharCode(65 + i)}</span>
-          <span
-            class="option-text"
-            data-sentence={opt.text}
-            on:click={handleStemInteraction}
-            on:keydown={handleStemInteraction}
-            role="presentation">{@html optionStems[i] ?? opt.text}</span
-          >
+          <span class="option-text">{@html optionStems[i] ?? opt.text}</span>
           {#if answered}
             <span class="option-mark">
               {#if opt.correct}✓{:else if selectedIds.has(opt.id)}✗{/if}
             </span>
           {/if}
-        </label>
+        </div>
       {/each}
     </div>
 
@@ -492,4 +532,12 @@
 {/if}
 
 <!-- Term detail popup -->
-<TermPopup termId={selectedTermId} on:close={() => (selectedTermId = null)} />
+<TermPopup
+  termId={selectedTermId}
+  canPickPhrase={!!lastClickedSentence && !!currentUserId}
+  on:close={() => {
+    selectedTermId = null;
+    lastClickedSentence = '';
+  }}
+  on:pickPhrase={openSliderFromTerm}
+/>
