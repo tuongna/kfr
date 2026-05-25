@@ -3,6 +3,41 @@ import { supabase } from './supabase';
 import { translateTerm } from './ai';
 import type { Term } from './types';
 
+// Punctuation that breaks a phrase: a slider/range cannot span across these.
+const PUNCT_BOUNDARY = /[.,;:!?]/;
+
+export interface WordSpan {
+  text: string;
+  start: number;
+  end: number;
+  /** Index of the punctuation-delimited segment this word belongs to. */
+  segment: number;
+}
+
+/**
+ * Splits a sentence into word spans with character offsets and segment ids.
+ * Words inside the same segment can be combined into a phrase; punctuation
+ * marks segment boundaries that the n-gram slider must never cross.
+ */
+export function tokenizeWords(sentence: string): WordSpan[] {
+  const out: WordSpan[] = [];
+  let segment = 0;
+  let i = 0;
+  while (i < sentence.length) {
+    const ch = sentence[i];
+    if (isLetter(ch)) {
+      let j = i + 1;
+      while (j < sentence.length && isLetter(sentence[j])) j++;
+      out.push({ text: sentence.slice(i, j), start: i, end: j, segment });
+      i = j;
+    } else {
+      if (PUNCT_BOUNDARY.test(ch)) segment++;
+      i++;
+    }
+  }
+  return out;
+}
+
 /**
  * Tokenizes a text stem into clickable HTML spans.
  *
@@ -11,6 +46,9 @@ import type { Term } from './types';
  *      Multi-word phrases ("Product Owner") are matched before their parts.
  *   2. Remaining letter sequences become `.any-word` spans (AI-translatable).
  *   3. Non-letter characters (spaces, punctuation) are emitted as plain text.
+ *
+ * Each interactive span carries `data-char-idx` (start offset in the original
+ * sentence) so callers can derive the n-gram window for the slider popup.
  */
 export function tokenizeStem(stem: string, knownTerms: Term[]): string {
   const sorted = [...knownTerms].sort((a, b) => b.text.length - a.text.length);
@@ -30,7 +68,7 @@ export function tokenizeStem(stem: string, knownTerms: Term[]): string {
       if (before && after) {
         const raw = stem.slice(i, i + t.length);
         out.push(
-          `<span class="glossary-term" data-term-id="${term.id}" tabindex="0" role="button">${escHtml(raw)}</span>`
+          `<span class="glossary-term" data-term-id="${term.id}" data-char-idx="${i}" tabindex="0" role="button">${escHtml(raw)}</span>`
         );
         i += t.length;
         matched = true;
@@ -46,7 +84,7 @@ export function tokenizeStem(stem: string, knownTerms: Term[]): string {
       const word = stem.slice(i, j);
       if (word.length >= 2) {
         out.push(
-          `<span class="any-word" data-word="${escAttr(word)}" tabindex="0" role="button">${escHtml(word)}</span>`
+          `<span class="any-word" data-word="${escAttr(word)}" data-char-idx="${i}" tabindex="0" role="button">${escHtml(word)}</span>`
         );
       } else {
         out.push(escHtml(word));
@@ -59,6 +97,49 @@ export function tokenizeStem(stem: string, knownTerms: Term[]): string {
   }
 
   return out.join('');
+}
+
+export interface NgramSuggestion {
+  text: string;
+  /** Existing term id if this n-gram is in the glossary, else null. */
+  termId: string | null;
+  length: number;
+}
+
+/**
+ * Returns n-gram suggestions starting at the clicked word.
+ *
+ * - Always includes the clicked word as the 1-gram (even if not in glossary).
+ * - Includes 2..maxLen grams ONLY if they exist in the glossary.
+ * - Stops at the next punctuation boundary (the n-gram never spans across).
+ * - Sorted by length ASC, matching the UX described in chat:
+ *   "item đầu tiên là từ đó, item thứ 2 là cụm từ có thể có..."
+ */
+export async function suggestNgrams(
+  sentence: string,
+  charIdx: number,
+  maxLen = 4
+): Promise<NgramSuggestion[]> {
+  const words = tokenizeWords(sentence);
+  const startIdx = words.findIndex((w) => w.start === charIdx);
+  if (startIdx === -1) return [];
+
+  const segment = words[startIdx].segment;
+  const window: WordSpan[] = [];
+  for (let i = startIdx; i < words.length && window.length < maxLen; i++) {
+    if (words[i].segment !== segment) break;
+    window.push(words[i]);
+  }
+
+  const results: NgramSuggestion[] = [];
+  for (let n = 1; n <= window.length; n++) {
+    const text = sentence.slice(window[0].start, window[n - 1].end);
+    const term = await db.terms.filter((t) => t.text.toLowerCase() === text.toLowerCase()).first();
+    if (term || n === 1) {
+      results.push({ text, termId: term?.id ?? null, length: n });
+    }
+  }
+  return results;
 }
 
 /**
