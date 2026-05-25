@@ -41,6 +41,13 @@
   let finalElapsed = 0;
   let elapsedInterval: ReturnType<typeof setInterval> | null = null;
 
+  /**
+   * True while translateAndSelect is running for a term that already existed in
+   * the glossary (Scrum-sense enrichment path), as opposed to a brand-new translation.
+   * Used to show "Bổ sung nghĩa Scrum…" instead of "Đang dịch AI…".
+   */
+  let enrichingScrum = false;
+
   /** Next model in MODELS that will be tried if the current one fails. */
   $: nextModelToTry = (() => {
     if (!loadingTranslate) return null;
@@ -128,6 +135,25 @@
 
   async function pickSuggestion(s: NgramSuggestion) {
     if (s.termId) {
+      // In Scrum context: only dispatch immediately if a Scrum sense is already cached.
+      // Otherwise, route through translateAndSelect so the AI can enrich it.
+      if (context === 'scrum') {
+        const scrumCount = await db.termSenses
+          .where('termId')
+          .equals(s.termId)
+          .filter((sense) => sense.register === 'scrum')
+          .count();
+        if (scrumCount === 0) {
+          // Term exists but has no Scrum sense — re-translate to enrich, then open.
+          enrichingScrum = true;
+          try {
+            await translateAndSelect(s.text);
+          } finally {
+            enrichingScrum = false;
+          }
+          return;
+        }
+      }
       dispatch('select', s.termId);
       return;
     }
@@ -141,15 +167,20 @@
     attempts = [];
     startElapsedTimer();
     try {
-      const termId = await lookupOrTranslate(text, ownerId, (a) => {
-        // Merge updates: when a model transitions trying → failed/succeeded, replace its row.
-        const last = attempts[attempts.length - 1];
-        if (last && last.model === a.model && last.status === 'trying') {
-          attempts = [...attempts.slice(0, -1), a];
-        } else {
-          attempts = [...attempts, a];
-        }
-      });
+      const termId = await lookupOrTranslate(
+        text,
+        ownerId,
+        (a) => {
+          // Merge updates: when a model transitions trying → failed/succeeded, replace its row.
+          const last = attempts[attempts.length - 1];
+          if (last && last.model === a.model && last.status === 'trying') {
+            attempts = [...attempts.slice(0, -1), a];
+          } else {
+            attempts = [...attempts, a];
+          }
+        },
+        context,
+      );
       dispatch('select', termId);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -325,10 +356,10 @@
             <span class="tp-status">
               {#if loadingTranslate}
                 <span class="tp-spinner" aria-hidden="true"></span>
-                Đang dịch AI…
+                {enrichingScrum ? '📋 Bổ sung nghĩa Scrum…' : 'Đang dịch AI…'}
               {:else}
                 <span class="tp-ok-icon" aria-hidden="true">✓</span>
-                Đã dịch xong
+                {enrichingScrum ? '📋 Đã bổ sung Scrum' : 'Đã dịch xong'}
               {/if}
             </span>
             {#if loadingTranslate && elapsedSeconds >= 1}
