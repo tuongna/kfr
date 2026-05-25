@@ -31,11 +31,27 @@ Guidance for Scrum definitions:
 - Keep scrumEn ≤ 2 sentences and scrumVi ≤ 2 sentences.`;
 
 // Tried in order by the edge function. Keep this list current to avoid dead endpoints.
-// Translation models — ordered by quality preference.
-// 120B-class models produce meaningfully better Scrum-specific definitions than 20B models.
+// Translation model fallback chain — tried in order by the edge function.
+//
+// Tier 1 — Free 120B (primary, high quality when quota available):
+//   openai/gpt-oss-120b:free, nvidia/nemotron-3-super-120b-a12b:free
+//
+// Tier 2 — Paid (reliable fallback when free quotas are exhausted; ~$0.0001–0.0006/call):
+//   anthropic/claude-haiku-4-5   — best instruction-following & structured JSON (~$0.0006)
+//   google/gemini-2.0-flash-001  — cheapest paid option, strong multilingual (~$0.0001)
+//   openai/gpt-4o-mini           — solid all-rounder (~$0.0003)
+//
+// Tier 3 — Free 70B (last resort when both tiers above are unavailable):
+//   meta-llama/llama-3.3-70b-instruct:free
 const MODELS = [
+  // Tier 1 — free 120B
   'openai/gpt-oss-120b:free',
   'nvidia/nemotron-3-super-120b-a12b:free',
+  // Tier 2 — paid (requires OpenRouter account with credit)
+  'anthropic/claude-haiku-4-5',
+  'google/gemini-2.0-flash-001',
+  'openai/gpt-4o-mini',
+  // Tier 3 — free 70B fallback
   'meta-llama/llama-3.3-70b-instruct:free',
 ];
 
