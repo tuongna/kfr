@@ -169,6 +169,8 @@ export async function lookupOrTranslate(rawText: string, ownerId: string): Promi
   });
   if (termError) throw new Error(`Không lưu được term: ${termError.message}`);
 
+  const termTags = ['ai-dịch'];
+
   const sensePayloadBase = {
     id: senseId,
     term_id: termId,
@@ -188,7 +190,7 @@ export async function lookupOrTranslate(rawText: string, ownerId: string): Promi
   }
   if (senseError) throw new Error(`Không lưu được nghĩa: ${senseError.message}`);
 
-  await db.terms.put({ id: termId, text: normalized, type: termType, tags: ['ai-dịch'], ownerId });
+  await db.terms.put({ id: termId, text: normalized, type: termType, tags: termTags, ownerId });
   await db.termSenses.put({
     id: senseId,
     termId,
@@ -198,6 +200,39 @@ export async function lookupOrTranslate(rawText: string, ownerId: string): Promi
     note: result.note || undefined,
     sortOrder: 0,
   });
+
+  // When AI identifies a Scrum term, also persist a scrum-specific sense (sort_order: 1 so it
+  // appears AFTER general by default; TermPopup re-sorts by context).
+  if (result.isScrumTerm && result.scrumEn) {
+    const scrumSenseId = crypto.randomUUID();
+    const scrumPayload = {
+      id: scrumSenseId,
+      term_id: termId,
+      register: 'scrum',
+      en: result.scrumEn,
+      vi: result.scrumVi ?? '',
+      sort_order: 1,
+    };
+
+    let { error: scrumErr } = await supabase.from('term_senses').insert({
+      ...scrumPayload,
+      note: null,
+    });
+    if (scrumErr?.message?.includes("'note' column")) {
+      ({ error: scrumErr } = await supabase.from('term_senses').insert(scrumPayload));
+    }
+    // Scrum sense failure is non-fatal — general sense already saved.
+    if (!scrumErr) {
+      await db.termSenses.put({
+        id: scrumSenseId,
+        termId,
+        register: 'scrum',
+        en: result.scrumEn,
+        vi: result.scrumVi ?? '',
+        sortOrder: 1,
+      });
+    }
+  }
 
   return termId;
 }

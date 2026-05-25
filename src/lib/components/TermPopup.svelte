@@ -10,6 +10,11 @@
   export let termId: string | null = null;
   /** When true, show a "Chọn cụm khác…" link that lets the parent open the slider. */
   export let canPickPhrase = false;
+  /**
+   * Learning context. When 'scrum', Scrum-specific senses are surfaced first and the
+   * Scrum badge is highlighted as the primary reading.
+   */
+  export let context: 'general' | 'scrum' = 'scrum';
 
   const dispatch = createEventDispatcher<{ close: void; pickPhrase: void }>();
 
@@ -54,6 +59,29 @@
   }
 
   $: progress = term ? getProgress($progressMap, 'term', term.id) : undefined;
+
+  /**
+   * Sort senses based on current learning context:
+   *   - context='scrum'  → scrum senses first, then general
+   *   - context='general' → general first, then scrum
+   * Within the same register, preserve sortOrder.
+   */
+  $: sortedSenses = (() => {
+    if (!senses.length) return senses;
+    const primary = context === 'scrum' ? 'scrum' : 'general';
+    return [...senses].sort((a, b) => {
+      const aIsPrimary = a.register === primary ? 0 : 1;
+      const bIsPrimary = b.register === primary ? 0 : 1;
+      if (aIsPrimary !== bIsPrimary) return aIsPrimary - bIsPrimary;
+      return a.sortOrder - b.sortOrder;
+    });
+  })();
+
+  /** Returns true if the term is a multi-word phrase so we can offer word-by-word lookup. */
+  $: isPhrase = term ? term.text.includes(' ') : false;
+
+  /** Individual words of a phrase — used for the layered lookup section. */
+  $: phraseWords = isPhrase && term ? term.text.split(/\s+/).filter(Boolean) : [];
 </script>
 
 {#if termId && term}
@@ -73,12 +101,27 @@
         <div class="card-ipa">[{term.ipa}]</div>
       {/if}
 
-      <!-- All senses shown at once -->
+      <!-- Context priority hint -->
+      {#if sortedSenses.length > 1}
+        <p class="context-hint">
+          {context === 'scrum'
+            ? '📋 Đang học theo ngữ cảnh Scrum — nghĩa Scrum được ưu tiên'
+            : '📖 Hiển thị nghĩa chung trước'}
+        </p>
+      {/if}
+
+      <!-- All senses, ordered by context priority -->
       <div class="senses mt-2">
-        {#each senses as sense}
-          <div class="sense register-{sense.register}">
-            <div class="sense-register">
+        {#each sortedSenses as sense, i}
+          <div
+            class="sense register-{sense.register}"
+            class:sense-primary={i === 0}
+          >
+            <div class="sense-register-badge register-badge-{sense.register}">
               {sense.register === 'scrum' ? '📋 Scrum' : '📖 General'}
+              {#if i === 0 && sortedSenses.length > 1}
+                <span class="sense-primary-label">· ưu tiên</span>
+              {/if}
             </div>
             <div class="sense-en">{sense.en}</div>
             <div class="sense-vi">{sense.vi}</div>
@@ -88,6 +131,26 @@
           </div>
         {/each}
       </div>
+
+      <!-- Layered lookup: phrase → individual words -->
+      {#if isPhrase && phraseWords.length > 1}
+        <div class="phrase-words-section mt-2">
+          <p class="phrase-words-label">🔍 Từng từ trong cụm:</p>
+          <div class="phrase-words-list">
+            {#each phraseWords as word}
+              <!-- Dispatch pickPhrase so parent can open NgramPopup for this word -->
+              <button
+                class="phrase-word-chip"
+                on:click={() => dispatch('pickPhrase')}
+                title={`Tra từ "${word}" (mở thanh chọn cụm)`}
+              >
+                {word}
+              </button>
+            {/each}
+          </div>
+          <p class="phrase-words-hint">Nhấn một từ để mở thanh kéo và tra riêng từng từ</p>
+        </div>
+      {/if}
 
       <!-- Tags -->
       {#if term.tags.length}
@@ -121,3 +184,98 @@
     {/if}
   </div>
 {/if}
+
+<style>
+  .context-hint {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+    font-style: italic;
+  }
+
+  /* Override global .sense styles with more prominent register badge */
+  .sense-register-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.55rem;
+    border-radius: 20px;
+    margin-bottom: 0.35rem;
+  }
+
+  .register-badge-scrum {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border: 1px solid var(--primary);
+  }
+
+  .register-badge-general {
+    background: #fff8e1;
+    color: #6d4c41;
+    border: 1px solid #ffe082;
+  }
+
+  .sense-primary-label {
+    font-size: 0.65rem;
+    opacity: 0.75;
+    font-weight: 500;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* First sense gets a slightly stronger left border */
+  .sense.sense-primary {
+    border-left-width: 4px;
+  }
+
+  /* Phrase word section */
+  .phrase-words-section {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .phrase-words-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+  }
+
+  .phrase-words-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .phrase-word-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--primary);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .phrase-word-chip:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+  }
+
+  .phrase-words-hint {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+</style>
