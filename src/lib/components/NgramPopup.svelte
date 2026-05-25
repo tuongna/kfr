@@ -7,10 +7,17 @@
     type NgramSuggestion,
     type WordSpan,
   } from '$lib/translate';
+  import { db } from '$lib/db';
+  import type { TermSense } from '$lib/types';
 
   export let sentence: string;
   export let charIdx: number;
   export let ownerId: string;
+  /**
+   * Learning context forwarded from the parent page.
+   * Used to choose which sense preview to show (scrum preferred in Scrum context).
+   */
+  export let context: 'general' | 'scrum' = 'scrum';
 
   const dispatch = createEventDispatcher<{ select: string; close: void }>();
 
@@ -20,6 +27,9 @@
   let loadingList = true;
   let loadingTranslate = false;
   let translateError = '';
+
+  /** Mini meaning previews fetched for known glossary items. Keyed by termId. */
+  let previews: Map<string, string> = new Map();
 
   // Slider state — initialized lazily when user opens the slider phase
   let words: WordSpan[] = [];
@@ -37,7 +47,37 @@
   onMount(async () => {
     suggestions = await suggestNgrams(sentence, charIdx, 4);
     loadingList = false;
+    // Fetch meaning previews for known terms in the background.
+    await loadPreviews(suggestions);
   });
+
+  /**
+   * For each suggestion that has a termId, fetch senses and pick the best one-line
+   * preview (Scrum sense preferred when context === 'scrum').
+   */
+  async function loadPreviews(suggs: NgramSuggestion[]) {
+    const known = suggs.filter((s) => s.termId);
+    if (!known.length) return;
+    const map = new Map<string, string>();
+    await Promise.all(
+      known.map(async (s) => {
+        if (!s.termId) return;
+        const allSenses: TermSense[] = await db.termSenses
+          .where('termId')
+          .equals(s.termId)
+          .toArray();
+        if (!allSenses.length) return;
+        // Pick best sense for preview
+        const primary =
+          context === 'scrum'
+            ? allSenses.find((x) => x.register === 'scrum') ?? allSenses[0]
+            : allSenses.find((x) => x.register === 'general') ?? allSenses[0];
+        const label = primary.register === 'scrum' ? '📋' : '📖';
+        map.set(s.termId, `${label} ${primary.vi}`);
+      })
+    );
+    previews = map;
+  }
 
   async function pickSuggestion(s: NgramSuggestion) {
     if (s.termId) {
@@ -192,11 +232,17 @@
               on:click={() => pickSuggestion(s)}
               disabled={loadingTranslate}
             >
-              <span class="ngram-text">{s.text}</span>
-              {#if s.termId}
-                <span class="ngram-tag-glossary">📋 glossary</span>
-              {:else if s.length === 1}
-                <span class="ngram-tag-ai">🤖 dịch AI</span>
+              <span class="ngram-item-main">
+                <span class="ngram-text">{s.text}</span>
+                {#if s.termId}
+                  <span class="ngram-tag-glossary">📋 glossary</span>
+                {:else if s.length === 1}
+                  <span class="ngram-tag-ai">🤖 dịch AI</span>
+                {/if}
+              </span>
+              <!-- Inline meaning preview for known terms -->
+              {#if s.termId && previews.has(s.termId)}
+                <span class="ngram-preview-line">{previews.get(s.termId)}</span>
               {/if}
             </button>
           </li>
@@ -207,7 +253,7 @@
             on:click={openSlider}
             disabled={loadingTranslate}
           >
-            + Chọn cụm khác…
+            ✂ Chọn cụm khác…
           </button>
         </li>
       </ul>
@@ -282,3 +328,38 @@
     {/if}
   {/if}
 </div>
+
+<style>
+  /* Vertical layout for ngram-item: main row on top, preview below */
+  .ngram-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .ngram-item-main {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+  }
+
+  .ngram-preview-line {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.3;
+    /* Prevent very long preview from breaking the layout */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* For has-term items the preview uses a slightly different color */
+  .ngram-item.has-term .ngram-preview-line {
+    color: var(--success);
+    opacity: 0.85;
+  }
+</style>
