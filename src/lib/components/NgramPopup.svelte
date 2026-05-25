@@ -129,6 +129,49 @@
       // already released
     }
   }
+
+  function segmentBounds(): { first: number; last: number } | null {
+    let first = -1;
+    let last = -1;
+    for (let i = 0; i < words.length; i++) {
+      if (words[i].segment !== initialSegment) continue;
+      if (first === -1) first = i;
+      last = i;
+    }
+    return first === -1 ? null : { first, last };
+  }
+
+  function onSliderKey(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      translateAndSelect(selectedPhrase);
+      return;
+    }
+    const bounds = segmentBounds();
+    if (!bounds) return;
+
+    const moveEnd = e.shiftKey ? 'left' : 'right';
+    const apply = (delta: number) => {
+      e.preventDefault();
+      if (moveEnd === 'right') {
+        rightIdx = Math.min(bounds.last, Math.max(leftIdx, rightIdx + delta));
+      } else {
+        leftIdx = Math.max(bounds.first, Math.min(rightIdx, leftIdx + delta));
+      }
+    };
+
+    if (e.key === 'ArrowRight') apply(1);
+    else if (e.key === 'ArrowLeft') apply(-1);
+    else if (e.key === 'Home') {
+      e.preventDefault();
+      if (moveEnd === 'right') rightIdx = leftIdx;
+      else leftIdx = bounds.first;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      if (moveEnd === 'right') rightIdx = bounds.last;
+      else leftIdx = rightIdx;
+    }
+  }
 </script>
 
 <div class="gloss-overlay" on:click={() => dispatch('close')} role="presentation"></div>
@@ -178,7 +221,8 @@
   {:else}
     <h3 style="margin:0 0 0.25rem;font-size:1rem">Kéo để chọn cụm</h3>
     <p class="text-secondary" style="font-size:0.78rem;margin-bottom:0.6rem">
-      Mỗi từ là một điểm; không vượt qua dấu câu.
+      Mỗi từ là một điểm; không vượt qua dấu câu. Bàn phím: ←/→ chỉnh đầu phải, Shift+←/→ chỉnh đầu
+      trái, Enter để dịch.
     </p>
 
     <div
@@ -188,10 +232,12 @@
       on:pointermove={onPointerMove}
       on:pointerup={onPointerUp}
       on:pointercancel={onPointerUp}
+      on:keydown={onSliderKey}
       role="slider"
       aria-valuemin={0}
       aria-valuemax={Math.max(words.length - 1, 0)}
       aria-valuenow={leftIdx}
+      aria-valuetext={selectedPhrase}
       tabindex="0"
     >
       {#each words as w, i (w.start)}
