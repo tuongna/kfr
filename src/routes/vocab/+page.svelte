@@ -21,6 +21,10 @@
   let filterQ: Quality | 'all' = 'all';
   let selectedTermId: string | null = null;
 
+  function setFilterQ(v: string) {
+    filterQ = v as Quality | 'all';
+  }
+
   async function loadItems() {
     loading = true;
     const lookups = await db.lookedUpTerms.orderBy('lastLookedAt').reverse().toArray();
@@ -132,7 +136,7 @@
     ] as chip}
       <button
         class="vocab-filter-chip {filterQ === chip.value ? 'active' : ''}"
-        on:click={() => (filterQ = chip.value as Quality | 'all')}
+        on:click={() => setFilterQ(chip.value)}
         type="button"
       >{chip.label}</button>
     {/each}
