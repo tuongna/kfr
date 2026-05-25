@@ -30,30 +30,37 @@ Guidance for Scrum definitions:
 - "Increment" must always mention the Definition of Done.
 - Keep scrumEn ≤ 2 sentences and scrumVi ≤ 2 sentences.`;
 
-// Tried in order by the edge function. Keep this list current to avoid dead endpoints.
-// Translation model fallback chain — tried in order by the edge function.
+// Translation model fallback chain — tried in order by translateTerm().
 //
-// Tier 1 — Free 120B (primary, high quality when quota available):
-//   openai/gpt-oss-120b:free, nvidia/nemotron-3-super-120b-a12b:free
+// Order: free tier first (3 models), then paid tier (3 models).
+// Iteration happens CLIENT-SIDE so the UI can show progressive status per attempt.
 //
-// Tier 2 — Paid (reliable fallback when free quotas are exhausted; ~$0.0001–0.0006/call):
-//   anthropic/claude-haiku-4-5   — best instruction-following & structured JSON (~$0.0006)
-//   google/gemini-2.0-flash-001  — cheapest paid option, strong multilingual (~$0.0001)
-//   openai/gpt-4o-mini           — solid all-rounder (~$0.0003)
+// Tier 1 — Free (primary, no cost):
+//   openai/gpt-oss-120b:free                  120B
+//   nvidia/nemotron-3-super-120b-a12b:free    120B
+//   meta-llama/llama-3.3-70b-instruct:free    70B
 //
-// Tier 3 — Free 70B (last resort when both tiers above are unavailable):
-//   meta-llama/llama-3.3-70b-instruct:free
+// Tier 2 — Paid (reliable fallback when free quotas exhausted):
+//   anthropic/claude-haiku-4-5    best JSON instruction-following  (~$0.0006/call)
+//   openai/gpt-4o-mini            solid all-rounder                (~$0.0003/call)
+//   google/gemini-2.0-flash-001   cheapest paid                    (~$0.0001/call)
 const MODELS = [
-  // Tier 1 — free 120B
   'openai/gpt-oss-120b:free',
   'nvidia/nemotron-3-super-120b-a12b:free',
-  // Tier 2 — paid (requires OpenRouter account with credit)
-  'anthropic/claude-haiku-4-5',
-  'google/gemini-2.0-flash-001',
-  'openai/gpt-4o-mini',
-  // Tier 3 — free 70B fallback
   'meta-llama/llama-3.3-70b-instruct:free',
+  'anthropic/claude-haiku-4-5',
+  'openai/gpt-4o-mini',
+  'google/gemini-2.0-flash-001',
 ];
+
+/** Single attempt to call one model. Emitted via the onAttempt callback. */
+export interface ModelAttempt {
+  model: string;
+  status: 'trying' | 'failed' | 'succeeded';
+  error?: string;
+}
+
+export type OnAttempt = (attempt: ModelAttempt) => void;
 
 interface OpenRouterChoice {
   message?: { content?: string };
@@ -139,34 +146,79 @@ export async function auditTermSenses(
   };
 }
 
-export async function translateTerm(word: string): Promise<TranslateResult> {
-  const { data, error } = await supabase.functions.invoke<ProxyEnvelope>('openrouter', {
-    body: {
-      models: MODELS,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: `Translate: "${word}"` },
-      ],
-      max_tokens: 350,
-    },
-  });
+export interface TranslateOutcome {
+  result: TranslateResult;
+  /** The model that actually produced the translation (id from OpenRouter response). */
+  model: string;
+}
 
-  if (error) throw new Error(`Edge function not reachable: ${error.message}`);
-  if (!data) throw new Error('Edge function returned empty response');
-  if (data.errors?.length) throw new Error(data.errors.join(' | '));
+/**
+ * Translates a term by iterating MODELS client-side. Each attempt fires onAttempt
+ * so the UI can show real-time fallback progress. Throws when ALL models fail.
+ *
+ * Cleans up the model id in the tag by stripping the ':free' suffix is the caller's
+ * responsibility (see translate.ts → lookupOrTranslate).
+ */
+export async function translateTerm(
+  word: string,
+  onAttempt?: OnAttempt,
+): Promise<TranslateOutcome> {
+  const errors: string[] = [];
 
-  const content: string = data.data?.choices?.[0]?.message?.content ?? '';
-  try {
-    const parsed = JSON.parse(content.trim()) as Partial<TranslateResult>;
-    return {
-      en: String(parsed.en ?? word),
-      vi: String(parsed.vi ?? word),
-      note: String(parsed.note ?? ''),
-      isScrumTerm: Boolean(parsed.isScrumTerm),
-      scrumEn: parsed.scrumEn ? String(parsed.scrumEn) : undefined,
-      scrumVi: parsed.scrumVi ? String(parsed.scrumVi) : undefined,
-    };
-  } catch {
-    return { en: word, vi: content.trim().slice(0, 300), note: '' };
+  for (const model of MODELS) {
+    onAttempt?.({ model, status: 'trying' });
+
+    const { data, error } = await supabase.functions.invoke<ProxyEnvelope>('openrouter', {
+      body: {
+        models: [model],
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: `Translate: "${word}"` },
+        ],
+        max_tokens: 350,
+      },
+    });
+
+    if (error) {
+      const msg = error.message;
+      onAttempt?.({ model, status: 'failed', error: msg });
+      errors.push(`${model}: ${msg}`);
+      continue;
+    }
+    if (!data || data.errors?.length) {
+      const msg = stripModelPrefix(data?.errors?.[0] ?? 'empty response', model);
+      onAttempt?.({ model, status: 'failed', error: msg });
+      errors.push(`${model}: ${msg}`);
+      continue;
+    }
+
+    const content: string = data.data?.choices?.[0]?.message?.content ?? '';
+    try {
+      const parsed = JSON.parse(content.trim()) as Partial<TranslateResult>;
+      const actualModel = data.model ?? model;
+      onAttempt?.({ model: actualModel, status: 'succeeded' });
+      return {
+        result: {
+          en: String(parsed.en ?? word),
+          vi: String(parsed.vi ?? word),
+          note: String(parsed.note ?? ''),
+          isScrumTerm: Boolean(parsed.isScrumTerm),
+          scrumEn: parsed.scrumEn ? String(parsed.scrumEn) : undefined,
+          scrumVi: parsed.scrumVi ? String(parsed.scrumVi) : undefined,
+        },
+        model: actualModel,
+      };
+    } catch {
+      const msg = `Invalid JSON: ${content.slice(0, 60)}`;
+      onAttempt?.({ model, status: 'failed', error: msg });
+      errors.push(`${model}: ${msg}`);
+    }
   }
+
+  throw new Error(`Tất cả model đều thất bại:\n${errors.join('\n')}`);
+}
+
+function stripModelPrefix(errMsg: string, model: string): string {
+  const prefix = `${model}: `;
+  return errMsg.startsWith(prefix) ? errMsg.slice(prefix.length) : errMsg;
 }

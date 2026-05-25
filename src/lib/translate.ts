@@ -1,6 +1,6 @@
 import { db } from './db';
 import { supabase } from './supabase';
-import { translateTerm } from './ai';
+import { translateTerm, type OnAttempt } from './ai';
 import type { Term } from './types';
 
 // Punctuation that breaks a phrase: a slider/range cannot span across these.
@@ -146,7 +146,11 @@ export async function suggestNgrams(
  * Returns the term ID for rawText, creating it via AI translation if not cached.
  * Writes new translations to both Supabase (persistent) and Dexie (local cache).
  */
-export async function lookupOrTranslate(rawText: string, ownerId: string): Promise<string> {
+export async function lookupOrTranslate(
+  rawText: string,
+  ownerId: string,
+  onAttempt?: OnAttempt,
+): Promise<string> {
   const normalized = rawText.trim();
 
   const existing = await db.terms
@@ -154,7 +158,11 @@ export async function lookupOrTranslate(rawText: string, ownerId: string): Promi
     .first();
   if (existing) return existing.id;
 
-  const result = await translateTerm(normalized);
+  const { result, model } = await translateTerm(normalized, onAttempt);
+
+  // Author tag: model id stripped of any ':free' suffix so the chip stays clean.
+  const modelTag = model.replace(/:free$/, '');
+  const termTags = ['ai-dịch', modelTag];
 
   const termId = crypto.randomUUID();
   const senseId = crypto.randomUUID();
@@ -164,12 +172,10 @@ export async function lookupOrTranslate(rawText: string, ownerId: string): Promi
     id: termId,
     text: normalized,
     type: termType,
-    tags: ['ai-dịch'],
+    tags: termTags,
     owner_id: ownerId,
   });
   if (termError) throw new Error(`Không lưu được term: ${termError.message}`);
-
-  const termTags = ['ai-dịch'];
 
   const sensePayloadBase = {
     id: senseId,

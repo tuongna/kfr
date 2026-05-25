@@ -80,8 +80,13 @@ serve(async (req: Request) => {
     (Array.isArray(body.models) && body.models.length ? body.models : null) ??
     (body.model ? [body.model] : []);
 
-  // Always append service defaults so one bad client model does not hard-fail translation.
-  const candidates = [...new Set([...requested, ...parseDefaultModelsFromEnv()])];
+  // When the client provides an explicit model list, honor it exactly (no surprise
+  // paid defaults). Only fall back to service defaults when the client sent nothing,
+  // which preserves the legacy contract for unconfigured callers.
+  const candidates =
+    requested.length > 0
+      ? [...new Set(requested)]
+      : parseDefaultModelsFromEnv();
 
   const errors: string[] = [];
 

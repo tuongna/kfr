@@ -9,6 +9,7 @@
   } from '$lib/translate';
   import { db } from '$lib/db';
   import type { TermSense } from '$lib/types';
+  import type { ModelAttempt } from '$lib/ai';
 
   export let sentence: string;
   export let charIdx: number;
@@ -27,6 +28,8 @@
   let loadingList = true;
   let loadingTranslate = false;
   let translateError = '';
+  /** Real-time log of model fallback attempts, shown to the user while translating. */
+  let attempts: ModelAttempt[] = [];
 
   /** Mini meaning previews fetched for known glossary items. Keyed by termId. */
   let previews: Map<string, string> = new Map();
@@ -91,8 +94,17 @@
     if (!text || loadingTranslate) return;
     loadingTranslate = true;
     translateError = '';
+    attempts = [];
     try {
-      const termId = await lookupOrTranslate(text, ownerId);
+      const termId = await lookupOrTranslate(text, ownerId, (a) => {
+        // Merge updates: when a model transitions trying → failed/succeeded, replace its row.
+        const last = attempts[attempts.length - 1];
+        if (last && last.model === a.model && last.status === 'trying') {
+          attempts = [...attempts.slice(0, -1), a];
+        } else {
+          attempts = [...attempts, a];
+        }
+      });
       dispatch('select', termId);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -100,6 +112,11 @@
     } finally {
       loadingTranslate = false;
     }
+  }
+
+  /** Strip ':free' suffix and the org prefix for compact display. */
+  function shortModelName(id: string): string {
+    return id.replace(/:free$/, '');
   }
 
   async function openSlider() {
@@ -257,8 +274,27 @@
           </button>
         </li>
       </ul>
-      {#if loadingTranslate}
-        <p class="text-secondary" style="font-size:0.85rem;margin-top:0.5rem">Đang dịch…</p>
+      {#if loadingTranslate || attempts.length}
+        <div class="translate-progress">
+          {#if loadingTranslate}
+            <p class="translate-progress-title">🤖 Đang dịch — thử các model lần lượt:</p>
+          {:else}
+            <p class="translate-progress-title">🤖 Đã dịch xong:</p>
+          {/if}
+          <ul class="translate-attempt-list">
+            {#each attempts as a (a.model + a.status)}
+              <li class="translate-attempt status-{a.status}">
+                <span class="translate-attempt-icon" aria-hidden="true">
+                  {#if a.status === 'trying'}⏳{:else if a.status === 'failed'}✗{:else}✓{/if}
+                </span>
+                <code class="translate-attempt-model">{shortModelName(a.model)}</code>
+                {#if a.error}
+                  <span class="translate-attempt-error">— {a.error.slice(0, 50)}</span>
+                {/if}
+              </li>
+            {/each}
+          </ul>
+        </div>
       {/if}
       {#if translateError}
         <p style="font-size:0.85rem;color:var(--error);margin-top:0.5rem">{translateError}</p>
@@ -361,5 +397,88 @@
   .ngram-item.has-term .ngram-preview-line {
     color: var(--success);
     opacity: 0.85;
+  }
+
+  /* Real-time translation progress (model fallback log) */
+  .translate-progress {
+    margin-top: 0.6rem;
+    padding: 0.55rem 0.7rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .translate-progress-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+  }
+
+  .translate-attempt-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .translate-attempt {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .translate-attempt-icon {
+    flex-shrink: 0;
+    width: 1rem;
+    text-align: center;
+  }
+
+  .translate-attempt-model {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.76rem;
+    background: var(--surface);
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .translate-attempt.status-trying .translate-attempt-icon {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .translate-attempt.status-failed {
+    color: var(--text-secondary);
+  }
+
+  .translate-attempt.status-failed .translate-attempt-model {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .translate-attempt.status-succeeded {
+    color: var(--success);
+    font-weight: 600;
+  }
+
+  .translate-attempt.status-succeeded .translate-attempt-model {
+    border-color: var(--success);
+    background: var(--success-light);
+    color: var(--success);
+  }
+
+  .translate-attempt-error {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
 </style>
