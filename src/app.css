@@ -248,6 +248,37 @@ body {
   margin-bottom: 0.25rem;
 }
 
+/* Pill-style register badge used in learn flashcard and TermPopup */
+.sense-register-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 20px;
+  margin-bottom: 0.35rem;
+}
+
+.register-badge-scrum {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border: 1px solid var(--primary);
+}
+
+.register-badge-general {
+  background: #fff8e1;
+  color: #6d4c41;
+  border: 1px solid #ffe082;
+}
+
+/* First sense in a list gets a slightly bolder left border */
+.sense.sense-primary {
+  border-left-width: 4px;
+}
+
 .sense-en {
   font-size: 0.95rem;
   color: var(--text);
