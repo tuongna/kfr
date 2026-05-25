@@ -49,6 +49,78 @@ interface ProxyEnvelope {
   errors?: string[];
 }
 
+export interface AuditResult {
+  quality: 'good' | 'fair' | 'poor';
+  senseReviews: {
+    register: 'general' | 'scrum';
+    enOk: boolean;
+    viOk: boolean;
+    suggestedEn: string;
+    suggestedVi: string;
+    reason: string;
+  }[];
+  missingScrumSense: boolean;
+  suggestedScrumEn: string;
+  suggestedScrumVi: string;
+}
+
+const AUDIT_MODELS = [
+  'deepseek/deepseek-chat-v3-0324:free',
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'google/gemini-flash-1.5',
+];
+
+const AUDIT_SYSTEM_PROMPT = `You are a senior bilingual Scrum/Agile editor reviewing flashcard definitions.
+Check accuracy against the Scrum Guide 2020, Vietnamese naturalness, and distinguish events from activities.
+For each sense provided, evaluate the English and Vietnamese definitions.
+Respond with JSON ONLY — no markdown fences, no extra keys:
+{
+  "quality": "good" | "fair" | "poor",
+  "senseReviews": [
+    {
+      "register": "general" | "scrum",
+      "enOk": true | false,
+      "viOk": true | false,
+      "suggestedEn": "<corrected English or empty string if enOk>",
+      "suggestedVi": "<corrected Vietnamese or empty string if viOk>",
+      "reason": "<brief explanation of issues, or empty string if both ok>"
+    }
+  ],
+  "missingScrumSense": true | false,
+  "suggestedScrumEn": "<Scrum-specific English definition if missingScrumSense, else empty string>",
+  "suggestedScrumVi": "<Scrum-specific Vietnamese definition if missingScrumSense, else empty string>"
+}`;
+
+export async function auditTermSenses(
+  termText: string,
+  senses: { register: string; en: string; vi: string }[]
+): Promise<AuditResult> {
+  const { data, error } = await supabase.functions.invoke<ProxyEnvelope>('openrouter', {
+    body: {
+      models: AUDIT_MODELS,
+      messages: [
+        { role: 'system', content: AUDIT_SYSTEM_PROMPT },
+        { role: 'user', content: JSON.stringify({ term: termText, senses }) },
+      ],
+      max_tokens: 600,
+    },
+  });
+
+  if (error) throw new Error(`Edge function not reachable: ${error.message}`);
+  if (!data) throw new Error('Edge function returned empty response');
+  if (data.errors?.length) throw new Error(data.errors.join(' | '));
+
+  const content: string = data.data?.choices?.[0]?.message?.content ?? '';
+  const parsed = JSON.parse(content.trim()) as Partial<AuditResult>;
+  return {
+    quality: (parsed.quality as AuditResult['quality']) ?? 'fair',
+    senseReviews: parsed.senseReviews ?? [],
+    missingScrumSense: Boolean(parsed.missingScrumSense),
+    suggestedScrumEn: String(parsed.suggestedScrumEn ?? ''),
+    suggestedScrumVi: String(parsed.suggestedScrumVi ?? ''),
+  };
+}
+
 export async function translateTerm(word: string): Promise<TranslateResult> {
   const { data, error } = await supabase.functions.invoke<ProxyEnvelope>('openrouter', {
     body: {
