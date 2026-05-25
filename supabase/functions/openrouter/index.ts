@@ -2,13 +2,19 @@
  * Supabase Edge Function — OpenRouter proxy
  *
  * Keeps the OPENROUTER_API_KEY server-side.
- * Client sends: { model, messages, max_tokens? }
- * This function forwards to OpenRouter and streams/returns the response.
+ * Client sends: { models?: string[], model?: string, messages, max_tokens? }
+ * - `models` (preferred): list of model ids tried in order; first 2xx wins.
+ * - `model` (legacy): single model id, equivalent to `models: [model]`.
+ *
+ * Always returns a 200 with `{ data?, model?, errors? }`. The proxy never
+ * forwards OpenRouter's non-2xx status, because supabase-js v2 treats
+ * non-2xx as an opaque "Failed to send a request" error that hides the
+ * upstream message.
  *
  * Deploy:
  *   supabase functions deploy openrouter --no-verify-jwt
  *
- * Set secret (from GitHub Actions or CLI):
+ * Set secret:
  *   supabase secrets set OPENROUTER_API_KEY=sk-or-...
  */
 
@@ -23,26 +29,29 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
+const DEFAULT_FALLBACK_MODELS = [
+  'google/gemini-2.0-flash-exp:free',
+  'meta-llama/llama-3.3-70b-instruct:free',
+  'google/gemma-2-9b-it:free',
+];
+
 serve(async (req: Request) => {
-  // CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405, headers: corsHeaders });
+    return json({ errors: ['Method not allowed'] }, 200);
   }
 
   const apiKey = Deno.env.get('OPENROUTER_API_KEY');
   if (!apiKey) {
-    return new Response(
-      JSON.stringify({ error: 'OPENROUTER_API_KEY not configured' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return json({ errors: ['OPENROUTER_API_KEY not configured on edge function'] }, 200);
   }
 
   let body: {
     model?: string;
+    models?: string[];
     messages: Array<{ role: string; content: string }>;
     max_tokens?: number;
   };
@@ -50,35 +59,63 @@ serve(async (req: Request) => {
   try {
     body = await req.json();
   } catch {
-    return new Response(
-      JSON.stringify({ error: 'Invalid JSON body' }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return json({ errors: ['Invalid JSON body'] }, 200);
   }
 
-  // Default to a capable free multilingual model (good Vietnamese + domain terms).
-  // Swap this single line to try another model, e.g. 'openai/gpt-oss-20b:free'.
-  const model = body.model ?? 'google/gemini-2.0-flash-exp:free';
+  const candidates =
+    (Array.isArray(body.models) && body.models.length ? body.models : null) ??
+    (body.model ? [body.model] : DEFAULT_FALLBACK_MODELS);
 
-  const response = await fetch(OPENROUTER_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': Deno.env.get('SITE_URL') ?? 'https://tuongna.github.io',
-      'X-Title': 'KfR Scrum Learning',
-    },
-    body: JSON.stringify({
-      model,
-      messages: body.messages,
-      max_tokens: body.max_tokens ?? 512,
-    }),
-  });
+  const errors: string[] = [];
 
-  const data = await response.json();
+  for (const model of candidates) {
+    try {
+      const response = await fetch(OPENROUTER_URL, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': Deno.env.get('SITE_URL') ?? 'https://tuongna.github.io',
+          'X-Title': 'KfR Scrum Learning',
+        },
+        body: JSON.stringify({
+          model,
+          messages: body.messages,
+          max_tokens: body.max_tokens ?? 512,
+        }),
+      });
 
-  return new Response(JSON.stringify(data), {
-    status: response.status,
+      const raw = await response.text();
+      let parsed: unknown = null;
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        // OpenRouter is expected to always return JSON
+      }
+
+      if (!response.ok) {
+        const msg =
+          (parsed &&
+            typeof parsed === 'object' &&
+            (parsed as { error?: { message?: string } }).error?.message) ||
+          raw.slice(0, 200) ||
+          `HTTP ${response.status}`;
+        errors.push(`${model}: ${msg}`);
+        continue;
+      }
+
+      return json({ data: parsed, model }, 200);
+    } catch (e) {
+      errors.push(`${model}: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  return json({ errors }, 200);
+});
+
+function json(payload: unknown, status: number) {
+  return new Response(JSON.stringify(payload), {
+    status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
-});
+}
