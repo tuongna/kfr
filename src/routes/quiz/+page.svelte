@@ -28,6 +28,7 @@
   let answered = false;
   let options: QuestionOption[] = [];
   $: optionStems = options.map((o) => tokenizeStem(o.text, allTermsForTokenize));
+  $: if (currentQ) highlightedStem = tokenizeStem(currentQ.stem, allTermsForTokenize);
   let termRefs: Term[] = [];
   let showHintPopover = false;
   let showExplanationSheet = false;
@@ -118,7 +119,6 @@
       sessionIndex
     );
     termRefs = refs;
-    highlightedStem = tokenizeStem(q.stem, allTermsForTokenize);
   }
 
   function handleStemInteraction(e: MouseEvent | KeyboardEvent): boolean {

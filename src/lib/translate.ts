@@ -160,23 +160,33 @@ export async function lookupOrTranslate(rawText: string, ownerId: string): Promi
   const senseId = crypto.randomUUID();
   const termType: 'word' | 'phrase' = normalized.includes(' ') ? 'phrase' : 'word';
 
-  await supabase.from('terms').insert({
+  const { error: termError } = await supabase.from('terms').insert({
     id: termId,
     text: normalized,
     type: termType,
     tags: ['ai-dịch'],
     owner_id: ownerId,
   });
+  if (termError) throw new Error(`Không lưu được term: ${termError.message}`);
 
-  await supabase.from('term_senses').insert({
+  const sensePayloadBase = {
     id: senseId,
     term_id: termId,
     register: 'general',
     en: result.en,
     vi: result.vi,
-    note: result.note || null,
     sort_order: 0,
+  };
+
+  // Backward compatibility: some deployments may not have run migration 003 (note column).
+  let { error: senseError } = await supabase.from('term_senses').insert({
+    ...sensePayloadBase,
+    note: result.note || null,
   });
+  if (senseError?.message?.includes("'note' column")) {
+    ({ error: senseError } = await supabase.from('term_senses').insert(sensePayloadBase));
+  }
+  if (senseError) throw new Error(`Không lưu được nghĩa: ${senseError.message}`);
 
   await db.terms.put({ id: termId, text: normalized, type: termType, tags: ['ai-dịch'], ownerId });
   await db.termSenses.put({

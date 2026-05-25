@@ -10,12 +10,12 @@ const SYSTEM_PROMPT = `You are a Vietnamese-English expert specializing in Scrum
 Given a word or phrase (typically from a Scrum context), respond with JSON only — no markdown fences:
 {"en": "<concise English definition, 1-2 sentences>", "vi": "<Vietnamese translation/explanation, 1-2 sentences>", "note": "<optional usage tip in Vietnamese, or empty string>"}`;
 
-// Tried in order server-side. Free models first, paid 8b as last resort.
+// Tried in order by the edge function. Keep this list current to avoid dead endpoints.
+// gpt-oss-20b:free is capable enough for glossary-style EN↔VI translation.
 const MODELS = [
-  'google/gemini-2.0-flash-exp:free',
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemma-2-9b-it:free',
-  'google/gemini-flash-1.5-8b',
+  'openai/gpt-oss-20b:free',
+  'meta-llama/llama-3.1-8b-instruct:free',
+  'qwen/qwen-2.5-7b-instruct:free',
 ];
 
 interface OpenRouterChoice {
