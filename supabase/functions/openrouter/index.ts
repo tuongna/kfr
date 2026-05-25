@@ -26,7 +26,8 @@ const ALLOWED_ORIGINS = Deno.env.get('ALLOWED_ORIGINS') ?? '*';
 const corsHeaders = {
   'Access-Control-Allow-Origin': ALLOWED_ORIGINS,
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  // Supabase JS client sends x-client-info and may send apikey from browser
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 const DEFAULT_FALLBACK_MODELS = [
