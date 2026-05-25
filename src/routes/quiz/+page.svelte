@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
   import { db } from '$lib/db';
   import { progressMap, getProgress, saveProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, shuffleByIndex, getBadge } from '$lib/srs';
@@ -23,25 +23,29 @@
   let lookedUpTermsData: Term[] = [];
 
   // Per-question UI state
-  let selectedOptionId: string | null = null;
+  let selectedIds: Set<string> = new Set();
   let answered = false;
   let options: QuestionOption[] = [];
   $: optionStems = options.map((o) => tokenizeStem(o.text, allTermsForTokenize));
   let termRefs: Term[] = [];
-  let showExplanation = false;
-  let showHint = false;
+  let showHintPopover = false;
+  let showExplanationSheet = false;
   let highlightedStem = '';
   let selectedTermId: string | null = null;
   let allTermsForTokenize: Term[] = [];
   let translatingWord: string | null = null;
   let translateError: string | null = null;
-  let phraseSelection: string | null = null;
 
   $: currentUserId = $authUser?.id;
   $: currentQ = sessionQuestions[sessionIndex] ?? null;
   $: progress = currentQ ? getProgress($progressMap, 'question', currentQ.id) : undefined;
-  $: selectedOpt = options.find((o) => o.id === selectedOptionId);
-  $: isCorrect = selectedOpt?.correct ?? false;
+  $: correctIds = new Set(options.filter((o) => o.correct).map((o) => o.id));
+  $: correctCount = correctIds.size;
+  $: isMulti = correctCount > 1;
+  $: isCorrect =
+    answered &&
+    selectedIds.size === correctCount &&
+    [...selectedIds].every((id) => correctIds.has(id));
   $: vocabCount = $sessionLookups.size;
   $: progressPct = sessionQuestions.length
     ? Math.round((sessionIndex / sessionQuestions.length) * 100)
@@ -69,13 +73,6 @@
       db.terms.toArray(),
     ]);
     initSession();
-    document.addEventListener('selectionchange', updatePhraseSelection);
-  });
-
-  onDestroy(() => {
-    if (typeof document !== 'undefined') {
-      document.removeEventListener('selectionchange', updatePhraseSelection);
-    }
   });
 
   function buildPool(filter: ExamFilter): Question[] {
@@ -91,8 +88,9 @@
     sessionDone = false;
     lookedUpTermsData = [];
     answered = false;
-    selectedOptionId = null;
-    showHint = false;
+    selectedIds = new Set();
+    showHintPopover = false;
+    showExplanationSheet = false;
     sessionLookups.set(new Map());
   }
 
@@ -103,19 +101,19 @@
 
   async function loadQuestion(q: Question) {
     answered = false;
-    selectedOptionId = null;
-    showExplanation = false;
-    showHint = false;
-    phraseSelection = null;
+    selectedIds = new Set();
+    showHintPopover = false;
+    showExplanationSheet = false;
 
     const [opts, refs] = await Promise.all([
       db.questionOptions.where('questionId').equals(q.id).toArray(),
-      q.termRefs.length
-        ? db.terms.where('id').anyOf(q.termRefs).toArray()
-        : Promise.resolve([]),
+      q.termRefs.length ? db.terms.where('id').anyOf(q.termRefs).toArray() : Promise.resolve([]),
     ]);
 
-    options = shuffleByIndex(opts.sort((a, b) => a.sortOrder - b.sortOrder), sessionIndex);
+    options = shuffleByIndex(
+      opts.sort((a, b) => a.sortOrder - b.sortOrder),
+      sessionIndex
+    );
     termRefs = refs;
     highlightedStem = tokenizeStem(q.stem, allTermsForTokenize);
   }
@@ -126,7 +124,6 @@
     const termEl = (e.target as HTMLElement).closest<HTMLElement>('[data-term-id]');
     if (termEl?.dataset.termId) {
       selectedTermId = termEl.dataset.termId;
-      phraseSelection = null;
       return;
     }
 
@@ -134,7 +131,6 @@
     const wordEl = (e.target as HTMLElement).closest<HTMLElement>('[data-word]');
     if (!wordEl?.dataset.word) return;
 
-    phraseSelection = null;
     const word = wordEl.dataset.word;
     translatingWord = word;
     translateError = null;
@@ -152,75 +148,40 @@
     }
   }
 
-  function updatePhraseSelection() {
-    const sel = window.getSelection();
-    const text = sel?.toString().trim() ?? '';
-    if (!text || !sel || sel.rangeCount === 0) {
-      phraseSelection = null;
-      return;
-    }
-    const node = sel.getRangeAt(0).commonAncestorContainer;
-    const el = node instanceof Element ? node : node.parentElement;
-    if (!el?.closest('.question-stem, .quiz-options')) {
-      phraseSelection = null;
-      return;
-    }
-    if (text.length > 2 && /\s/.test(text)) {
-      phraseSelection = text.replace(/\s+/g, ' ');
-    } else {
-      phraseSelection = null;
-    }
-  }
-
-  async function translatePhrase() {
-    if (!phraseSelection || !currentUserId || translatingWord) return;
-    const phrase = phraseSelection;
-    phraseSelection = null;
-    window.getSelection()?.removeAllRanges();
-    translatingWord = phrase;
-    translateError = null;
-    try {
-      const termId = await lookupOrTranslate(phrase, currentUserId);
-      allTermsForTokenize = await db.terms.toArray();
-      selectedTermId = termId;
-    } catch (err) {
-      console.error('Phrase translation failed:', err);
-      translateError = 'Dịch thất bại — thử lại sau';
-      setTimeout(() => (translateError = null), 3000);
-    } finally {
-      translatingWord = null;
-    }
-  }
-
-  function blurAnswerFocus() {
-    if (typeof document === 'undefined') return;
-    const active = document.activeElement;
-    if (active instanceof HTMLElement && active.closest('.quiz-options')) {
-      active.blur();
-    }
-  }
-
-  async function selectOption(opt: QuestionOption) {
+  async function toggleOption(opt: QuestionOption) {
     if (answered) return;
+
+    if (isMulti) {
+      // Multi: toggle, auto-submit when user has selected `correctCount` items
+      const next = new Set(selectedIds);
+      if (next.has(opt.id)) next.delete(opt.id);
+      else next.add(opt.id);
+      selectedIds = next;
+      if (next.size === correctCount) await submitAnswer();
+    } else {
+      // Single: pick → submit immediately
+      selectedIds = new Set([opt.id]);
+      await submitAnswer();
+    }
+  }
+
+  async function submitAnswer() {
     answered = true;
-    selectedOptionId = opt.id;
-    blurAnswerFocus();
-    if (opt.correct) sessionCorrect++;
+    const allCorrect =
+      selectedIds.size === correctCount && [...selectedIds].every((id) => correctIds.has(id));
+    if (allCorrect) sessionCorrect++;
     if (currentQ) {
-      await saveProgress(improveProgress(progress, 'question', currentQ.id, !opt.correct));
+      await saveProgress(improveProgress(progress, 'question', currentQ.id, !allCorrect));
     }
   }
 
   async function nextQuestion() {
-    blurAnswerFocus();
+    showHintPopover = false;
+    showExplanationSheet = false;
     if (sessionIndex >= sessionQuestions.length - 1) {
       await finishSession();
     } else {
       sessionIndex++;
-      answered = false;
-      selectedOptionId = null;
-      showExplanation = false;
-      showHint = false;
     }
   }
 
@@ -233,12 +194,20 @@
   }
 
   function optionClass(opt: QuestionOption): string {
-    if (!answered) return '';
+    if (!answered) return selectedIds.has(opt.id) ? 'picked' : '';
     const classes: string[] = [];
-    if (opt.id === selectedOptionId) classes.push('selected');
-    if (opt.correct) classes.push('correct');
-    else if (opt.id === selectedOptionId) classes.push('incorrect');
+    const picked = selectedIds.has(opt.id);
+    const correct = opt.correct;
+    if (picked) classes.push('picked');
+    if (correct) classes.push('correct');
+    if (picked && !correct) classes.push('incorrect');
+    if (!picked && correct) classes.push('missed');
     return classes.join(' ');
+  }
+
+  function qualityBadgeLabel(q: Question): string {
+    if (q.quality === 'trusted') return q.source ?? 'Scrum.org';
+    return q.source ? `Tham khảo · ${q.source}` : 'Tham khảo';
   }
 </script>
 
@@ -277,7 +246,6 @@
       </p>
     </div>
 
-    <!-- Score grid -->
     <div class="result-grid">
       <div class="result-stat">
         <div class="result-stat-value">{sessionCorrect}/{sessionQuestions.length}</div>
@@ -293,7 +261,6 @@
       </div>
     </div>
 
-    <!-- Readiness meter -->
     <div class="readiness-section">
       <div class="readiness-header">
         <span style="font-size:0.9rem;font-weight:600">Đánh giá Readiness:</span>
@@ -316,7 +283,6 @@
       </p>
     </div>
 
-    <!-- Vocab reinforcement list -->
     {#if lookedUpTermsData.length > 0}
       <div class="vocab-reinforce-section">
         <p class="vocab-reinforce-title">
@@ -339,7 +305,7 @@
     </button>
   </div>
 
-<!-- ── EMPTY STATE ── -->
+  <!-- ── EMPTY STATE ── -->
 {:else if sessionQuestions.length === 0}
   <div class="empty-state">
     {#if allQuestions.length === 0}
@@ -349,7 +315,7 @@
     {/if}
   </div>
 
-<!-- ── QUIZ CARD ── -->
+  <!-- ── QUIZ CARD ── -->
 {:else if currentQ}
   <!-- Progress bar -->
   <div class="quiz-progress-section">
@@ -359,6 +325,10 @@
       </span>
       <div class="flex items-center gap-1">
         <span class="tag" style="cursor:default">{currentQ.exam}</span>
+        <span class="quality-badge quality-{currentQ.quality}" title={currentQ.source ?? ''}>
+          {currentQ.quality === 'trusted' ? '🟢' : '🟡'}
+          {qualityBadgeLabel(currentQ)}
+        </span>
         <span>{getBadge(progress?.level ?? -1)}</span>
       </div>
     </div>
@@ -367,9 +337,8 @@
     </div>
   </div>
 
-  <div class="card">
-    <!-- Question stem with inline glossary highlights -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <div class="card quiz-card">
+    <!-- Question stem -->
     <div
       class="question-stem"
       on:click={handleStemInteraction}
@@ -380,98 +349,129 @@
     </div>
 
     <p class="glossary-hint-label">
-      💡 Click từ đơn hoặc <em>bôi chọn cụm từ</em> để tra nghĩa
-      {#if translatingWord}<span class="translate-loading">· Đang dịch "{translatingWord}"…</span>{/if}
+      💡 Click từ trong câu để tra nghĩa
+      {#if translatingWord}<span class="translate-loading">· Đang dịch "{translatingWord}"…</span
+        >{/if}
       {#if translateError}<span class="translate-error">· {translateError}</span>{/if}
     </p>
-    {#if phraseSelection && currentUserId && !translatingWord}
-      <div class="phrase-translate-bar">
-        <span class="phrase-preview">"{phraseSelection}"</span>
-        <button class="btn btn-sm btn-primary" on:click={translatePhrase}>Dịch cụm</button>
-        <button class="btn btn-sm btn-ghost" on:click={() => { phraseSelection = null; window.getSelection()?.removeAllRanges(); }}>✕</button>
+
+    <!-- Multi-select hint -->
+    {#if isMulti}
+      <div class="multi-hint">
+        ☑ Chọn {correctCount} đáp án — tự động chấm khi đủ
       </div>
     {/if}
 
-    <!-- Hint toggle (only visible before answering) -->
-    {#if currentQ.explanationVi && !answered}
-      <div class="hint-section">
-        <button class="btn btn-ghost btn-sm" on:click={() => (showHint = !showHint)}>
-          {showHint ? '▲ Ẩn gợi ý' : '💡 Gợi ý tư duy'}
-        </button>
-        {#if showHint}
-          <div class="hint-box">{currentQ.explanationVi}</div>
-        {/if}
-      </div>
-    {/if}
-
-    <!-- Answer options: chip button selects, text supports word lookup -->
+    <!-- Answer options -->
     <div class="quiz-options">
       {#each options as opt, i}
-        <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-        <div
-          class="quiz-option {optionClass(opt)}"
-          on:click={handleStemInteraction}
-          on:keydown={handleStemInteraction}
-        >
-          <button
-            class="option-letter"
-            on:click|stopPropagation={() => selectOption(opt)}
+        <label class="quiz-option {optionClass(opt)}" class:disabled={answered}>
+          <input
+            type={isMulti ? 'checkbox' : 'radio'}
+            name="quiz-answer-{currentQ.id}"
+            class="option-input"
+            checked={selectedIds.has(opt.id)}
             disabled={answered}
-            aria-label="Chọn đáp án {String.fromCharCode(65 + i)}"
-          >
-            {String.fromCharCode(65 + i)}
-          </button>
+            on:change={() => toggleOption(opt)}
+          />
+          <span class="option-letter-label">{String.fromCharCode(65 + i)}</span>
           <span class="option-text">{@html optionStems[i] ?? opt.text}</span>
-        </div>
+          {#if answered}
+            <span class="option-mark">
+              {#if opt.correct}✓{:else if selectedIds.has(opt.id)}✗{/if}
+            </span>
+          {/if}
+        </label>
       {/each}
     </div>
 
-    <!-- Post-answer feedback -->
+    <!-- Pad bottom so sticky bar doesn't overlap content -->
     {#if answered}
-      <div class="answer-feedback answer-feedback-{isCorrect ? 'correct' : 'incorrect'}">
+      <div class="quiz-card-pad" aria-hidden="true"></div>
+    {/if}
+  </div>
+
+  <!-- Hint button + popover (pre-answer only) -->
+  {#if currentQ.explanationVi && !answered}
+    <div class="hint-trigger-wrap">
+      <button
+        class="hint-trigger-btn"
+        on:click={() => (showHintPopover = !showHintPopover)}
+        aria-expanded={showHintPopover}
+      >
+        {showHintPopover ? '▲ Ẩn gợi ý' : '💡 Gợi ý tư duy'}
+      </button>
+      {#if showHintPopover}
+        <div class="hint-popover" role="tooltip">
+          {currentQ.explanationVi}
+        </div>
+      {/if}
+    </div>
+  {/if}
+
+  <!-- Sticky bottom action bar (post-answer) -->
+  {#if answered}
+    <div class="action-bar" role="region" aria-label="Kết quả câu">
+      <div class="action-bar-status action-bar-status-{isCorrect ? 'correct' : 'incorrect'}">
         <span class="answer-feedback-icon">{isCorrect ? '✓' : '✗'}</span>
-        <span>{isCorrect ? 'Chính xác!' : 'Sai rồi!'}</span>
+        <span>{isCorrect ? 'Chính xác' : 'Chưa đúng'}</span>
         <span class="session-live-score">{sessionCorrect}/{sessionIndex + 1}</span>
       </div>
-
-      {#if currentQ.explanationVi || currentQ.explanationEn}
+      {#if currentQ.explanationVi || currentQ.explanationEn || termRefs.length}
         <button
-          class="btn btn-ghost btn-sm"
-          on:click={() => (showExplanation = !showExplanation)}
-          style="margin-top:0.75rem"
+          class="btn btn-ghost btn-sm action-bar-info"
+          on:click={() => (showExplanationSheet = true)}
+          aria-label="Xem giải thích"
         >
-          {showExplanation ? '▲ Ẩn giải thích' : '▼ Xem giải thích đầy đủ'}
+          ℹ️ Giải thích
         </button>
-        {#if showExplanation}
-          <div class="explanation-box">
-            {#if currentQ.explanationVi}
-              <p style="font-size:0.9rem">{currentQ.explanationVi}</p>
-            {/if}
-            {#if currentQ.explanationEn}
-              <p class="text-secondary mt-1" style="font-size:0.85rem">{currentQ.explanationEn}</p>
-            {/if}
-          </div>
-        {/if}
       {/if}
+      <button class="btn btn-primary btn-sm action-bar-next" on:click={nextQuestion}>
+        {sessionIndex < sessionQuestions.length - 1 ? 'Câu tiếp ▶' : '🎓 Xem kết quả'}
+      </button>
+    </div>
+  {/if}
 
+  <!-- Explanation sheet (overlay, slides up) -->
+  {#if showExplanationSheet}
+    <div
+      class="gloss-overlay"
+      on:click={() => (showExplanationSheet = false)}
+      role="presentation"
+    ></div>
+    <div class="gloss-popup" role="dialog" aria-modal="true" aria-label="Giải thích">
+      <button class="gloss-close" on:click={() => (showExplanationSheet = false)} aria-label="Đóng"
+        >✕</button
+      >
+      <h3 style="margin:0 0 0.75rem 0;font-size:1rem">📖 Giải thích</h3>
+      {#if currentQ.explanationVi}
+        <p style="font-size:0.9rem;line-height:1.55">{currentQ.explanationVi}</p>
+      {/if}
+      {#if currentQ.explanationEn}
+        <p class="text-secondary mt-1" style="font-size:0.85rem;line-height:1.5">
+          {currentQ.explanationEn}
+        </p>
+      {/if}
       {#if termRefs.length}
         <div class="mt-2">
-          <p class="text-secondary" style="font-size:0.8rem;margin-bottom:0.4rem">
+          <p class="text-secondary" style="font-size:0.78rem;margin-bottom:0.4rem">
             📌 Thuật ngữ trong câu hỏi:
           </p>
           <div class="tags">
             {#each termRefs as term}
-              <button class="tag" on:click={() => (selectedTermId = term.id)}>{term.text}</button>
+              <button
+                class="tag"
+                on:click={() => {
+                  showExplanationSheet = false;
+                  selectedTermId = term.id;
+                }}>{term.text}</button
+              >
             {/each}
           </div>
         </div>
       {/if}
-
-      <button class="btn btn-primary mt-2" style="width:100%" on:click={nextQuestion}>
-        {sessionIndex < sessionQuestions.length - 1 ? 'Câu tiếp theo ▶' : '🎓 Xem kết quả phiên'}
-      </button>
-    {/if}
-  </div>
+    </div>
+  {/if}
 {/if}
 
 <!-- Term detail popup -->
