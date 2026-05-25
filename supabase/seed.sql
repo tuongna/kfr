@@ -1,9 +1,12 @@
 -- ============================================================
--- Seed data — 5 Scrum terms + 3 PSM-I questions (sample)
+-- Seed data — 5 Scrum terms (per-owner)
 -- Run AFTER creating your user account and replacing YOUR_USER_ID
 -- ============================================================
 -- Replace 'YOUR_USER_ID' with your actual auth.users uuid:
 --   SELECT id FROM auth.users WHERE email = 'your@email.com';
+-- ============================================================
+-- Note: questions are seeded separately via seed_scrum_open.sql
+-- (public, sourced from scrum.org Open Assessment).
 -- ============================================================
 
 DO $$
@@ -16,11 +19,6 @@ DECLARE
   t_sm      uuid := gen_random_uuid();
   t_spgoal  uuid := gen_random_uuid();
   t_pbref   uuid := gen_random_uuid();
-
-  -- Question IDs
-  q1 uuid := gen_random_uuid();
-  q2 uuid := gen_random_uuid();
-  q3 uuid := gen_random_uuid();
 BEGIN
 
   -- ---- Terms ----
@@ -68,52 +66,5 @@ BEGIN
                          'Hoạt động liên tục xem xét và cập nhật các hạng mục backlog.', 0),
     (t_pbref, 'scrum',   'The act of breaking down and further defining Product Backlog items into smaller more precise items. An ongoing activity, not a formal Scrum event.',
                          'Việc phân tách và làm rõ các hạng mục Product Backlog thành các phần nhỏ hơn, chính xác hơn. Đây là hoạt động LIÊN TỤC, KHÔNG phải một sự kiện Scrum chính thức.', 1);
-
-  -- ---- Questions ----
-
-  INSERT INTO public.questions (id, exam, stem, explanation_en, explanation_vi, tags, term_refs, owner_id) VALUES
-    (q1, 'PSM-I',
-     'Who is accountable for managing the Product Backlog?',
-     'The Product Owner is solely accountable for Product Backlog management, including its content, availability, and ordering. However, the Product Owner may delegate the work to others.',
-     'Product Owner là người DUY NHẤT chịu trách nhiệm quản lý Product Backlog — nội dung, sự sẵn sàng, và thứ tự ưu tiên. Tuy nhiên, PO có thể ủy thác công việc cho người khác.',
-     ARRAY['role','product-backlog'],
-     ARRAY[t_po], owner),
-
-    (q2, 'PSM-I',
-     'During a Sprint, when is it appropriate to update the Sprint Goal?',
-     'The Sprint Goal is committed to during Sprint Planning and should not change during the Sprint. The scope can be renegotiated, but not the Sprint Goal itself.',
-     'Sprint Goal được cam kết trong Sprint Planning và KHÔNG được thay đổi trong Sprint. Chỉ scope (nội dung công việc) mới có thể điều chỉnh để đạt Goal, không phải Goal.',
-     ARRAY['sprint','sprint-goal'],
-     ARRAY[t_spgoal], owner),
-
-    (q3, 'PSM-I',
-     'Which statement best describes the role of the Scrum Master during the Daily Scrum?',
-     'The Daily Scrum is an event for the Developers. The Scrum Master does not run it. The Scrum Master teaches the Developers to keep the Daily Scrum within 15 minutes, but the Developers own the meeting.',
-     'Daily Scrum là sự kiện của Developers. Scrum Master KHÔNG điều hành nó. SM đảm bảo sự kiện diễn ra nhưng Developers tự tổ chức — đây là điểm hay bị nhầm trong thi cử.',
-     ARRAY['event','scrum-master','daily-scrum'],
-     ARRAY[t_sm], owner);
-
-  -- ---- Question Options ----
-
-  -- Q1: Who manages Product Backlog?
-  INSERT INTO public.question_options (question_id, text, correct, sort_order) VALUES
-    (q1, 'The Product Owner',                                          true,  0),
-    (q1, 'The Scrum Master',                                           false, 1),
-    (q1, 'The Scrum Team as a whole',                                  false, 2),
-    (q1, 'The stakeholders who requested the features',                false, 3);
-
-  -- Q2: Sprint Goal change
-  INSERT INTO public.question_options (question_id, text, correct, sort_order) VALUES
-    (q2, 'Never — the Sprint Goal is fixed once the Sprint starts',    true,  0),
-    (q2, 'Whenever the Product Owner requests it',                     false, 1),
-    (q2, 'When the Developers discover it is unachievable',            false, 2),
-    (q2, 'During the Daily Scrum if the team agrees',                  false, 3);
-
-  -- Q3: Scrum Master at Daily Scrum
-  INSERT INTO public.question_options (question_id, text, correct, sort_order) VALUES
-    (q3, 'Ensures the event happens; Developers run it themselves',    true,  0),
-    (q3, 'Facilitates the meeting and asks each Developer their update', false, 1),
-    (q3, 'Takes notes and reports status to management',               false, 2),
-    (q3, 'The Scrum Master is not required to attend',                 false, 3);
 
 END $$;

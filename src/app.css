@@ -357,39 +357,242 @@ body {
   padding: 0.75rem 1rem;
   text-align: left;
   font-size: 0.95rem;
-  transition: all 0.15s;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
   width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.quiz-option.disabled {
+  cursor: default;
 }
 
 /* Hover only while no answer has been picked yet */
-.quiz-option:not(.correct):not(.incorrect):not(.selected):hover {
+.quiz-option:not(.correct):not(.incorrect):not(.missed):not(.disabled):hover {
   border-color: var(--primary);
 }
 
+/* User picked this option (pre-answer or post-answer) */
+.quiz-option.picked:not(.correct):not(.incorrect) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* Correct option after answer */
 .quiz-option.correct {
   border-color: var(--success);
   background: var(--success-light);
   color: var(--success);
 }
 
+/* User picked, wrong */
 .quiz-option.incorrect {
   border-color: var(--error);
   background: var(--error-light);
   color: var(--error);
 }
 
-/* Mark the option the user actually picked */
-.quiz-option.selected {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+/* Correct option the user did NOT pick — softer green to differentiate */
+.quiz-option.missed {
+  border-color: var(--success);
+  background: transparent;
+  color: var(--success);
 }
-.quiz-option.selected.correct {
-  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.3);
+
+/* Native input — focus ring confined to it only */
+.option-input {
+  flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--primary);
 }
-.quiz-option.selected.incorrect {
-  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.3);
+
+.option-input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.option-input:disabled {
+  cursor: default;
+}
+
+/* A/B/C/D letter — visual aid only, not interactive */
+.option-letter-label {
+  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.quiz-option.correct .option-letter-label,
+.quiz-option.missed .option-letter-label {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.quiz-option.incorrect .option-letter-label {
+  background: var(--error);
+  color: white;
+  border-color: var(--error);
+}
+
+.option-text {
+  flex: 1;
+  text-align: left;
+}
+
+.option-mark {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.quiz-option.correct .option-mark {
+  color: var(--success);
+}
+.quiz-option.incorrect .option-mark {
+  color: var(--error);
+}
+.quiz-option.missed .option-mark {
+  color: var(--success);
+}
+
+/* Hint shown only for multi-select questions */
+.multi-hint {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #6d4c41;
+}
+
+/* Quality badge near exam tag */
+.quality-badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.quality-badge.quality-trusted {
+  background: var(--success-light);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.quality-badge.quality-reference {
+  background: #fff8e1;
+  color: #6d4c41;
+  border: 1px solid #ffe082;
+}
+
+/* Hint trigger (popover anchor) — positioned outside the card so the popover
+   floats over surroundings instead of expanding inline. */
+.hint-trigger-wrap {
+  position: relative;
+  margin-top: 0.5rem;
+}
+
+.hint-trigger-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+  color: var(--primary);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.hint-trigger-btn:hover {
+  background: var(--primary-light);
+}
+
+.hint-popover {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 0.75rem 1rem;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #5d4037;
+  line-height: 1.5;
+  box-shadow: var(--shadow);
+}
+
+/* Sticky bottom action bar after answering */
+.action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.action-bar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.action-bar-status-correct {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.action-bar-status-incorrect {
+  background: var(--error-light);
+  color: var(--error);
+}
+
+.action-bar-info {
+  flex-shrink: 0;
+}
+
+.action-bar-next {
+  margin-left: auto;
+}
+
+/* Reserve space at bottom of quiz card so sticky bar never overlaps options */
+.quiz-card-pad {
+  height: 70px;
 }
 
 /* ========================
@@ -642,76 +845,6 @@ progress::-webkit-progress-value {
   color: var(--primary);
 }
 
-/* Pre-answer hint box */
-.hint-section {
-  margin-bottom: 0.75rem;
-}
-
-.hint-box {
-  margin-top: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: #fff8e1;
-  border: 1px solid #ffe082;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  color: #5d4037;
-  line-height: 1.5;
-}
-
-/* Letter chip — the select-answer button */
-.option-letter {
-  flex-shrink: 0;
-  width: 1.6rem;
-  height: 1.6rem;
-  padding: 0;
-  border-radius: 6px;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  transition: all 0.15s;
-  margin-top: 1px;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.option-letter:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-.option-letter:disabled {
-  opacity: 1;
-  cursor: default;
-}
-
-.quiz-option:not(.correct):not(.incorrect):not(.selected):hover .option-letter {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-.quiz-option.correct .option-letter {
-  background: var(--success);
-  color: white;
-  border-color: var(--success);
-}
-
-.quiz-option.incorrect .option-letter {
-  background: var(--error);
-  color: white;
-  border-color: var(--error);
-}
-
-.option-text {
-  flex: 1;
-  text-align: left;
-}
-
 /* Session progress bar (above quiz card) */
 .quiz-progress-section {
   margin-bottom: 0.75rem;
@@ -739,28 +872,6 @@ progress::-webkit-progress-value {
   transition: width 0.3s ease;
 }
 
-/* Post-answer feedback row */
-.answer-feedback {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-top: 1rem;
-}
-
-.answer-feedback-correct {
-  background: var(--success-light);
-  color: var(--success);
-}
-
-.answer-feedback-incorrect {
-  background: var(--error-light);
-  color: var(--error);
-}
-
 .answer-feedback-icon {
   font-size: 1rem;
 }
@@ -770,14 +881,6 @@ progress::-webkit-progress-value {
   font-size: 0.8rem;
   font-weight: 500;
   opacity: 0.8;
-}
-
-/* Post-answer explanation box */
-.explanation-box {
-  margin-top: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: var(--primary-light);
-  border-radius: 8px;
 }
 
 /* Filter bar enhancements */
@@ -947,27 +1050,6 @@ progress::-webkit-progress-value {
 .translate-error {
   color: var(--error);
   font-style: italic;
-}
-
-/* Phrase selection → translate bar */
-.phrase-translate-bar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.75rem;
-  background: var(--primary-light);
-  border-radius: 8px;
-  font-size: 0.82rem;
-  margin-top: 0.4rem;
-}
-
-.phrase-preview {
-  flex: 1;
-  font-style: italic;
-  color: var(--text-secondary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* Note field inside a TermSense */
