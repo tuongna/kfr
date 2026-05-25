@@ -5,9 +5,10 @@
   import { improveProgress, canPractice, shuffleByIndex, getBadge } from '$lib/srs';
   import { sessionLookups } from '$lib/stores/session';
   import { authUser } from '$lib/stores/auth';
-  import { tokenizeStem, lookupOrTranslate } from '$lib/translate';
+  import { tokenizeStem } from '$lib/translate';
   import type { Question, QuestionOption, Term } from '$lib/types';
   import TermPopup from '$lib/components/TermPopup.svelte';
+  import NgramPopup from '$lib/components/NgramPopup.svelte';
 
   type ExamFilter = 'all' | 'PSM-I' | 'PSPO-I';
   const EXAM_FILTERS: ExamFilter[] = ['all', 'PSM-I', 'PSPO-I'];
@@ -33,8 +34,8 @@
   let highlightedStem = '';
   let selectedTermId: string | null = null;
   let allTermsForTokenize: Term[] = [];
-  let translatingWord: string | null = null;
-  let translateError: string | null = null;
+  let ngramSentence: string | null = null;
+  let ngramCharIdx = 0;
 
   $: currentUserId = $authUser?.id;
   $: currentQ = sessionQuestions[sessionIndex] ?? null;
@@ -118,34 +119,37 @@
     highlightedStem = tokenizeStem(q.stem, allTermsForTokenize);
   }
 
-  async function handleStemInteraction(e: MouseEvent | KeyboardEvent) {
+  function handleStemInteraction(e: MouseEvent | KeyboardEvent) {
     if (e instanceof KeyboardEvent && e.key !== 'Enter' && e.key !== ' ') return;
 
-    const termEl = (e.target as HTMLElement).closest<HTMLElement>('[data-term-id]');
+    const target = e.target as HTMLElement;
+    const termEl = target.closest<HTMLElement>('[data-term-id]');
+    const wordEl = target.closest<HTMLElement>('[data-word]');
+    if (!termEl && !wordEl) return;
+
+    // Stop the click from reaching the surrounding <label>, which would
+    // otherwise toggle the answer's radio/checkbox.
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Glossary term → open its detail popup directly (skip n-gram picker)
     if (termEl?.dataset.termId) {
       selectedTermId = termEl.dataset.termId;
       return;
     }
 
-    if (!currentUserId || translatingWord) return;
-    const wordEl = (e.target as HTMLElement).closest<HTMLElement>('[data-word]');
-    if (!wordEl?.dataset.word) return;
+    if (!currentUserId || !wordEl) return;
+    const sentenceEl = wordEl.closest<HTMLElement>('[data-sentence]');
+    const sentence = sentenceEl?.dataset.sentence ?? wordEl.dataset.word ?? '';
+    const charIdx = parseInt(wordEl.dataset.charIdx ?? '0', 10);
+    ngramSentence = sentence;
+    ngramCharIdx = charIdx;
+  }
 
-    const word = wordEl.dataset.word;
-    translatingWord = word;
-    translateError = null;
-    try {
-      const termId = await lookupOrTranslate(word, currentUserId);
-      allTermsForTokenize = await db.terms.toArray();
-      selectedTermId = termId;
-    } catch (err) {
-      console.error('Translation failed:', err);
-      const msg = err instanceof Error ? err.message : String(err);
-      translateError = `Dịch thất bại: ${msg.slice(0, 120)}`;
-      setTimeout(() => (translateError = null), 6000);
-    } finally {
-      translatingWord = null;
-    }
+  async function onNgramSelect(termId: string) {
+    ngramSentence = null;
+    allTermsForTokenize = await db.terms.toArray();
+    selectedTermId = termId;
   }
 
   async function toggleOption(opt: QuestionOption) {
@@ -341,6 +345,7 @@
     <!-- Question stem -->
     <div
       class="question-stem"
+      data-sentence={currentQ.stem}
       on:click={handleStemInteraction}
       on:keydown={handleStemInteraction}
       role="presentation"
@@ -348,12 +353,7 @@
       {@html highlightedStem}
     </div>
 
-    <p class="glossary-hint-label">
-      💡 Click từ trong câu để tra nghĩa
-      {#if translatingWord}<span class="translate-loading">· Đang dịch "{translatingWord}"…</span
-        >{/if}
-      {#if translateError}<span class="translate-error">· {translateError}</span>{/if}
-    </p>
+    <p class="glossary-hint-label">💡 Click từ trong câu để tra nghĩa hoặc chọn cụm</p>
 
     <!-- Multi-select hint -->
     {#if isMulti}
@@ -375,7 +375,13 @@
             on:change={() => toggleOption(opt)}
           />
           <span class="option-letter-label">{String.fromCharCode(65 + i)}</span>
-          <span class="option-text">{@html optionStems[i] ?? opt.text}</span>
+          <span
+            class="option-text"
+            data-sentence={opt.text}
+            on:click={handleStemInteraction}
+            on:keydown={handleStemInteraction}
+            role="presentation">{@html optionStems[i] ?? opt.text}</span
+          >
           {#if answered}
             <span class="option-mark">
               {#if opt.correct}✓{:else if selectedIds.has(opt.id)}✗{/if}
@@ -472,6 +478,17 @@
       {/if}
     </div>
   {/if}
+{/if}
+
+<!-- N-gram phrase picker (opens on plain-word tap) -->
+{#if ngramSentence && currentUserId}
+  <NgramPopup
+    sentence={ngramSentence}
+    charIdx={ngramCharIdx}
+    ownerId={currentUserId}
+    on:select={(e) => onNgramSelect(e.detail)}
+    on:close={() => (ngramSentence = null)}
+  />
 {/if}
 
 <!-- Term detail popup -->

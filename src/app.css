@@ -461,17 +461,28 @@ body {
 .option-mark {
   flex-shrink: 0;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.8rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  line-height: 1;
 }
 
 .quiz-option.correct .option-mark {
   color: var(--success);
+  background: var(--success-light);
 }
 .quiz-option.incorrect .option-mark {
   color: var(--error);
+  background: var(--error-light);
 }
 .quiz-option.missed .option-mark {
   color: var(--success);
+  background: var(--success-light);
 }
 
 /* Hint shown only for multi-select questions */
@@ -1068,4 +1079,178 @@ progress::-webkit-progress-value {
   background: #e8eaf6;
   color: #3949ab;
   border-color: #c5cae9;
+}
+
+/* ========================
+   N-gram popup (tap-to-translate phrase picker)
+   ======================== */
+.ngram-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ngram-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.ngram-item:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.ngram-item:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.ngram-item.has-term {
+  border-color: var(--success);
+  background: var(--success-light);
+  color: var(--success);
+  font-weight: 600;
+}
+
+.ngram-item-other {
+  background: transparent;
+  border-style: dashed;
+  color: var(--primary);
+  justify-content: center;
+}
+
+.ngram-text {
+  flex: 1;
+}
+
+.ngram-tag-glossary,
+.ngram-tag-ai {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.ngram-tag-glossary {
+  background: var(--success);
+  color: white;
+}
+
+.ngram-tag-ai {
+  background: #e8eaf6;
+  color: #3949ab;
+}
+
+/* Slider — drag to pick a phrase */
+.ngram-slider {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0.5rem 0.25rem 0.75rem;
+  overflow-x: auto;
+  position: relative;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  background: var(--bg);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.ngram-notch {
+  flex: 0 0 auto;
+  min-width: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.35rem;
+  cursor: grab;
+  position: relative;
+}
+
+.ngram-notch.out-of-segment {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ngram-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  transition:
+    background-color 0.1s,
+    border-color 0.1s,
+    transform 0.1s;
+}
+
+.ngram-notch.in-range .ngram-dot {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.ngram-notch.is-endpoint .ngram-dot {
+  width: 22px;
+  height: 22px;
+  background: var(--surface);
+  border-width: 4px;
+  border-color: var(--primary);
+  transform: translateY(-5px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.ngram-label {
+  font-size: 0.82rem;
+  text-align: center;
+  word-break: keep-all;
+  color: var(--text-secondary);
+}
+
+.ngram-notch.in-range .ngram-label {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.ngram-divider {
+  flex: 0 0 auto;
+  width: 1px;
+  background: var(--border);
+  margin: 0.4rem 0.35rem;
+}
+
+.ngram-preview {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.ngram-preview strong {
+  color: var(--text);
+}
+
+.ngram-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
 }
