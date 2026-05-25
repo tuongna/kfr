@@ -23,6 +23,9 @@
    ```
 3. Sửa `supabase/seed.sql`: thay `YOUR_USER_ID` bằng ID thực.
 4. Chạy seed trong SQL Editor.
+5. (Tùy chọn) Seed thêm bộ câu hỏi Scrum Open Assessment (PSM-I, public, không cần user ID):
+   - `supabase/seed_scrum_open.sql` — bộ 30 câu hỏi pool 1
+   - `supabase/seed_scrum_open_v2.sql` — bộ 30 câu hỏi pool 2 (mẫu khác từ Scrum Open)
 
 ### 3. Cài GitHub Secrets
 
