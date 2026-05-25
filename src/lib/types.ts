@@ -19,6 +19,8 @@ export interface TermSense {
   sortOrder: number;
 }
 
+export type QuestionQuality = 'trusted' | 'reference';
+
 export interface Question {
   id: string;
   exam: 'PSM-I' | 'PSPO-I';
@@ -28,6 +30,8 @@ export interface Question {
   tags: string[];
   termRefs: string[];
   ownerId: string;
+  source?: string;
+  quality: QuestionQuality;
   options?: QuestionOption[];
 }
 

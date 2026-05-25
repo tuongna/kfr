@@ -15,9 +15,7 @@ export async function syncContent(force = false): Promise<void> {
 }
 
 async function syncTerms(): Promise<void> {
-  const { data, error } = await supabase
-    .from('terms')
-    .select('*, term_senses(*)');
+  const { data, error } = await supabase.from('terms').select('*, term_senses(*)');
 
   if (error) throw error;
   if (!data) return;
@@ -54,9 +52,7 @@ async function syncTerms(): Promise<void> {
 }
 
 async function syncQuestions(): Promise<void> {
-  const { data, error } = await supabase
-    .from('questions')
-    .select('*, question_options(*)');
+  const { data, error } = await supabase.from('questions').select('*, question_options(*)');
 
   if (error) throw error;
   if (!data) return;
@@ -70,6 +66,8 @@ async function syncQuestions(): Promise<void> {
     tags: q.tags ?? [],
     termRefs: q.term_refs ?? [],
     ownerId: q.owner_id,
+    source: q.source ?? undefined,
+    quality: q.quality === 'trusted' ? 'trusted' : 'reference',
   }));
 
   const options: QuestionOption[] = data.flatMap((q) =>
