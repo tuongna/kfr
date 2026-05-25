@@ -145,18 +145,40 @@ export async function suggestNgrams(
 /**
  * Returns the term ID for rawText, creating it via AI translation if not cached.
  * Writes new translations to both Supabase (persistent) and Dexie (local cache).
+ *
+ * When `context` is `'scrum'` and the term already exists in cache but has no
+ * Scrum-specific sense, re-translates to try to enrich it (non-fatal: if the AI
+ * doesn't identify it as a Scrum term, the existing general sense is kept as-is).
  */
 export async function lookupOrTranslate(
   rawText: string,
   ownerId: string,
   onAttempt?: OnAttempt,
+  context: 'general' | 'scrum' = 'general',
 ): Promise<string> {
   const normalized = rawText.trim();
 
   const existing = await db.terms
     .filter((t) => t.text.toLowerCase() === normalized.toLowerCase())
     .first();
-  if (existing) return existing.id;
+
+  if (existing) {
+    // In Scrum context, check whether a Scrum-specific sense already exists.
+    // If not, re-translate to attempt enrichment (only the scrum sense is added;
+    // the existing general sense is never replaced).
+    if (context === 'scrum') {
+      const scrumSenseCount = await db.termSenses
+        .where('termId')
+        .equals(existing.id)
+        .filter((s) => s.register === 'scrum')
+        .count();
+
+      if (scrumSenseCount === 0) {
+        await enrichScrumSense(existing.id, normalized, ownerId, onAttempt);
+      }
+    }
+    return existing.id;
+  }
 
   const { result, model } = await translateTerm(normalized, onAttempt);
 
@@ -241,6 +263,58 @@ export async function lookupOrTranslate(
   }
 
   return termId;
+}
+
+/**
+ * Re-translates `text` and, if the AI identifies it as a Scrum term, inserts the
+ * Scrum sense into Supabase and Dexie for `termId`. The existing general sense is
+ * never modified. Errors are swallowed so the caller always gets a termId back.
+ */
+async function enrichScrumSense(
+  termId: string,
+  text: string,
+  ownerId: string,
+  onAttempt?: OnAttempt,
+): Promise<void> {
+  let result: import('./ai').TranslateResult;
+  try {
+    ({ result } = await translateTerm(text, onAttempt));
+  } catch {
+    // All models failed — keep existing general sense, no Scrum enrichment.
+    return;
+  }
+
+  if (!result.isScrumTerm || !result.scrumEn) return;
+
+  const scrumSenseId = crypto.randomUUID();
+  const scrumPayload = {
+    id: scrumSenseId,
+    term_id: termId,
+    register: 'scrum',
+    en: result.scrumEn,
+    vi: result.scrumVi ?? '',
+    sort_order: 1,
+  };
+
+  let { error: scrumErr } = await supabase.from('term_senses').insert({
+    ...scrumPayload,
+    note: null,
+  });
+  if (scrumErr?.message?.includes("'note' column")) {
+    ({ error: scrumErr } = await supabase.from('term_senses').insert(scrumPayload));
+  }
+
+  if (!scrumErr) {
+    await db.termSenses.put({
+      id: scrumSenseId,
+      termId,
+      register: 'scrum',
+      en: result.scrumEn,
+      vi: result.scrumVi ?? '',
+      sortOrder: 1,
+    });
+  }
+  // Ignore scrumErr — non-fatal; the term still opens with its general sense.
 }
 
 function isLetter(ch: string): boolean {
