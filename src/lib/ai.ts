@@ -4,14 +4,33 @@ export interface TranslateResult {
   en: string;
   vi: string;
   note: string;
+  /** Scrum-specific English definition, present only when this is a Scrum term. */
+  scrumEn?: string;
+  /** Scrum-specific Vietnamese explanation. */
+  scrumVi?: string;
+  /** True when AI identified this as a Scrum/Agile domain term. */
+  isScrumTerm?: boolean;
 }
 
-const SYSTEM_PROMPT = `You are a Vietnamese-English expert specializing in Scrum and Agile terminology.
-Given a word or phrase (typically from a Scrum context), respond with JSON only — no markdown fences:
-{"en": "<concise English definition, 1-2 sentences>", "vi": "<Vietnamese translation/explanation, 1-2 sentences>", "note": "<optional usage tip in Vietnamese, or empty string>"}`;
+const SYSTEM_PROMPT = `You are a Vietnamese-English bilingual expert specializing in Scrum and Agile.
+Given a word or phrase (usually from a PSM / PSPO exam context), respond with JSON ONLY — no markdown fences, no extra keys:
+{
+  "en": "<General-context English definition, 1–2 concise sentences>",
+  "vi": "<General-context Vietnamese translation/explanation, 1–2 sentences>",
+  "note": "<Optional usage tip in Vietnamese; empty string if none>",
+  "isScrumTerm": <true | false>,
+  "scrumEn": "<Scrum-specific English definition if isScrumTerm=true, else empty string. Be precise: distinguish formal Scrum events (time-boxed, mandatory) from ongoing activities or roles.>",
+  "scrumVi": "<Scrum-specific Vietnamese explanation if isScrumTerm=true, else empty string>"
+}
+
+Guidance for Scrum definitions:
+- Formal Scrum events (Sprint, Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective) are time-boxed and mandatory — say so explicitly.
+- Product Backlog is an ordered list of everything known to improve the product; Product Backlog Refinement is an ongoing activity (NOT a formal event).
+- Distinguish Scrum roles: Product Owner (maximizes value), Scrum Master (serves team & org), Developers (create the Increment).
+- "Increment" must always mention the Definition of Done.
+- Keep scrumEn ≤ 2 sentences and scrumVi ≤ 2 sentences.`;
 
 // Tried in order by the edge function. Keep this list current to avoid dead endpoints.
-// gpt-oss-20b:free is capable enough for glossary-style EN↔VI translation.
 const MODELS = [
   'openai/gpt-oss-20b:free',
   'meta-llama/llama-3.1-8b-instruct:free',
@@ -38,7 +57,7 @@ export async function translateTerm(word: string): Promise<TranslateResult> {
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `Translate: "${word}"` },
       ],
-      max_tokens: 200,
+      max_tokens: 350,
     },
   });
 
@@ -53,6 +72,9 @@ export async function translateTerm(word: string): Promise<TranslateResult> {
       en: String(parsed.en ?? word),
       vi: String(parsed.vi ?? word),
       note: String(parsed.note ?? ''),
+      isScrumTerm: Boolean(parsed.isScrumTerm),
+      scrumEn: parsed.scrumEn ? String(parsed.scrumEn) : undefined,
+      scrumVi: parsed.scrumVi ? String(parsed.scrumVi) : undefined,
     };
   } catch {
     return { en: word, vi: content.trim().slice(0, 300), note: '' };
