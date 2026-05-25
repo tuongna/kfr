@@ -63,7 +63,7 @@
   $: currentPath = $page.url.pathname;
 
   const navLinks = [
-    { href: `${base}/learn`, label: 'Học từ vựng' },
+    { href: `${base}/vocab`, label: '📚 Từ đã tra' },
     { href: `${base}/quiz`, label: 'Kiểm tra' },
   ];
 </script>
