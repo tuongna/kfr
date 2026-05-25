@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount, tick } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte';
   import {
     suggestNgrams,
     tokenizeWords,
@@ -9,7 +9,7 @@
   } from '$lib/translate';
   import { db } from '$lib/db';
   import type { TermSense } from '$lib/types';
-  import type { ModelAttempt } from '$lib/ai';
+  import { MODELS, MODEL_DISPLAY, type ModelAttempt } from '$lib/ai';
 
   export let sentence: string;
   export let charIdx: number;
@@ -33,6 +33,50 @@
 
   /** Mini meaning previews fetched for known glossary items. Keyed by termId. */
   let previews: Map<string, string> = new Map();
+
+  // ── Translation timing ──────────────────────────────────────────────────────
+  /** Seconds elapsed since the current translate call started. */
+  let elapsedSeconds = 0;
+  /** Final elapsed time preserved after translation finishes, for the "done" badge. */
+  let finalElapsed = 0;
+  let elapsedInterval: ReturnType<typeof setInterval> | null = null;
+
+  /** Next model in MODELS that will be tried if the current one fails. */
+  $: nextModelToTry = (() => {
+    if (!loadingTranslate) return null;
+    const last = attempts[attempts.length - 1];
+    if (!last || last.status !== 'trying') return null;
+    return attempts.length < MODELS.length ? MODELS[attempts.length] : null;
+  })();
+
+  /** True while a paid-tier model is actively being called. */
+  $: usingPaidModel =
+    loadingTranslate && attempts.some((a) => a.status === 'trying' && !a.model.endsWith(':free'));
+
+  function isFreeModel(id: string): boolean {
+    return id.endsWith(':free');
+  }
+
+  /** Human-friendly model name for display. */
+  function friendlyModel(id: string): string {
+    return MODEL_DISPLAY[id] ?? id.replace(/:free$/, '').split('/').pop() ?? id;
+  }
+
+  function startElapsedTimer(): void {
+    elapsedSeconds = 0;
+    elapsedInterval = setInterval(() => {
+      elapsedSeconds += 1;
+    }, 1000);
+  }
+
+  function stopElapsedTimer(): void {
+    if (elapsedInterval !== null) {
+      clearInterval(elapsedInterval);
+      elapsedInterval = null;
+    }
+  }
+
+  onDestroy(() => stopElapsedTimer());
 
   // Slider state — initialized lazily when user opens the slider phase
   let words: WordSpan[] = [];
@@ -95,6 +139,7 @@
     loadingTranslate = true;
     translateError = '';
     attempts = [];
+    startElapsedTimer();
     try {
       const termId = await lookupOrTranslate(text, ownerId, (a) => {
         // Merge updates: when a model transitions trying → failed/succeeded, replace its row.
@@ -110,14 +155,12 @@
       const msg = e instanceof Error ? e.message : String(e);
       translateError = `Dịch thất bại: ${msg.slice(0, 120)}`;
     } finally {
+      finalElapsed = elapsedSeconds;
       loadingTranslate = false;
+      stopElapsedTimer();
     }
   }
 
-  /** Strip ':free' suffix and the org prefix for compact display. */
-  function shortModelName(id: string): string {
-    return id.replace(/:free$/, '');
-  }
 
   async function openSlider() {
     words = tokenizeWords(sentence);
@@ -275,25 +318,101 @@
         </li>
       </ul>
       {#if loadingTranslate || attempts.length}
-        <div class="translate-progress">
-          {#if loadingTranslate}
-            <p class="translate-progress-title">🤖 Đang dịch — thử các model lần lượt:</p>
-          {:else}
-            <p class="translate-progress-title">🤖 Đã dịch xong:</p>
-          {/if}
+        <div class="translate-progress" class:translate-progress--done={!loadingTranslate && attempts.length > 0}>
+
+          <!-- ── Header: status + elapsed ────────────────────────────────── -->
+          <div class="tp-header">
+            <span class="tp-status">
+              {#if loadingTranslate}
+                <span class="tp-spinner" aria-hidden="true"></span>
+                Đang dịch AI…
+              {:else}
+                <span class="tp-ok-icon" aria-hidden="true">✓</span>
+                Đã dịch xong
+              {/if}
+            </span>
+            {#if loadingTranslate && elapsedSeconds >= 1}
+              <span class="tp-elapsed" class:tp-elapsed--slow={elapsedSeconds >= 8}>
+                ⏱ {elapsedSeconds}s
+              </span>
+            {:else if !loadingTranslate && finalElapsed >= 1}
+              <span class="tp-elapsed tp-elapsed--done">⏱ {finalElapsed}s</span>
+            {/if}
+          </div>
+
+          <!-- ── Progress track: one dot per model ──────────────────────── -->
+          <div
+            class="tp-track"
+            aria-label="Tiến trình: {attempts.length} trong {MODELS.length} model"
+          >
+            {#each MODELS as m, i}
+              {@const st = i < attempts.length ? attempts[i].status : 'pending'}
+              <div
+                class="tp-dot tp-dot--{st}"
+                class:tp-dot--free={isFreeModel(m)}
+                title="{friendlyModel(m)} · {isFreeModel(m) ? 'free' : 'paid'}"
+              ></div>
+            {/each}
+            <span class="tp-fraction">{attempts.length}/{MODELS.length}</span>
+          </div>
+
+          <!-- ── Per-model attempt rows ──────────────────────────────────── -->
           <ul class="translate-attempt-list">
             {#each attempts as a (a.model + a.status)}
               <li class="translate-attempt status-{a.status}">
                 <span class="translate-attempt-icon" aria-hidden="true">
-                  {#if a.status === 'trying'}⏳{:else if a.status === 'failed'}✗{:else}✓{/if}
+                  {#if a.status === 'trying'}
+                    <span class="icon-spin">↻</span>
+                  {:else if a.status === 'failed'}✗
+                  {:else}✓{/if}
                 </span>
-                <code class="translate-attempt-model">{shortModelName(a.model)}</code>
-                {#if a.error}
+                <span
+                  class="tp-tier-badge"
+                  class:tp-tier-badge--paid={!isFreeModel(a.model)}
+                  title={isFreeModel(a.model) ? 'Free tier' : 'Paid tier'}
+                >
+                  {isFreeModel(a.model) ? 'F' : '$'}
+                </span>
+                <code class="translate-attempt-model">{friendlyModel(a.model)}</code>
+                {#if a.status === 'trying'}
+                  <span class="tp-running">xử lý…</span>
+                {:else if a.error}
                   <span class="translate-attempt-error">— {a.error.slice(0, 50)}</span>
                 {/if}
               </li>
             {/each}
+
+            <!-- Next-in-queue preview -->
+            {#if nextModelToTry}
+              <li class="translate-attempt translate-attempt--next">
+                <span class="translate-attempt-icon" aria-hidden="true">→</span>
+                <span
+                  class="tp-tier-badge"
+                  class:tp-tier-badge--paid={!isFreeModel(nextModelToTry)}
+                  title={isFreeModel(nextModelToTry) ? 'Free tier' : 'Paid tier'}
+                >
+                  {isFreeModel(nextModelToTry) ? 'F' : '$'}
+                </span>
+                <code class="translate-attempt-model translate-attempt-model--next">
+                  {friendlyModel(nextModelToTry)}
+                </code>
+                <span class="tp-queued">sẽ thử tiếp</span>
+              </li>
+            {/if}
           </ul>
+
+          <!-- ── Tier-switch notice ──────────────────────────────────────── -->
+          {#if usingPaidModel}
+            <p class="tp-tier-note">💰 Chuyển sang paid model — đáng tin cậy hơn</p>
+          {/if}
+
+          <!-- ── Slow-warning (after 8s) ────────────────────────────────── -->
+          {#if loadingTranslate && elapsedSeconds >= 8}
+            <p class="tp-slow-warn">
+              ⏳ Hơi lâu rồi — vẫn đang xử lý, xin chờ thêm chút…
+            </p>
+          {/if}
+
         </div>
       {/if}
       {#if translateError}
@@ -399,56 +518,234 @@
     opacity: 0.85;
   }
 
-  /* Real-time translation progress (model fallback log) */
+  /* ─── Translation progress panel ────────────────────────────────────────── */
+
   .translate-progress {
     margin-top: 0.6rem;
-    padding: 0.55rem 0.7rem;
+    padding: 0.6rem 0.75rem;
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
   }
 
-  .translate-progress-title {
-    font-size: 0.8rem;
+  .translate-progress--done {
+    border-color: var(--success);
+  }
+
+  /* Header row ─────────────────────────────────────────────────────────────── */
+  .tp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .tp-status {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--text-secondary);
-    margin-bottom: 0.35rem;
   }
 
+  /* CSS-only arc spinner */
+  .tp-spinner {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .tp-ok-icon {
+    color: var(--success);
+    font-size: 0.9rem;
+  }
+
+  .tp-elapsed {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    opacity: 0.75;
+  }
+
+  .tp-elapsed--slow {
+    color: #d97706;
+    font-weight: 700;
+    opacity: 1;
+  }
+
+  .tp-elapsed--done {
+    opacity: 0.5;
+  }
+
+  /* Progress dot track ─────────────────────────────────────────────────────── */
+  .tp-track {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .tp-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      transform 0.15s;
+    flex-shrink: 0;
+  }
+
+  /* pending free = faint outline */
+  .tp-dot--pending.tp-dot--free {
+    opacity: 0.3;
+  }
+
+  /* pending paid = slightly stronger outline */
+  .tp-dot--pending:not(.tp-dot--free) {
+    border-color: var(--primary);
+    opacity: 0.2;
+  }
+
+  /* trying = pulsing primary fill */
+  .tp-dot--trying {
+    background: var(--primary);
+    border-color: var(--primary);
+    animation: tp-pulse 0.9s ease-in-out infinite;
+  }
+
+  /* failed = muted grey fill */
+  .tp-dot--failed {
+    background: var(--text-secondary);
+    border-color: var(--text-secondary);
+    opacity: 0.45;
+  }
+
+  /* succeeded = green fill */
+  .tp-dot--succeeded {
+    background: var(--success);
+    border-color: var(--success);
+  }
+
+  @keyframes tp-pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.45);
+      opacity: 0.65;
+    }
+  }
+
+  .tp-fraction {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    margin-left: 4px;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.7;
+  }
+
+  /* Attempt list ───────────────────────────────────────────────────────────── */
   .translate-attempt-list {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.18rem;
   }
 
   .translate-attempt {
     display: flex;
     align-items: baseline;
-    gap: 0.4rem;
+    gap: 0.35rem;
     font-size: 0.78rem;
-    line-height: 1.4;
+    line-height: 1.5;
   }
 
   .translate-attempt-icon {
     flex-shrink: 0;
     width: 1rem;
     text-align: center;
+    font-size: 0.8rem;
+  }
+
+  .icon-spin {
+    display: inline-block;
+    animation: spin 0.9s linear infinite;
+  }
+
+  /* Tier badge (F = free, $ = paid) */
+  .tp-tier-badge {
+    flex-shrink: 0;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.03rem 0.26rem;
+    border-radius: 3px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+
+  .tp-tier-badge--paid {
+    color: var(--primary);
+    border-color: var(--primary);
+    opacity: 0.75;
   }
 
   .translate-attempt-model {
     font-family: ui-monospace, 'SF Mono', Menlo, monospace;
-    font-size: 0.76rem;
+    font-size: 0.75rem;
     background: var(--surface);
-    padding: 0.05rem 0.35rem;
+    padding: 0.04rem 0.32rem;
     border-radius: 4px;
     border: 1px solid var(--border);
+    white-space: nowrap;
   }
 
-  .translate-attempt.status-trying .translate-attempt-icon {
-    animation: pulse 1.2s ease-in-out infinite;
+  .translate-attempt-model--next {
+    opacity: 0.45;
+    font-style: italic;
+  }
+
+  /* "xử lý…" / "sẽ thử tiếp" labels */
+  .tp-running {
+    font-size: 0.72rem;
+    color: var(--primary);
+    font-style: italic;
+  }
+
+  .tp-queued {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+  }
+
+  .translate-attempt-error {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Per-status row overrides */
+  .translate-attempt.status-trying .translate-attempt-model {
+    border-color: var(--primary);
+    color: var(--primary);
   }
 
   .translate-attempt.status-failed {
@@ -457,7 +754,7 @@
 
   .translate-attempt.status-failed .translate-attempt-model {
     text-decoration: line-through;
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   .translate-attempt.status-succeeded {
@@ -471,14 +768,45 @@
     color: var(--success);
   }
 
-  .translate-attempt-error {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    font-style: italic;
+  .translate-attempt--next {
+    opacity: 0.55;
+  }
+
+  /* Tier-switch notice */
+  .tp-tier-note {
+    font-size: 0.74rem;
+    color: var(--primary);
+    margin: 0;
+    padding: 0.22rem 0.4rem;
+    border-radius: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  /* Slow warning (appears after 8 s) */
+  .tp-slow-warn {
+    font-size: 0.76rem;
+    color: #d97706;
+    margin: 0;
+    padding: 0.28rem 0.45rem;
+    border-left: 2.5px solid #d97706;
+    border-radius: 0 4px 4px 0;
+    background: rgba(217, 119, 6, 0.08);
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
   }
 </style>

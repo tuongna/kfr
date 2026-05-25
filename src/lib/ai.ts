@@ -30,7 +30,7 @@ Guidance for Scrum definitions:
 - "Increment" must always mention the Definition of Done.
 - Keep scrumEn ≤ 2 sentences and scrumVi ≤ 2 sentences.`;
 
-// Translation model fallback chain — tried in order by translateTerm().
+// Translation model fallback chain — tried in order by translateTerm() and auditTermSenses().
 //
 // Order: free tier first (3 models), then paid tier (3 models).
 // Iteration happens CLIENT-SIDE so the UI can show progressive status per attempt.
@@ -44,7 +44,7 @@ Guidance for Scrum definitions:
 //   anthropic/claude-haiku-4-5    best JSON instruction-following  (~$0.0006/call)
 //   openai/gpt-4o-mini            solid all-rounder                (~$0.0003/call)
 //   google/gemini-2.0-flash-001   cheapest paid                    (~$0.0001/call)
-const MODELS = [
+export const MODELS = [
   'openai/gpt-oss-120b:free',
   'nvidia/nemotron-3-super-120b-a12b:free',
   'meta-llama/llama-3.3-70b-instruct:free',
@@ -52,6 +52,19 @@ const MODELS = [
   'openai/gpt-4o-mini',
   'google/gemini-2.0-flash-001',
 ];
+
+/** Human-readable display names for each model in the fallback chain. */
+export const MODEL_DISPLAY: Record<string, string> = {
+  'openai/gpt-oss-120b:free': 'GPT-OSS 120B',
+  'nvidia/nemotron-3-super-120b-a12b:free': 'Nemotron 120B',
+  'meta-llama/llama-3.3-70b-instruct:free': 'Llama 3.3 70B',
+  'anthropic/claude-haiku-4-5': 'Claude Haiku',
+  'openai/gpt-4o-mini': 'GPT-4o mini',
+  'google/gemini-2.0-flash-001': 'Gemini Flash',
+};
+
+/** Per-model network timeout. If a model doesn't respond in time, fall through to the next. */
+export const PER_MODEL_TIMEOUT_MS = 15_000;
 
 /** Single attempt to call one model. Emitted via the onAttempt callback. */
 export interface ModelAttempt {
@@ -89,11 +102,8 @@ export interface AuditResult {
   suggestedScrumVi: string;
 }
 
-const AUDIT_MODELS = [
-  'deepseek/deepseek-chat-v3-0324:free',
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemini-flash-1.5',
-];
+// Audit uses the same model chain as translation — ensures always-working fallback.
+// (Previously used separate AUDIT_MODELS that had stale/broken endpoints.)
 
 const AUDIT_SYSTEM_PROMPT = `You are a senior bilingual Scrum/Agile editor reviewing flashcard definitions.
 Check accuracy against the Scrum Guide 2020, Vietnamese naturalness, and distinguish events from activities.
@@ -116,34 +126,79 @@ Respond with JSON ONLY — no markdown fences, no extra keys:
   "suggestedScrumVi": "<Scrum-specific Vietnamese definition if missingScrumSense, else empty string>"
 }`;
 
+/**
+ * Audits existing term senses by iterating the shared MODELS chain client-side.
+ * Mirrors translateTerm(): tries each model in order, fires onAttempt callbacks so
+ * the UI can show the same real-time fallback progress as during translation.
+ */
 export async function auditTermSenses(
   termText: string,
-  senses: { register: string; en: string; vi: string }[]
+  senses: { register: string; en: string; vi: string }[],
+  onAttempt?: OnAttempt,
 ): Promise<AuditResult> {
-  const { data, error } = await supabase.functions.invoke<ProxyEnvelope>('openrouter', {
-    body: {
-      models: AUDIT_MODELS,
-      messages: [
-        { role: 'system', content: AUDIT_SYSTEM_PROMPT },
-        { role: 'user', content: JSON.stringify({ term: termText, senses }) },
-      ],
-      max_tokens: 600,
-    },
-  });
+  const errors: string[] = [];
+  const userMessage = JSON.stringify({ term: termText, senses });
 
-  if (error) throw new Error(`Edge function not reachable: ${error.message}`);
-  if (!data) throw new Error('Edge function returned empty response');
-  if (data.errors?.length) throw new Error(data.errors.join(' | '));
+  for (const model of MODELS) {
+    onAttempt?.({ model, status: 'trying' });
 
-  const content: string = data.data?.choices?.[0]?.message?.content ?? '';
-  const parsed = JSON.parse(content.trim()) as Partial<AuditResult>;
-  return {
-    quality: (parsed.quality as AuditResult['quality']) ?? 'fair',
-    senseReviews: parsed.senseReviews ?? [],
-    missingScrumSense: Boolean(parsed.missingScrumSense),
-    suggestedScrumEn: String(parsed.suggestedScrumEn ?? ''),
-    suggestedScrumVi: String(parsed.suggestedScrumVi ?? ''),
-  };
+    const invokePromise = supabase.functions.invoke<ProxyEnvelope>('openrouter', {
+      body: {
+        models: [model],
+        messages: [
+          { role: 'system', content: AUDIT_SYSTEM_PROMPT },
+          { role: 'user', content: userMessage },
+        ],
+        max_tokens: 600,
+      },
+    });
+
+    const timeoutPromise = new Promise<{ data: null; error: { message: string } }>((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            data: null,
+            error: { message: `Timeout sau ${PER_MODEL_TIMEOUT_MS / 1000}s` },
+          }),
+        PER_MODEL_TIMEOUT_MS
+      )
+    );
+
+    const { data, error } = await Promise.race([invokePromise, timeoutPromise]);
+
+    if (error) {
+      const msg = (error as { message: string }).message;
+      onAttempt?.({ model, status: 'failed', error: msg });
+      errors.push(`${model}: ${msg}`);
+      continue;
+    }
+    if (!data || data.errors?.length) {
+      const msg = stripModelPrefix(data?.errors?.[0] ?? 'empty response', model);
+      onAttempt?.({ model, status: 'failed', error: msg });
+      errors.push(`${model}: ${msg}`);
+      continue;
+    }
+
+    const content: string = data.data?.choices?.[0]?.message?.content ?? '';
+    try {
+      const parsed = JSON.parse(content.trim()) as Partial<AuditResult>;
+      const actualModel = data.model ?? model;
+      onAttempt?.({ model: actualModel, status: 'succeeded' });
+      return {
+        quality: (parsed.quality as AuditResult['quality']) ?? 'fair',
+        senseReviews: parsed.senseReviews ?? [],
+        missingScrumSense: Boolean(parsed.missingScrumSense),
+        suggestedScrumEn: String(parsed.suggestedScrumEn ?? ''),
+        suggestedScrumVi: String(parsed.suggestedScrumVi ?? ''),
+      };
+    } catch {
+      const msg = `Invalid JSON: ${content.slice(0, 60)}`;
+      onAttempt?.({ model, status: 'failed', error: msg });
+      errors.push(`${model}: ${msg}`);
+    }
+  }
+
+  throw new Error(`Tất cả model đều thất bại (audit):\n${errors.join('\n')}`);
 }
 
 export interface TranslateOutcome {
@@ -168,7 +223,9 @@ export async function translateTerm(
   for (const model of MODELS) {
     onAttempt?.({ model, status: 'trying' });
 
-    const { data, error } = await supabase.functions.invoke<ProxyEnvelope>('openrouter', {
+    // Race the edge-function call against a per-model timeout so the UI never hangs
+    // indefinitely on a slow or unresponsive free-tier model.
+    const invokePromise = supabase.functions.invoke<ProxyEnvelope>('openrouter', {
       body: {
         models: [model],
         messages: [
@@ -178,6 +235,19 @@ export async function translateTerm(
         max_tokens: 350,
       },
     });
+
+    const timeoutPromise = new Promise<{ data: null; error: { message: string } }>((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            data: null,
+            error: { message: `Timeout sau ${PER_MODEL_TIMEOUT_MS / 1000}s` },
+          }),
+        PER_MODEL_TIMEOUT_MS
+      )
+    );
+
+    const { data, error } = await Promise.race([invokePromise, timeoutPromise]);
 
     if (error) {
       const msg = error.message;
