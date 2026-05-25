@@ -8,8 +8,10 @@
   import { improveProgress, canPractice, getBadge } from '$lib/srs';
 
   export let termId: string | null = null;
+  /** When true, show a "Chọn cụm khác…" link that lets the parent open the slider. */
+  export let canPickPhrase = false;
 
-  const dispatch = createEventDispatcher<{ close: void }>();
+  const dispatch = createEventDispatcher<{ close: void; pickPhrase: void }>();
 
   let term: Term | null = null;
   let senses: TermSense[] = [];
@@ -105,6 +107,16 @@
         <p class="text-secondary mt-2" style="font-size:0.85rem;text-align:center">
           Ôn lại vào {new Date(progress.nextReview).toLocaleDateString('vi-VN')}
         </p>
+      {/if}
+
+      {#if canPickPhrase}
+        <button
+          class="btn btn-ghost btn-sm mt-2"
+          on:click={() => dispatch('pickPhrase')}
+          style="width:100%"
+        >
+          ✂ Chọn cụm khác trong câu…
+        </button>
       {/if}
     {/if}
   </div>
