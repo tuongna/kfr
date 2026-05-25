@@ -26,14 +26,28 @@ const ALLOWED_ORIGINS = Deno.env.get('ALLOWED_ORIGINS') ?? '*';
 const corsHeaders = {
   'Access-Control-Allow-Origin': ALLOWED_ORIGINS,
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  // Supabase JS client sends x-client-info and may send apikey from browser
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 const DEFAULT_FALLBACK_MODELS = [
-  'google/gemini-2.0-flash-exp:free',
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemma-2-9b-it:free',
+  // Prefer broadly available models; project can override with OPENROUTER_DEFAULT_MODELS
+  'openai/gpt-4o-mini',
+  'anthropic/claude-3.5-haiku',
+  'meta-llama/llama-3.1-8b-instruct',
 ];
+
+function parseDefaultModelsFromEnv(): string[] {
+  const raw = Deno.env.get('OPENROUTER_DEFAULT_MODELS')?.trim();
+  if (!raw) return DEFAULT_FALLBACK_MODELS;
+
+  const parsed = raw
+    .split(',')
+    .map((m) => m.trim())
+    .filter(Boolean);
+
+  return parsed.length ? parsed : DEFAULT_FALLBACK_MODELS;
+}
 
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
@@ -62,9 +76,12 @@ serve(async (req: Request) => {
     return json({ errors: ['Invalid JSON body'] }, 200);
   }
 
-  const candidates =
+  const requested =
     (Array.isArray(body.models) && body.models.length ? body.models : null) ??
-    (body.model ? [body.model] : DEFAULT_FALLBACK_MODELS);
+    (body.model ? [body.model] : []);
+
+  // Always append service defaults so one bad client model does not hard-fail translation.
+  const candidates = [...new Set([...requested, ...parseDefaultModelsFromEnv()])];
 
   const errors: string[] = [];
 

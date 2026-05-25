@@ -48,6 +48,10 @@ supabase link --project-ref YOUR_PROJECT_REF
 # Set secret (lấy từ GitHub Secret hoặc trực tiếp)
 supabase secrets set OPENROUTER_API_KEY=sk-or-...
 supabase secrets set SITE_URL=https://tuongna.github.io
+# Production: không dùng '*', chỉ cho phép đúng domain frontend
+supabase secrets set ALLOWED_ORIGINS=https://tuongna.github.io
+# Optional: override fallback models (comma-separated)
+supabase secrets set OPENROUTER_DEFAULT_MODELS=openai/gpt-4o-mini,anthropic/claude-3.5-haiku
 
 # Deploy function
 supabase functions deploy openrouter --no-verify-jwt
