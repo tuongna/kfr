@@ -31,10 +31,12 @@ Guidance for Scrum definitions:
 - Keep scrumEn ≤ 2 sentences and scrumVi ≤ 2 sentences.`;
 
 // Tried in order by the edge function. Keep this list current to avoid dead endpoints.
+// Translation models — ordered by quality preference.
+// 120B-class models produce meaningfully better Scrum-specific definitions than 20B models.
 const MODELS = [
-  'openai/gpt-oss-20b:free',
-  'meta-llama/llama-3.1-8b-instruct:free',
-  'qwen/qwen-2.5-7b-instruct:free',
+  'openai/gpt-oss-120b:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'meta-llama/llama-3.3-70b-instruct:free',
 ];
 
 interface OpenRouterChoice {
