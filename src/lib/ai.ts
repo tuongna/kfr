@@ -189,7 +189,7 @@ export async function auditTermSenses(
 
     const content: string = data.data?.choices?.[0]?.message?.content ?? '';
     try {
-      const parsed = JSON.parse(content.trim()) as Partial<AuditResult>;
+      const parsed = JSON.parse(extractJson(content)) as Partial<AuditResult>;
       const actualModel = data.model ?? model;
       onAttempt?.({ model: actualModel, status: 'succeeded' });
       return {
@@ -272,7 +272,7 @@ export async function translateTerm(
 
     const content: string = data.data?.choices?.[0]?.message?.content ?? '';
     try {
-      const parsed = JSON.parse(content.trim()) as Partial<TranslateResult>;
+      const parsed = JSON.parse(extractJson(content)) as Partial<TranslateResult>;
       const actualModel = data.model ?? model;
       onAttempt?.({ model: actualModel, status: 'succeeded' });
       return {
@@ -299,4 +299,19 @@ export async function translateTerm(
 function stripModelPrefix(errMsg: string, model: string): string {
   const prefix = `${model}: `;
   return errMsg.startsWith(prefix) ? errMsg.slice(prefix.length) : errMsg;
+}
+
+/**
+ * Extracts a JSON object from a model response. Handles cases where models
+ * (notably Claude Haiku) wrap the JSON in markdown code fences despite being
+ * told not to, or prepend/append explanatory prose.
+ */
+function extractJson(content: string): string {
+  const trimmed = content.trim();
+  const fenceMatch = trimmed.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```\s*$/i);
+  if (fenceMatch) return fenceMatch[1].trim();
+  const start = trimmed.indexOf('{');
+  const end = trimmed.lastIndexOf('}');
+  if (start >= 0 && end > start) return trimmed.slice(start, end + 1);
+  return trimmed;
 }
