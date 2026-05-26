@@ -7,7 +7,7 @@ export class KfrDB extends Dexie {
   termSenses!: Table<TermSense>;
   questions!: Table<Question>;
   questionOptions!: Table<QuestionOption>;
-  progress!: Table<LocalProgress>;
+  progressV2!: Table<LocalProgress>;
   lookedUpTerms!: Table<LookedUpTerm>;
 
   constructor() {
@@ -26,18 +26,29 @@ export class KfrDB extends Dexie {
     // Old rows are tagged with a legacy marker so the next logged-in user
     // can claim them (upload to Supabase under their id) instead of losing
     // any device-only progress that never synced.
+    //
+    // NOTE: Dexie does not support changing the primary key of an existing
+    // object store, so we cannot rename the key path of `progress` in-place.
+    // Instead, we create a new `progressV2` table with the correct composite
+    // key and migrate rows there, then drop the old `progress` table in v3.
     this.version(2)
       .stores({
-        progress: '[userId+itemType+itemId], userId, itemType, nextReview',
+        progress: '[itemType+itemId], itemType, nextReview', // keep old schema unchanged
+        progressV2: '[userId+itemType+itemId], userId, itemType, nextReview',
       })
       .upgrade(async (tx) => {
         const old = await tx.table('progress').toArray();
-        await tx.table('progress').clear();
+        await tx.table('progressV2').clear();
         if (!old.length) return;
         await tx
-          .table('progress')
+          .table('progressV2')
           .bulkAdd(old.map((p) => ({ ...p, userId: LEGACY_PROGRESS_USER_ID })));
       });
+
+    // v3: drop the now-redundant old progress table.
+    this.version(3).stores({
+      progress: null,
+    });
   }
 }
 

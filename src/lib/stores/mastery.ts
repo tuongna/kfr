@@ -20,7 +20,7 @@ export function getProgress(
 }
 
 export async function loadMastery(userId: string): Promise<void> {
-  const all = await db.progress.where('userId').equals(userId).toArray();
+  const all = await db.progressV2.where('userId').equals(userId).toArray();
   const map = new Map(all.map((p) => [progressKey(p.itemType, p.itemId), p]));
   progressMap.set(map);
 }
@@ -36,7 +36,7 @@ export async function saveProgress(progress: ProgressInput): Promise<void> {
   const now = new Date().toISOString();
   const row: LocalProgress = { ...progress, userId: user.id };
 
-  await db.progress.put(row);
+  await db.progressV2.put(row);
   progressMap.update((m) => {
     const next = new Map(m);
     next.set(progressKey(row.itemType, row.itemId), row);
@@ -63,7 +63,7 @@ export async function saveProgress(progress: ProgressInput): Promise<void> {
     return;
   }
 
-  await db.progress.put({ ...row, syncedAt: now });
+  await db.progressV2.put({ ...row, syncedAt: now });
 }
 
 export const stats = derived(progressMap, ($map) => {
