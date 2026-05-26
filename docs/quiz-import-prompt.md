@@ -12,7 +12,7 @@ seed SQL theo schema của repo này.
 3. AI trả về 1 file SQL. Lưu vào `supabase/seed_scrum_open_vN.sql` (N = pool
    number tiếp theo) → paste vào Supabase SQL Editor.
 
-Nếu DB đã có migration `006_unique_question_stem.sql`, INSERT trùng stem sẽ
+Nếu DB đã có migration `006_normalize_scrum_open.sql`, INSERT trùng stem sẽ
 fail loud → bạn biết câu nào trùng, gỡ khỏi seed mới rồi chạy lại.
 
 ---
