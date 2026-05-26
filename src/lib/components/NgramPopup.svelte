@@ -245,6 +245,17 @@
 
   function onPointerMove(e: PointerEvent) {
     if (dragOrigin === null) return;
+    // Auto-scroll when the user drags near the slider edges so off-screen
+    // notches on small screens become reachable while pointer is captured.
+    if (sliderEl) {
+      const rect = sliderEl.getBoundingClientRect();
+      const edge = 40;
+      if (e.clientX < rect.left + edge) {
+        sliderEl.scrollLeft -= Math.max(6, (rect.left + edge - e.clientX) / 3);
+      } else if (e.clientX > rect.right - edge) {
+        sliderEl.scrollLeft += Math.max(6, (e.clientX - (rect.right - edge)) / 3);
+      }
+    }
     const idx = notchIndexFromX(e.clientX);
     if (idx === null) return;
     leftIdx = Math.min(dragOrigin, idx);
@@ -272,7 +283,12 @@
     return first === -1 ? null : { first, last };
   }
 
-  function onSliderKey(e: KeyboardEvent) {
+  function scrollNotchIntoView(idx: number) {
+    const notch = sliderEl?.querySelector<HTMLElement>(`.ngram-notch[data-index="${idx}"]`);
+    notch?.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  }
+
+  async function onSliderKey(e: KeyboardEvent) {
     if (e.key === 'Enter') {
       e.preventDefault();
       translateAndSelect(selectedPhrase);
@@ -301,7 +317,11 @@
       e.preventDefault();
       if (moveEnd === 'right') rightIdx = bounds.last;
       else leftIdx = rightIdx;
+    } else {
+      return;
     }
+    await tick();
+    scrollNotchIntoView(moveEnd === 'right' ? rightIdx : leftIdx);
   }
 </script>
 
