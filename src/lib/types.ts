@@ -44,6 +44,7 @@ export interface QuestionOption {
 }
 
 export interface LocalProgress {
+  userId: string;
   itemType: 'term' | 'question';
   itemId: string;
   level: number;
@@ -51,6 +52,14 @@ export interface LocalProgress {
   nextReview: string | null;
   syncedAt?: string;
 }
+
+/** Progress payload shape without identity/sync metadata. SRS produces this;
+ *  `saveProgress` tags on the userId before persisting. */
+export type ProgressInput = Omit<LocalProgress, 'userId' | 'syncedAt'>;
+
+/** Marker used by Dexie v2 upgrade to flag pre-userId rows that need to be
+ *  claimed by the next user who logs in. */
+export const LEGACY_PROGRESS_USER_ID = '__legacy__';
 
 export interface LookedUpTerm {
   termId: string;
