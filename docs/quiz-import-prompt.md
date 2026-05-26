@@ -114,9 +114,15 @@ and `'true-false'` for T/F questions.
         AND 'scrum-open-pool-{{N}}' = ANY(tags);
 
     DO $$ DECLARE
-      q1  uuid; q2  uuid; q3  uuid; ... q{{COUNT}} uuid;
+      -- Static UUIDs: MUST be hardcoded, not generated at runtime.
+      -- Re-running the seed preserves public.progress records keyed to these IDs.
+      -- Generate a fresh batch once with:
+      --   python3 -c "import uuid; [print(str(uuid.uuid4())) for _ in range({{COUNT}})]"
+      q1  uuid := '{{UUID_1}}';
+      q2  uuid := '{{UUID_2}}';
+      ...
+      q{{COUNT}} uuid := '{{UUID_COUNT}}';
     BEGIN
-      q1  := gen_random_uuid(); q2  := gen_random_uuid(); ...
 
       -- ────── Questions ──────
       INSERT INTO public.questions
@@ -180,9 +186,10 @@ OUTPUT (pool 9, exam PSM-I):
         AND 'scrum-open-pool-9' = ANY(tags);
 
     DO $$ DECLARE
-      q1 uuid; q2 uuid;
+      -- Static UUIDs: hardcoded for idempotency (preserves progress records on re-run).
+      q1 uuid := 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+      q2 uuid := 'b2c3d4e5-f6a7-8901-bcde-f12345678901';
     BEGIN
-      q1 := gen_random_uuid(); q2 := gen_random_uuid();
 
       INSERT INTO public.questions
         (id, exam, stem, explanation_en, explanation_vi, tags, term_refs, source, quality)
