@@ -124,7 +124,15 @@ Respond with JSON ONLY — no markdown fences, no extra keys:
   "missingScrumSense": true | false,
   "suggestedScrumEn": "<Scrum-specific English definition if missingScrumSense, else empty string>",
   "suggestedScrumVi": "<Scrum-specific Vietnamese definition if missingScrumSense, else empty string>"
-}`;
+}
+
+CRITICAL RULE — empty or blank fields:
+If any "en" or "vi" field in the input senses is an empty string or contains only whitespace,
+that sense is BROKEN and UNUSABLE. You MUST:
+  - Set overall quality to "poor" (never "good" or "fair" when any field is empty).
+  - Set enOk to false (if en is empty) and/or viOk to false (if vi is empty).
+  - Provide a COMPLETE, meaningful corrected value in suggestedEn / suggestedVi — never leave them empty.
+  - Set reason to explain that the field was empty and provide a correction.`;
 
 /**
  * Audits existing term senses by iterating the shared MODELS chain client-side.
