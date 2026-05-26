@@ -34,6 +34,10 @@
    ở mức DB (nếu crawl thêm bộ mới, INSERT sẽ fail nếu stem trùng — bạn biết được
    ngay câu nào trùng để xử lý).
 
+   **Thêm pool mới từ markdown crawl:** xem `docs/quiz-import-prompt.md` — chứa
+   prompt sẵn để paste vào AI bất kỳ (Claude/GPT/Gemini) để convert raw markdown
+   sang file `seed_scrum_open_vN.sql`.
+
 ### 3. Cài GitHub Secrets
 
 Vào repository → Settings → Secrets and variables → Actions → New repository secret:
