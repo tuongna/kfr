@@ -11,23 +11,38 @@ DELETE FROM public.questions
     AND 'scrum-open-pool-1' = ANY(tags);
 
 DO $$ DECLARE
-  q1  uuid; q2  uuid; q3  uuid; q4  uuid; q5  uuid;
-  q6  uuid; q7  uuid; q8  uuid; q9  uuid; q10 uuid;
-  q11 uuid; q12 uuid; q13 uuid; q14 uuid; q15 uuid;
-  q16 uuid; q17 uuid; q18 uuid; q19 uuid; q20 uuid;
-  q21 uuid; q22 uuid; q23 uuid; q24 uuid; q25 uuid;
-  q26 uuid; q27 uuid; q28 uuid; q29 uuid; q30 uuid;
+  -- Static UUIDs: stable across re-runs so public.progress records are preserved.
+  q1   uuid := 'e9d04f0d-7221-4899-9efb-e69b6492462a';
+  q2   uuid := 'a0a21297-9764-48e7-a4df-e4901d53f56f';
+  q3   uuid := '955086b5-c12c-4388-b5ba-4a3c3a2cb7b6';
+  q4   uuid := '2e856166-490b-4758-a30b-980b9ac9dc97';
+  q5   uuid := 'fa1c4e2a-b834-4ee4-ae79-7c469888e700';
+  q6   uuid := '39365769-f4ac-4941-84bc-7eec392d805e';
+  q7   uuid := 'ca56a4a2-8339-4554-b4c0-5950af46e384';
+  q8   uuid := '7284e4ac-50ac-4903-a5d2-fd4c8bdd011a';
+  q9   uuid := '23ab812c-0954-45f2-9e6f-e6efc7bfa570';
+  q10  uuid := '4bb8ef34-292b-4e7b-bef9-2d271fe1ce25';
+  q11  uuid := '9ee88992-e716-474b-b478-b93ec4d3f04b';
+  q12  uuid := '79e6aad5-a46c-4157-86c9-1c309e0628e0';
+  q13  uuid := '07482980-4ad9-4436-8a39-acc6e7b698ef';
+  q14  uuid := '1ce52192-dfbd-4a1f-bcc5-fa19fc3b608d';
+  q15  uuid := 'd23c700a-94ad-4fdd-8ee2-45d5b8b74087';
+  q16  uuid := 'dea413a3-21b9-4a0d-a7a5-3a89ede00caa';
+  q17  uuid := '4ff45f1a-5d64-4672-81de-9040829a6555';
+  q18  uuid := '3d4555dc-a1b3-4a02-b9dc-dce7bc108847';
+  q19  uuid := '7f998de1-b91e-4190-90ba-88747345ee11';
+  q20  uuid := '7f85b5fe-e652-4650-bae6-c56c56e29ee8';
+  q21  uuid := '2969479c-d6d2-486a-8417-00ae43675bc4';
+  q22  uuid := '75279768-f42c-4e82-8a25-52e3e4fb8bf9';
+  q23  uuid := '370d625a-ce44-4660-8cfe-3f78872a4f34';
+  q24  uuid := 'c5950f1a-28d9-4132-acab-6bbb643ea735';
+  q25  uuid := 'e89966fb-fb81-4d6e-b06d-5ae1bed8739b';
+  q26  uuid := 'e8059a92-11f7-4d15-806d-208b24bcae08';
+  q27  uuid := '9c2182dd-2e83-4b98-bf24-ccd8620430af';
+  q28  uuid := '8514ce4e-b4ee-471a-afd9-90e23b9e0d5a';
+  q29  uuid := '87c870b1-0baa-4f61-bfcc-e16206aff70b';
+  q30  uuid := 'b1910162-3582-49dd-8cb1-b6875db0fc2c';
 BEGIN
-  q1  := gen_random_uuid(); q2  := gen_random_uuid(); q3  := gen_random_uuid();
-  q4  := gen_random_uuid(); q5  := gen_random_uuid(); q6  := gen_random_uuid();
-  q7  := gen_random_uuid(); q8  := gen_random_uuid(); q9  := gen_random_uuid();
-  q10 := gen_random_uuid(); q11 := gen_random_uuid(); q12 := gen_random_uuid();
-  q13 := gen_random_uuid(); q14 := gen_random_uuid(); q15 := gen_random_uuid();
-  q16 := gen_random_uuid(); q17 := gen_random_uuid(); q18 := gen_random_uuid();
-  q19 := gen_random_uuid(); q20 := gen_random_uuid(); q21 := gen_random_uuid();
-  q22 := gen_random_uuid(); q23 := gen_random_uuid(); q24 := gen_random_uuid();
-  q25 := gen_random_uuid(); q26 := gen_random_uuid(); q27 := gen_random_uuid();
-  q28 := gen_random_uuid(); q29 := gen_random_uuid(); q30 := gen_random_uuid();
 
   -- ────────────────────────────────────────────────────────────
   -- Questions

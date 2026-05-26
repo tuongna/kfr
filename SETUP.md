@@ -34,6 +34,11 @@
    ở mức DB (nếu crawl thêm bộ mới, INSERT sẽ fail nếu stem trùng — bạn biết được
    ngay câu nào trùng để xử lý).
 
+   **UUID tĩnh:** cả hai file seed dùng UUID cứng (hardcoded) thay vì `gen_random_uuid()`
+   → chạy lại seed sẽ xóa và tái tạo câu hỏi với **cùng UUID**, bảo tồn bản ghi
+   `public.progress` của người dùng. File seed mới cũng cần làm tương tự — xem
+   hướng dẫn sinh UUID trong `docs/quiz-import-prompt.md`.
+
    **Thêm pool mới từ markdown crawl:** xem `docs/quiz-import-prompt.md` — chứa
    prompt sẵn để paste vào AI bất kỳ (Claude/GPT/Gemini) để convert raw markdown
    sang file `seed_scrum_open_vN.sql`.
