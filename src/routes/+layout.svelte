@@ -5,9 +5,9 @@
   import '../app.css';
   import { supabase } from '$lib/supabase';
   import { authUser, authLoading } from '$lib/stores/auth';
-  import { loadMastery, stats } from '$lib/stores/mastery';
+  import { loadMastery, clearMastery, stats } from '$lib/stores/mastery';
   import { syncContent } from '$lib/content';
-  import { syncProgressDown } from '$lib/sync';
+  import { syncProgressDown, syncProgressUp, claimLegacyProgress } from '$lib/sync';
   import { BADGES } from '$lib/srs';
 
   async function initSession() {
@@ -38,12 +38,21 @@
         await onUserReady(sess.user.id);
       } else {
         authUser.set(null);
+        clearMastery();
       }
     });
   }
 
   async function onUserReady(userId: string) {
-    await Promise.all([syncContent(), syncProgressDown(userId), loadMastery()]);
+    // Order matters:
+    //  1. claim any pre-v2 rows under this user so they survive
+    //  2. push anything saved locally but not yet uploaded
+    //  3. pull the merged server state down
+    //  4. populate the in-memory map (scoped by userId)
+    await claimLegacyProgress(userId);
+    await syncProgressUp(userId);
+    await Promise.all([syncContent(), syncProgressDown(userId)]);
+    await loadMastery(userId);
   }
 
   async function signIn() {
@@ -56,6 +65,7 @@
   async function signOut() {
     await supabase.auth.signOut();
     authUser.set(null);
+    clearMastery();
   }
 
   onMount(initSession);

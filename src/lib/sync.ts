@@ -1,19 +1,30 @@
 import { supabase } from './supabase';
 import { db } from './db';
 import type { LocalProgress } from './types';
+import { LEGACY_PROGRESS_USER_ID } from './types';
 
+/**
+ * Upload any local progress rows for `userId` that haven't been synced yet
+ * (no `syncedAt`). Called after sign-in so offline edits made on this device
+ * eventually reach the server.
+ */
 export async function syncProgressUp(userId: string): Promise<void> {
-  const local = await db.progress.toArray();
-  if (!local.length) return;
+  const unsynced = await db.progress
+    .where('userId')
+    .equals(userId)
+    .filter((p) => !p.syncedAt)
+    .toArray();
+  if (!unsynced.length) return;
 
-  const rows = local.map((p) => ({
+  const now = new Date().toISOString();
+  const rows = unsynced.map((p) => ({
     user_id: userId,
     item_type: p.itemType,
     item_id: p.itemId,
     level: p.level,
     xp: p.xp,
     next_review: p.nextReview,
-    updated_at: new Date().toISOString(),
+    updated_at: now,
   }));
 
   const { error } = await supabase
@@ -22,9 +33,40 @@ export async function syncProgressUp(userId: string): Promise<void> {
 
   if (error) throw error;
 
-  await db.progress.bulkPut(
-    local.map((p) => ({ ...p, syncedAt: new Date().toISOString() }))
-  );
+  await db.progress.bulkPut(unsynced.map((p) => ({ ...p, syncedAt: now })));
+}
+
+/**
+ * Claim any rows left from before per-user scoping existed (Dexie v1) by
+ * uploading them to Supabase under the current user, then dropping the
+ * legacy marker rows. This preserves device-only progress for the user who
+ * first logs in after the fix lands.
+ */
+export async function claimLegacyProgress(userId: string): Promise<void> {
+  const legacy = await db.progress
+    .where('userId')
+    .equals(LEGACY_PROGRESS_USER_ID)
+    .toArray();
+  if (!legacy.length) return;
+
+  const now = new Date().toISOString();
+  const rows = legacy.map((p) => ({
+    user_id: userId,
+    item_type: p.itemType,
+    item_id: p.itemId,
+    level: p.level,
+    xp: p.xp,
+    next_review: p.nextReview,
+    updated_at: now,
+  }));
+
+  const { error } = await supabase
+    .from('progress')
+    .upsert(rows, { onConflict: 'user_id,item_type,item_id' });
+
+  if (error) throw error;
+
+  await db.progress.where('userId').equals(LEGACY_PROGRESS_USER_ID).delete();
 }
 
 export async function syncProgressDown(userId: string): Promise<void> {
@@ -36,21 +78,23 @@ export async function syncProgressDown(userId: string): Promise<void> {
   if (error) throw error;
   if (!data?.length) return;
 
-  const local = await db.progress.toArray();
+  const local = await db.progress.where('userId').equals(userId).toArray();
   const localMap = new Map(local.map((p) => [`${p.itemType}:${p.itemId}`, p]));
 
+  const now = new Date().toISOString();
   const merged: LocalProgress[] = data.map((row) => {
     const key = `${row.item_type}:${row.item_id}`;
     const localP = localMap.get(key);
 
     if (!localP) {
       return {
+        userId,
         itemType: row.item_type,
         itemId: row.item_id,
         level: row.level,
         xp: row.xp,
         nextReview: row.next_review,
-        syncedAt: new Date().toISOString(),
+        syncedAt: now,
       };
     }
 
@@ -65,12 +109,13 @@ export async function syncProgressDown(userId: string): Promise<void> {
             : row.next_review;
 
     return {
+      userId,
       itemType: row.item_type,
       itemId: row.item_id,
       level: Math.max(localP.level, row.level),
       xp: Math.max(localP.xp, row.xp),
       nextReview,
-      syncedAt: new Date().toISOString(),
+      syncedAt: now,
     };
   });
 

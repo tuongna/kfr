@@ -1,4 +1,4 @@
-import type { LocalProgress } from './types';
+import type { ProgressInput } from './types';
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -9,19 +9,19 @@ export const XPS_INCENTIVE = 2;
 export const BADGES = ['🥉', '🥈', '🥇', '🏆', '💎'];
 export const MAX_LEVEL = SRS_INTERVALS.length - 1;
 
-export function canPractice(progress: LocalProgress | undefined): boolean {
+export function canPractice(progress: ProgressInput | undefined): boolean {
   if (!progress) return true;
   if (!progress.nextReview) return true;
   return Date.now() >= new Date(progress.nextReview).getTime();
 }
 
 export function improveProgress(
-  current: LocalProgress | undefined,
+  current: ProgressInput | undefined,
   itemType: 'term' | 'question',
   itemId: string,
   wrong: boolean
-): LocalProgress {
-  const base = current ?? { itemType, itemId, level: -1, xp: 0, nextReview: null };
+): ProgressInput {
+  const base: ProgressInput = current ?? { itemType, itemId, level: -1, xp: 0, nextReview: null };
 
   if (wrong) {
     return {
@@ -49,11 +49,11 @@ export function getBadge(level: number): string {
   return BADGES.slice(0, level + 1).join('');
 }
 
-export function getTotalXP(progresses: LocalProgress[]): number {
+export function getTotalXP(progresses: ProgressInput[]): number {
   return progresses.reduce((sum, p) => sum + p.xp, 0);
 }
 
-export function getLevelCounts(progresses: LocalProgress[]): number[] {
+export function getLevelCounts(progresses: ProgressInput[]): number[] {
   return BADGES.map((_, i) => progresses.filter((p) => p.level >= i).length);
 }
 
