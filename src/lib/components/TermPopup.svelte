@@ -94,8 +94,8 @@
   async function loadTerm(id: string) {
     loading = true;
     editMode = false;
-    auditResult = null;
-    auditError = '';
+    resetAuditState();
+    resetRetranslateState();
     [term, senses] = await Promise.all([
       db.terms.get(id).then((t) => t ?? null),
       db.termSenses.where('termId').equals(id).sortBy('sortOrder'),
@@ -117,9 +117,28 @@
     term = null;
     senses = [];
     editMode = false;
+    resetAuditState();
+    resetRetranslateState();
+    dispatch('close');
+  }
+
+  function resetAuditState() {
+    stopAuditTimer();
+    auditing = false;
     auditResult = null;
     auditError = '';
-    dispatch('close');
+    auditAttempts = [];
+    auditElapsed = 0;
+    auditFinalElapsed = 0;
+  }
+
+  function resetRetranslateState() {
+    stopRetranslateTimer();
+    retranslating = false;
+    retranslateError = '';
+    retranslateAttempts = [];
+    retranslateElapsed = 0;
+    retranslateFinalElapsed = 0;
   }
 
   async function markKnown() {
@@ -287,16 +306,18 @@
   // Audit functions
   async function auditTerm() {
     if (!term) return;
+    const startedTermId = term.id;
     auditing = true;
     auditError = '';
     auditResult = null;
     auditAttempts = [];
     startAuditTimer();
     try {
-      auditResult = await auditTermSenses(
+      const result = await auditTermSenses(
         term.text,
         senses.map((s) => ({ register: s.register, en: s.en, vi: s.vi })),
         (a) => {
+          if (term?.id !== startedTermId) return;
           const last = auditAttempts[auditAttempts.length - 1];
           if (last && last.model === a.model && last.status === 'trying') {
             auditAttempts = [...auditAttempts.slice(0, -1), a];
@@ -305,12 +326,17 @@
           }
         }
       );
+      if (term?.id === startedTermId) auditResult = result;
     } catch (e: unknown) {
-      auditError = e instanceof Error ? e.message : String(e);
+      if (term?.id === startedTermId) {
+        auditError = e instanceof Error ? e.message : String(e);
+      }
     } finally {
-      auditFinalElapsed = auditElapsed;
-      auditing = false;
-      stopAuditTimer();
+      if (term?.id === startedTermId) {
+        auditFinalElapsed = auditElapsed;
+        auditing = false;
+        stopAuditTimer();
+      }
     }
   }
 
@@ -320,12 +346,14 @@
    */
   async function retranslateTerm() {
     if (!term) return;
+    const startedTermId = term.id;
     retranslating = true;
     retranslateError = '';
     retranslateAttempts = [];
     startRetranslateTimer();
     try {
       const { result } = await translateTerm(term.text, (a) => {
+        if (term?.id !== startedTermId) return;
         const last = retranslateAttempts[retranslateAttempts.length - 1];
         if (last && last.model === a.model && last.status === 'trying') {
           retranslateAttempts = [...retranslateAttempts.slice(0, -1), a];
@@ -333,6 +361,8 @@
           retranslateAttempts = [...retranslateAttempts, a];
         }
       });
+
+      if (term?.id !== startedTermId) return;
 
       // Enter edit mode and pre-fill senses with the fresh translation
       enterEditMode();
@@ -386,11 +416,15 @@
         }
       }
     } catch (e: unknown) {
-      retranslateError = e instanceof Error ? e.message : String(e);
+      if (term?.id === startedTermId) {
+        retranslateError = e instanceof Error ? e.message : String(e);
+      }
     } finally {
-      retranslateFinalElapsed = retranslateElapsed;
-      retranslating = false;
-      stopRetranslateTimer();
+      if (term?.id === startedTermId) {
+        retranslateFinalElapsed = retranslateElapsed;
+        retranslating = false;
+        stopRetranslateTimer();
+      }
     }
   }
 
