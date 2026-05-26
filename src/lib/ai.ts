@@ -63,8 +63,10 @@ export const MODEL_DISPLAY: Record<string, string> = {
   'google/gemini-2.0-flash-001': 'Gemini Flash',
 };
 
-/** Per-model network timeout. If a model doesn't respond in time, fall through to the next. */
-export const PER_MODEL_TIMEOUT_MS = 15_000;
+/** Per-model network timeout. If a model doesn't respond in time, fall through to the next.
+ * Free-tier 120B endpoints often need 20-30s on cold start; 15s was too aggressive and
+ * caused every model in the chain to time out before producing any token. */
+export const PER_MODEL_TIMEOUT_MS = 30_000;
 
 /** Single attempt to call one model. Emitted via the onAttempt callback. */
 export interface ModelAttempt {
