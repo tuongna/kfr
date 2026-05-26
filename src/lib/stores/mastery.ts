@@ -1,7 +1,9 @@
-import { writable, derived } from 'svelte/store';
-import type { LocalProgress } from '$lib/types';
+import { writable, derived, get } from 'svelte/store';
+import type { LocalProgress, ProgressInput } from '$lib/types';
 import { getTotalXP, getLevelCounts } from '$lib/srs';
 import { db } from '$lib/db';
+import { supabase } from '$lib/supabase';
+import { authUser } from '$lib/stores/auth';
 
 export const progressMap = writable<Map<string, LocalProgress>>(new Map());
 
@@ -17,19 +19,51 @@ export function getProgress(
   return map.get(progressKey(itemType, itemId));
 }
 
-export async function loadMastery(): Promise<void> {
-  const all = await db.progress.toArray();
+export async function loadMastery(userId: string): Promise<void> {
+  const all = await db.progress.where('userId').equals(userId).toArray();
   const map = new Map(all.map((p) => [progressKey(p.itemType, p.itemId), p]));
   progressMap.set(map);
 }
 
-export async function saveProgress(progress: LocalProgress): Promise<void> {
-  await db.progress.put(progress);
+export function clearMastery(): void {
+  progressMap.set(new Map());
+}
+
+export async function saveProgress(progress: ProgressInput): Promise<void> {
+  const user = get(authUser);
+  if (!user) return;
+
+  const now = new Date().toISOString();
+  const row: LocalProgress = { ...progress, userId: user.id };
+
+  await db.progress.put(row);
   progressMap.update((m) => {
     const next = new Map(m);
-    next.set(progressKey(progress.itemType, progress.itemId), progress);
+    next.set(progressKey(row.itemType, row.itemId), row);
     return next;
   });
+
+  const { error } = await supabase.from('progress').upsert(
+    {
+      user_id: user.id,
+      item_type: row.itemType,
+      item_id: row.itemId,
+      level: row.level,
+      xp: row.xp,
+      next_review: row.nextReview,
+      updated_at: now,
+    },
+    { onConflict: 'user_id,item_type,item_id' }
+  );
+
+  if (error) {
+    // Local copy is kept without `syncedAt` so the next `syncProgressUp`
+    // catches it up.
+    console.warn('Failed to sync progress to Supabase:', error);
+    return;
+  }
+
+  await db.progress.put({ ...row, syncedAt: now });
 }
 
 export const stats = derived(progressMap, ($map) => {
