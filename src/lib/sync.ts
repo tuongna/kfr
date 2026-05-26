@@ -9,7 +9,7 @@ import { LEGACY_PROGRESS_USER_ID } from './types';
  * eventually reach the server.
  */
 export async function syncProgressUp(userId: string): Promise<void> {
-  const unsynced = await db.progress
+  const unsynced = await db.progressV2
     .where('userId')
     .equals(userId)
     .filter((p) => !p.syncedAt)
@@ -33,7 +33,7 @@ export async function syncProgressUp(userId: string): Promise<void> {
 
   if (error) throw error;
 
-  await db.progress.bulkPut(unsynced.map((p) => ({ ...p, syncedAt: now })));
+  await db.progressV2.bulkPut(unsynced.map((p) => ({ ...p, syncedAt: now })));
 }
 
 /**
@@ -43,7 +43,7 @@ export async function syncProgressUp(userId: string): Promise<void> {
  * first logs in after the fix lands.
  */
 export async function claimLegacyProgress(userId: string): Promise<void> {
-  const legacy = await db.progress
+  const legacy = await db.progressV2
     .where('userId')
     .equals(LEGACY_PROGRESS_USER_ID)
     .toArray();
@@ -66,7 +66,7 @@ export async function claimLegacyProgress(userId: string): Promise<void> {
 
   if (error) throw error;
 
-  await db.progress.where('userId').equals(LEGACY_PROGRESS_USER_ID).delete();
+  await db.progressV2.where('userId').equals(LEGACY_PROGRESS_USER_ID).delete();
 }
 
 export async function syncProgressDown(userId: string): Promise<void> {
@@ -78,7 +78,7 @@ export async function syncProgressDown(userId: string): Promise<void> {
   if (error) throw error;
   if (!data?.length) return;
 
-  const local = await db.progress.where('userId').equals(userId).toArray();
+  const local = await db.progressV2.where('userId').equals(userId).toArray();
   const localMap = new Map(local.map((p) => [`${p.itemType}:${p.itemId}`, p]));
 
   const now = new Date().toISOString();
@@ -119,5 +119,5 @@ export async function syncProgressDown(userId: string): Promise<void> {
     };
   });
 
-  await db.progress.bulkPut(merged);
+  await db.progressV2.bulkPut(merged);
 }
