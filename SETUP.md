@@ -9,7 +9,7 @@
 3. Chạy migrations trong Supabase SQL Editor (theo thứ tự):
    - `supabase/migrations/001_schema.sql` → `002_rls.sql` → `003_ai_terms.sql`
    - `supabase/migrations/004_public_questions.sql` → `005_question_source.sql`
-   - `supabase/migrations/006_unique_question_stem.sql` (ngăn câu hỏi trùng stem)
+   - `supabase/migrations/006_normalize_scrum_open.sql` (tag pool-1 legacy + UNIQUE stem)
 4. Bật Auth → Providers → **Google** (cần Google Cloud OAuth credentials).
 5. Trong Authentication → URL Configuration:
    - Site URL: `https://tuongna.github.io` (hoặc URL app của bạn)
@@ -30,7 +30,7 @@
 
    **Chống trùng:** mỗi seed có `DELETE ... WHERE 'scrum-open-pool-N' = ANY(tags)` ở
    đầu file → chạy lại file nào chỉ xóa data của pool đó, không động đến pool còn
-   lại. Migration `006_unique_question_stem.sql` cũng ngăn 2 câu hỏi có cùng stem
+   lại. Migration `006_normalize_scrum_open.sql` cũng ngăn 2 câu hỏi có cùng stem
    ở mức DB (nếu crawl thêm bộ mới, INSERT sẽ fail nếu stem trùng — bạn biết được
    ngay câu nào trùng để xử lý).
 
