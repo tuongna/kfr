@@ -7,7 +7,7 @@
   import { saveProgress } from '$lib/stores/mastery';
   import { progressMap, getProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, getBadge } from '$lib/srs';
-  import { auditTermSenses, MODELS, MODEL_DISPLAY, type AuditResult, type ModelAttempt } from '$lib/ai';
+  import { auditTermSenses, translateTerm, MODELS, MODEL_DISPLAY, type AuditResult, type ModelAttempt } from '$lib/ai';
 
   export let termId: string | null = null;
   /** When true, show a "Chọn cụm khác…" link that lets the parent open the slider. */
@@ -49,6 +49,14 @@
   let auditFinalElapsed = 0;
   let auditElapsedInterval: ReturnType<typeof setInterval> | null = null;
 
+  // Retranslate state (for fixing empty/broken senses)
+  let retranslating: boolean = false;
+  let retranslateError: string = '';
+  let retranslateAttempts: ModelAttempt[] = [];
+  let retranslateElapsed = 0;
+  let retranslateFinalElapsed = 0;
+  let retranslateElapsedInterval: ReturnType<typeof setInterval> | null = null;
+
   function isFreeModel(id: string): boolean {
     return id.endsWith(':free');
   }
@@ -66,6 +74,18 @@
     if (auditElapsedInterval !== null) {
       clearInterval(auditElapsedInterval);
       auditElapsedInterval = null;
+    }
+  }
+
+  function startRetranslateTimer() {
+    retranslateElapsed = 0;
+    retranslateElapsedInterval = setInterval(() => { retranslateElapsed += 1; }, 1000);
+  }
+
+  function stopRetranslateTimer() {
+    if (retranslateElapsedInterval !== null) {
+      clearInterval(retranslateElapsedInterval);
+      retranslateElapsedInterval = null;
     }
   }
 
@@ -294,6 +314,86 @@
     }
   }
 
+  /**
+   * Re-translates the current term via AI and enters edit mode with the new values
+   * pre-filled so the user can review before saving. Used when senses are empty/broken.
+   */
+  async function retranslateTerm() {
+    if (!term) return;
+    retranslating = true;
+    retranslateError = '';
+    retranslateAttempts = [];
+    startRetranslateTimer();
+    try {
+      const { result } = await translateTerm(term.text, (a) => {
+        const last = retranslateAttempts[retranslateAttempts.length - 1];
+        if (last && last.model === a.model && last.status === 'trying') {
+          retranslateAttempts = [...retranslateAttempts.slice(0, -1), a];
+        } else {
+          retranslateAttempts = [...retranslateAttempts, a];
+        }
+      });
+
+      // Enter edit mode and pre-fill senses with the fresh translation
+      enterEditMode();
+
+      const generalIdx = editSenses.findIndex((s) => s.register === 'general');
+      if (generalIdx !== -1) {
+        editSenses[generalIdx] = {
+          ...editSenses[generalIdx],
+          en: result.en,
+          vi: result.vi,
+          note: result.note,
+        };
+      } else {
+        editSenses = [
+          {
+            id: 'new-' + Date.now(),
+            termId: term.id,
+            register: 'general',
+            en: result.en,
+            vi: result.vi,
+            note: result.note,
+            sortOrder: 0,
+          },
+          ...editSenses,
+        ];
+      }
+
+      // Fill or add Scrum sense if AI identified this as a Scrum term
+      if (result.isScrumTerm && result.scrumEn && result.scrumVi) {
+        const scrumIdx = editSenses.findIndex((s) => s.register === 'scrum');
+        if (scrumIdx !== -1 && (!editSenses[scrumIdx].en.trim() || !editSenses[scrumIdx].vi.trim())) {
+          // Overwrite only if the existing scrum sense is also empty
+          editSenses[scrumIdx] = {
+            ...editSenses[scrumIdx],
+            en: result.scrumEn,
+            vi: result.scrumVi,
+          };
+        } else if (scrumIdx === -1) {
+          editSenses = [
+            ...editSenses,
+            {
+              id: 'new-' + (Date.now() + 1),
+              termId: term.id,
+              register: 'scrum',
+              en: result.scrumEn,
+              vi: result.scrumVi,
+              note: '',
+              sortOrder: editSenses.length,
+            },
+          ];
+        }
+      }
+    } catch (e: unknown) {
+      retranslateError = e instanceof Error ? e.message : String(e);
+    } finally {
+      retranslateFinalElapsed = retranslateElapsed;
+      retranslating = false;
+      stopRetranslateTimer();
+    }
+  }
+
   function applyAuditSuggestion(register: 'general' | 'scrum', field: 'en' | 'vi', value: string) {
     enterEditMode();
     const idx = editSenses.findIndex((s) => s.register === register);
@@ -320,6 +420,9 @@
   }
 
   $: hasScrumSense = editSenses.some((s) => s.register === 'scrum');
+
+  /** True when at least one sense has an empty en or vi — triggers the ❌ banner */
+  $: hasEmptySenses = senses.some((s) => !s.en.trim() || !s.vi.trim());
 </script>
 
 {#if termId && term}
@@ -436,6 +539,81 @@
 
         <!-- Edit / Audit buttons -->
         {#if allowEdit}
+          <!-- ❌ Empty-sense major warning — shown when any sense has blank en or vi -->
+          {#if hasEmptySenses && !editMode}
+            <div class="empty-sense-banner">
+              <span class="empty-sense-icon">❌</span>
+              <div class="empty-sense-text">
+                <strong>Nghĩa trống — từ chưa dùng được (major)</strong>
+                <span>AI sẽ dịch lại và điền vào form để bạn xem trước khi lưu</span>
+              </div>
+              <button
+                class="btn btn-primary btn-sm"
+                on:click={retranslateTerm}
+                disabled={retranslating}
+                type="button"
+              >
+                {retranslating ? 'Đang dịch...' : '🔄 Dịch lại'}
+              </button>
+            </div>
+          {/if}
+
+          {#if retranslateError}
+            <p style="color:var(--error);font-size:0.82rem;margin-top:0.4rem">{retranslateError}</p>
+          {/if}
+
+          <!-- Retranslate model-progress panel -->
+          {#if retranslating || (retranslateAttempts.length && !editMode)}
+            <div class="audit-progress" class:audit-progress--done={!retranslating && retranslateAttempts.length > 0}>
+              <div class="ap-header">
+                <span class="ap-status">
+                  {#if retranslating}
+                    <span class="ap-spinner" aria-hidden="true"></span>
+                    Đang dịch lại…
+                  {:else}
+                    <span style="color:var(--success)">✓</span>
+                    Dịch xong — xem lại và lưu
+                  {/if}
+                </span>
+                {#if retranslating && retranslateElapsed >= 1}
+                  <span class="ap-elapsed" class:ap-elapsed--slow={retranslateElapsed >= 8}>⏱ {retranslateElapsed}s</span>
+                {:else if !retranslating && retranslateFinalElapsed >= 1}
+                  <span class="ap-elapsed" style="opacity:0.5">⏱ {retranslateFinalElapsed}s</span>
+                {/if}
+              </div>
+              <div class="ap-track">
+                {#each MODELS as m, i}
+                  {@const st = i < retranslateAttempts.length ? retranslateAttempts[i].status : 'pending'}
+                  <div class="ap-dot ap-dot--{st}" class:ap-dot--free={isFreeModel(m)} title="{friendlyModel(m)}"></div>
+                {/each}
+                <span class="ap-fraction">{retranslateAttempts.length}/{MODELS.length}</span>
+              </div>
+              <ul class="ap-list">
+                {#each retranslateAttempts as a (a.model + a.status)}
+                  <li class="ap-row ap-row--{a.status}">
+                    <span class="ap-icon">
+                      {#if a.status === 'trying'}<span class="ap-spin">↻</span>
+                      {:else if a.status === 'failed'}✗
+                      {:else}✓{/if}
+                    </span>
+                    <span class="ap-badge" class:ap-badge--paid={!isFreeModel(a.model)}>
+                      {isFreeModel(a.model) ? 'F' : '$'}
+                    </span>
+                    <code class="ap-model">{friendlyModel(a.model)}</code>
+                    {#if a.status === 'trying'}
+                      <span class="ap-running">xử lý…</span>
+                    {:else if a.error}
+                      <span class="ap-err">— {a.error.slice(0, 50)}</span>
+                    {/if}
+                  </li>
+                {/each}
+              </ul>
+              {#if retranslating && retranslateElapsed >= 8}
+                <p class="ap-slow">⏳ Hơi lâu rồi — vẫn đang xử lý, xin chờ thêm chút…</p>
+              {/if}
+            </div>
+          {/if}
+
           <div style="display:flex;gap:0.4rem;margin-top:0.75rem;flex-wrap:wrap">
             <button class="btn btn-ghost btn-sm" on:click={enterEditMode} type="button">
               ✏️ Sửa
@@ -716,6 +894,42 @@
     font-size: 0.72rem;
     color: var(--text-secondary);
     font-style: italic;
+  }
+
+  /* ─── Empty-sense major warning banner ──────────────────────────────────── */
+
+  .empty-sense-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(220, 38, 38, 0.07);
+    border: 1.5px solid var(--error);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .empty-sense-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .empty-sense-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .empty-sense-text strong {
+    font-size: 0.82rem;
+    color: var(--error);
+  }
+
+  .empty-sense-text span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
   }
 
   /* ─── Audit model-progress panel ─────────────────────────────────────────── */
