@@ -7,8 +7,9 @@
 1. Vào [supabase.com](https://supabase.com) → New project → đặt tên `kfr`.
 2. Ghi lại **Project URL** và **anon public key** (Settings → API).
 3. Chạy migrations trong Supabase SQL Editor (theo thứ tự):
-   - `supabase/migrations/001_schema.sql`
-   - `supabase/migrations/002_rls.sql`
+   - `supabase/migrations/001_schema.sql` → `002_rls.sql` → `003_ai_terms.sql`
+   - `supabase/migrations/004_public_questions.sql` → `005_question_source.sql`
+   - `supabase/migrations/006_unique_question_stem.sql` (ngăn câu hỏi trùng stem)
 4. Bật Auth → Providers → **Google** (cần Google Cloud OAuth credentials).
 5. Trong Authentication → URL Configuration:
    - Site URL: `https://tuongna.github.io` (hoặc URL app của bạn)
@@ -24,8 +25,14 @@
 3. Sửa `supabase/seed.sql`: thay `YOUR_USER_ID` bằng ID thực.
 4. Chạy seed trong SQL Editor.
 5. (Tùy chọn) Seed thêm bộ câu hỏi Scrum Open Assessment (PSM-I, public, không cần user ID):
-   - `supabase/seed_scrum_open.sql` — bộ 30 câu hỏi pool 1
-   - `supabase/seed_scrum_open_v2.sql` — bộ 30 câu hỏi pool 2 (mẫu khác từ Scrum Open)
+   - `supabase/seed_scrum_open.sql` — Pool 1: 30 câu (tag `scrum-open-pool-1`)
+   - `supabase/seed_scrum_open_v2.sql` — Pool 2: 30 câu (tag `scrum-open-pool-2`)
+
+   **Chống trùng:** mỗi seed có `DELETE ... WHERE 'scrum-open-pool-N' = ANY(tags)` ở
+   đầu file → chạy lại file nào chỉ xóa data của pool đó, không động đến pool còn
+   lại. Migration `006_unique_question_stem.sql` cũng ngăn 2 câu hỏi có cùng stem
+   ở mức DB (nếu crawl thêm bộ mới, INSERT sẽ fail nếu stem trùng — bạn biết được
+   ngay câu nào trùng để xử lý).
 
 ### 3. Cài GitHub Secrets
 

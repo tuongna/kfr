@@ -1,6 +1,14 @@
--- Scrum Open Assessment — 30 representative questions (PSM-I)
+-- Scrum Open Assessment — Pool 1 (30 representative PSM-I questions)
+-- Idempotent: re-running this file removes Pool 1 questions (by tag) and re-inserts.
+-- Pool 2 questions (seed_scrum_open_v2.sql) are NOT affected.
 -- Run via: psql <connection-string> -f supabase/seed_scrum_open.sql
 --       or paste into Supabase Studio → SQL Editor.
+
+-- ── Idempotency: drop prior Pool 1 rows; options cascade via FK ─────
+DELETE FROM public.questions
+  WHERE source = 'Scrum Open Assessment'
+    AND owner_id IS NULL
+    AND 'scrum-open-pool-1' = ANY(tags);
 
 DO $$ DECLARE
   q1  uuid; q2  uuid; q3  uuid; q4  uuid; q5  uuid;
@@ -32,210 +40,210 @@ BEGIN
      'What is the maximum length of a Sprint?',
      'The Scrum Guide states Sprints are one month or less. No Sprint may be longer than one month. When a Sprint''s horizon is too long, the Sprint Goal may become invalid and complexity may rise.',
      'Scrum Guide quy định Sprint có thời gian tối đa là một tháng. Sprint dài hơn có thể khiến Sprint Goal mất giá trị và rủi ro gia tăng.',
-     ARRAY['sprint', 'timebox'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint', 'timebox', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 2
     (q2, 'PSM-I',
      'Who is accountable for maximizing the value of the product resulting from the work of the Scrum Team?',
      'The Product Owner is accountable for maximizing the value of the product resulting from the work of the Scrum Team. How this is done may vary widely across organizations, Scrum Teams, and individuals.',
      'Product Owner chịu trách nhiệm tối đa hóa giá trị của sản phẩm từ công việc của Scrum Team. Cách thực hiện có thể khác nhau tùy tổ chức.',
-     ARRAY['product-owner', 'accountability'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['product-owner', 'accountability', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 3
     (q3, 'PSM-I',
      'What is the timebox for the Daily Scrum?',
      'The Daily Scrum is a 15-minute event for the Developers of the Scrum Team. To reduce complexity, it is held at the same time and place every working day of the Sprint.',
      'Daily Scrum là sự kiện 15 phút dành cho Developers. Được tổ chức cùng giờ, cùng địa điểm mỗi ngày làm việc trong Sprint để giảm phức tạp.',
-     ARRAY['daily-scrum', 'timebox'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['daily-scrum', 'timebox', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 4
     (q4, 'PSM-I',
      'Who has the authority to cancel a Sprint?',
      'Only the Product Owner has the authority to cancel a Sprint. A Sprint would be cancelled if the Sprint Goal becomes obsolete. This is a rare occurrence.',
      'Chỉ Product Owner mới có quyền hủy Sprint. Sprint bị hủy khi Sprint Goal trở nên lỗi thời. Đây là trường hợp hiếm gặp.',
-     ARRAY['sprint', 'product-owner', 'cancellation'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint', 'product-owner', 'cancellation', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 5
     (q5, 'PSM-I',
      'Which three pillars uphold every implementation of empirical process control?',
      'The three pillars of empiricism are Transparency, Inspection, and Adaptation. Scrum combines these pillars to make decisions based on what is observed rather than speculation.',
      'Ba trụ cột của chủ nghĩa kinh nghiệm trong Scrum là Minh bạch (Transparency), Thanh tra (Inspection) và Thích nghi (Adaptation). Đây là nền tảng cho mọi quyết định dựa trên thực tế quan sát được.',
-     ARRAY['empiricism', 'transparency', 'inspection', 'adaptation'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['empiricism', 'transparency', 'inspection', 'adaptation', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 6
     (q6, 'PSM-I',
      'Which statement about the Increment is correct?',
      'Multiple Increments may be created within a Sprint. The sum of the Increments is presented at the Sprint Review, supporting empiricism. The Product Owner may decide to release any Increment before the Sprint ends.',
      'Nhiều Increment có thể được tạo ra trong một Sprint. Product Owner có thể quyết định phát hành bất kỳ Increment nào trước khi Sprint kết thúc.',
-     ARRAY['increment', 'sprint'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['increment', 'sprint', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 7
     (q7, 'PSM-I',
      'What is the maximum timebox for Sprint Planning for a one-month Sprint?',
      'Sprint Planning is timeboxed to a maximum of 8 hours for a one-month Sprint. For shorter Sprints, the event is usually shorter.',
      'Sprint Planning được giới hạn tối đa 8 giờ cho Sprint một tháng. Sprint ngắn hơn thường có Sprint Planning ngắn hơn tương ứng.',
-     ARRAY['sprint-planning', 'timebox'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-planning', 'timebox', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 8
     (q8, 'PSM-I',
      'What is the commitment for the Sprint Backlog?',
      'The Sprint Goal is the commitment for the Sprint Backlog. The Sprint Goal is the single objective for the Sprint and provides flexibility to Developers while maintaining focus.',
      'Sprint Goal là cam kết gắn với Sprint Backlog. Sprint Goal tạo ra sự linh hoạt cho Developers trong khi vẫn duy trì trọng tâm nhất quán.',
-     ARRAY['sprint-backlog', 'sprint-goal', 'commitment'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-backlog', 'sprint-goal', 'commitment', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 9
     (q9, 'PSM-I',
      'Which of the following best describes the Scrum Master''s role?',
      'The Scrum Master is accountable for establishing Scrum and coaching the Scrum Team in self-management and cross-functionality. The Scrum Master is a servant leader, not a manager who assigns work.',
      'Scrum Master chịu trách nhiệm thiết lập Scrum và huấn luyện Scrum Team về tự quản lý và đa chức năng. Scrum Master là người lãnh đạo phục vụ, không phải quản lý phân công công việc.',
-     ARRAY['scrum-master', 'servant-leader'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['scrum-master', 'servant-leader', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 10
     (q10, 'PSM-I',
      'Who are the members of a Scrum Team?',
      'A Scrum Team consists of one Scrum Master, one Product Owner, and Developers. There are no sub-teams or hierarchies within a Scrum Team; it is a cohesive unit of professionals.',
      'Scrum Team gồm một Scrum Master, một Product Owner và các Developers. Không có sub-team hay hệ thống phân cấp bên trong Scrum Team.',
-     ARRAY['scrum-team'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['scrum-team', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 11
     (q11, 'PSM-I',
      'What is the recommended size for a Scrum Team?',
      'The Scrum Team should be small enough to remain nimble and large enough to complete significant work within a Sprint — typically 10 or fewer people. If teams become too large, they should consider reorganizing into multiple cohesive Scrum Teams.',
      'Scrum Team đủ nhỏ để linh hoạt và đủ lớn để hoàn thành công việc đáng kể trong một Sprint — thường từ 10 người trở xuống.',
-     ARRAY['scrum-team', 'team-size'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['scrum-team', 'team-size', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 12
     (q12, 'PSM-I',
      'What is the maximum timebox for the Sprint Review for a one-month Sprint?',
      'The Sprint Review is timeboxed to a maximum of 4 hours for a one-month Sprint. For shorter Sprints, the event is usually shorter.',
      'Sprint Review được giới hạn tối đa 4 giờ cho Sprint một tháng. Sprint ngắn hơn thường có Sprint Review ngắn hơn tương ứng.',
-     ARRAY['sprint-review', 'timebox'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-review', 'timebox', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 13
     (q13, 'PSM-I',
      'What is the maximum timebox for the Sprint Retrospective for a one-month Sprint?',
      'The Sprint Retrospective is timeboxed to a maximum of 3 hours for a one-month Sprint. The Scrum Team inspects how the last Sprint went with regards to individuals, interactions, processes, tools, and the Definition of Done.',
      'Sprint Retrospective được giới hạn tối đa 3 giờ cho Sprint một tháng. Scrum Team kiểm tra cách Sprint vừa diễn ra liên quan đến con người, tương tác, quy trình và công cụ.',
-     ARRAY['sprint-retrospective', 'timebox'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-retrospective', 'timebox', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 14
     (q14, 'PSM-I',
      'Who is responsible for creating the Definition of Done when there is no existing organizational standard?',
      'If the Definition of Done is not a standard of the organization, the Developers of the Scrum Team must create a Definition of Done appropriate for the product. The Scrum Master ensures the team has one.',
      'Nếu tổ chức không có tiêu chuẩn Definition of Done, các Developers của Scrum Team phải tự tạo DoD phù hợp với sản phẩm của họ.',
-     ARRAY['definition-of-done'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['definition-of-done', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 15
     (q15, 'PSM-I',
      'Which of the following is one of Scrum''s three pillars of empiricism but NOT one of the five Scrum values?',
      'The three pillars are Transparency, Inspection, and Adaptation. The five Scrum values are: Commitment, Focus, Openness, Respect, and Courage. Transparency is a pillar, not a value.',
      'Ba trụ cột là: Transparency, Inspection, Adaptation. Năm giá trị Scrum là: Commitment, Focus, Openness, Respect, Courage. Transparency là trụ cột, không phải giá trị.',
-     ARRAY['empiricism', 'scrum-values'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['empiricism', 'scrum-values', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 16
     (q16, 'PSM-I',
      'When multiple Scrum Teams are working on the same product, how many Product Backlogs should there be?',
      'There is one Product Backlog per product, regardless of how many Scrum Teams work on it. Having one Product Backlog ensures a single source of truth for priorities and goals.',
      'Chỉ có một Product Backlog cho mỗi sản phẩm, dù có bao nhiêu Scrum Team cùng làm việc. Điều này đảm bảo có một nguồn thông tin duy nhất về thứ tự ưu tiên.',
-     ARRAY['product-backlog'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['product-backlog', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 17
     (q17, 'PSM-I',
      'Who is responsible for sizing (estimating) Product Backlog items?',
      'The Developers who will be doing the work are responsible for the sizing of Product Backlog items. The Product Owner may influence by helping Developers understand and select trade-offs.',
      'Các Developers thực hiện công việc chịu trách nhiệm ước lượng kích thước của các Product Backlog item. Product Owner có thể hỗ trợ bằng cách làm rõ yêu cầu và trade-off.',
-     ARRAY['product-backlog', 'estimation'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['product-backlog', 'estimation', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 18
     (q18, 'PSM-I',
      'When is the Sprint Goal created?',
      'The Sprint Goal is created during Sprint Planning. It is the single objective for the Sprint and is crafted collaboratively by the Scrum Team. After Sprint Planning, the Developers inform the Product Owner of the Sprint Goal.',
      'Sprint Goal được tạo ra trong quá trình Sprint Planning. Đây là mục tiêu duy nhất cho Sprint, được tạo ra cùng nhau bởi Scrum Team.',
-     ARRAY['sprint-goal', 'sprint-planning'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-goal', 'sprint-planning', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 19
     (q19, 'PSM-I',
      'What is the primary purpose of the Daily Scrum?',
      'The Daily Scrum''s purpose is to inspect progress toward the Sprint Goal and adapt the Sprint Backlog as necessary, adjusting the upcoming planned work. It is not a status meeting for management.',
      'Mục đích của Daily Scrum là thanh tra tiến độ hướng tới Sprint Goal và thích nghi Sprint Backlog nếu cần. Đây không phải là cuộc họp báo cáo cho ban quản lý.',
-     ARRAY['daily-scrum', 'sprint-goal'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['daily-scrum', 'sprint-goal', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 20
     (q20, 'PSM-I',
      'Which description best fits the Scrum Master role?',
      'The Scrum Master is a servant leader who serves the Scrum Team and the larger organization. They help everyone understand Scrum theory and practice, and remove impediments to the Scrum Team''s progress.',
      'Scrum Master là người lãnh đạo phục vụ cho Scrum Team và tổ chức. Họ giúp mọi người hiểu lý thuyết và thực hành Scrum, đồng thời loại bỏ các trở ngại cho Scrum Team.',
-     ARRAY['scrum-master', 'servant-leader'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['scrum-master', 'servant-leader', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 21
     (q21, 'PSM-I',
      'What happens to incomplete Product Backlog items at the end of a Sprint?',
      'Incomplete Product Backlog items are returned to the Product Backlog. They are re-estimated and re-prioritized by the Product Owner in the next refinement cycle. The Sprint is NOT extended.',
      'Các Product Backlog item chưa hoàn thành được trả lại Product Backlog. Product Owner sẽ ước lượng lại và sắp xếp thứ tự ưu tiên trong chu kỳ refinement tiếp theo. Sprint không được kéo dài.',
-     ARRAY['sprint', 'product-backlog'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint', 'product-backlog', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 22
     (q22, 'PSM-I',
      'Which statement about the Sprint Backlog is correct?',
      'The Sprint Backlog is updated throughout the Sprint as Developers learn more. Only Developers can change the Sprint Backlog; the Product Owner does not modify it unilaterally.',
      'Sprint Backlog được cập nhật liên tục trong suốt Sprint khi Developers học được nhiều hơn. Chỉ Developers mới có thể thay đổi Sprint Backlog.',
-     ARRAY['sprint-backlog'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-backlog', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 23
     (q23, 'PSM-I',
      'What best describes Product Backlog refinement?',
      'Product Backlog refinement is the act of breaking down and further defining Product Backlog items into smaller, more precise items. This is an ongoing activity in which the Product Owner and the Scrum Team collaborate.',
      'Product Backlog refinement là hoạt động phân tách và làm rõ thêm các Product Backlog item thành các mục nhỏ hơn, chính xác hơn. Đây là hoạt động liên tục giữa Product Owner và Scrum Team.',
-     ARRAY['product-backlog', 'refinement'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['product-backlog', 'refinement', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 24
     (q24, 'PSM-I',
      'What is the Product Goal?',
      'The Product Goal describes a future state of the product which can serve as a target for the Scrum Team to plan against. It is the commitment for the Product Backlog and represents the long-term objective.',
      'Product Goal mô tả trạng thái tương lai của sản phẩm mà Scrum Team hướng đến. Đây là cam kết của Product Backlog và là mục tiêu dài hạn cho Scrum Team.',
-     ARRAY['product-goal', 'product-backlog'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['product-goal', 'product-backlog', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 25
     (q25, 'PSM-I',
      'Which statement best describes an Increment?',
      'An Increment is a concrete stepping stone toward the Product Goal. Each Increment is additive to all prior Increments and thoroughly verified, ensuring that all Increments work together. An Increment must be usable.',
      'Increment là một bước cụ thể hướng tới Product Goal. Mỗi Increment bổ sung cho tất cả các Increment trước đó và được xác minh kỹ lưỡng. Increment phải có thể sử dụng được.',
-     ARRAY['increment', 'product-goal'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['increment', 'product-goal', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 26
     (q26, 'PSM-I',
      'Which of the following is the complete set of Scrum values?',
      'The five Scrum values are: Commitment, Focus, Openness, Respect, and Courage. When these values are embodied and lived by the Scrum Team, the Scrum pillars of Transparency, Inspection, and Adaptation come to life.',
      'Năm giá trị Scrum là: Commitment (Cam kết), Focus (Tập trung), Openness (Cởi mở), Respect (Tôn trọng) và Courage (Dũng cảm). Những giá trị này là nền tảng văn hóa của Scrum.',
-     ARRAY['scrum-values'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['scrum-values', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 27
     (q27, 'PSM-I',
      'What is the purpose of the Sprint Review?',
      'The Sprint Review''s purpose is to inspect the outcome of the Sprint and determine future adaptations. The Scrum Team presents the results to key stakeholders and discusses progress toward the Product Goal. The Product Backlog may be adjusted.',
      'Mục đích của Sprint Review là thanh tra kết quả của Sprint và xác định hướng thích nghi tiếp theo. Scrum Team trình bày kết quả cho các stakeholders chính và thảo luận về tiến độ hướng tới Product Goal.',
-     ARRAY['sprint-review', 'product-backlog'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-review', 'product-backlog', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 28
     (q28, 'PSM-I',
      'What is the primary purpose of the Sprint Retrospective?',
      'The purpose of the Sprint Retrospective is to plan ways to increase quality and effectiveness. The Scrum Team inspects how the last Sprint went and identifies the most helpful improvements to implement next Sprint.',
      'Mục đích của Sprint Retrospective là lên kế hoạch cải thiện chất lượng và hiệu quả. Scrum Team kiểm tra Sprint vừa qua và xác định các cải tiến hữu ích nhất để áp dụng vào Sprint tiếp theo.',
-     ARRAY['sprint-retrospective'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['sprint-retrospective', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 29
     (q29, 'PSM-I',
      'What does the Definition of Done provide for the Scrum Team?',
      'The Definition of Done creates transparency by providing everyone a shared understanding of what work is considered complete. If a Product Backlog item does not meet the DoD, it cannot be released or presented at the Sprint Review.',
      'Definition of Done tạo ra sự minh bạch bằng cách cung cấp hiểu biết chung về thế nào là "hoàn thành". Nếu một Product Backlog item không đáp ứng DoD, nó không thể phát hành hoặc trình bày tại Sprint Review.',
-     ARRAY['definition-of-done', 'transparency'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
+     ARRAY['definition-of-done', 'transparency', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted'),
 
     -- 30
     (q30, 'PSM-I',
      'Which statement best describes Scrum?',
      'Scrum is a lightweight framework that helps people, teams, and organizations generate value through adaptive solutions for complex problems. It is intentionally incomplete, only defining the parts required to implement Scrum theory.',
      'Scrum là một framework nhẹ giúp mọi người, nhóm và tổ chức tạo ra giá trị thông qua các giải pháp thích nghi cho các vấn đề phức tạp. Scrum cố tình không đầy đủ, chỉ định nghĩa những phần cần thiết.',
-     ARRAY['scrum', 'framework'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted');
+     ARRAY['scrum', 'framework', 'scrum-open-pool-1'], '{}'::uuid[], 'Scrum Open Assessment', 'trusted');
 
   -- ────────────────────────────────────────────────────────────
   -- Options
