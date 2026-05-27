@@ -209,11 +209,12 @@ export async function lookupOrTranslate(
   };
 
   // Backward compatibility: some deployments may not have run migration 003 (note column).
+  // PGRST204 = "Column not found in schema cache" — stable PostgREST error code.
   let { error: senseError } = await supabase.from('term_senses').insert({
     ...sensePayloadBase,
     note: result.note || null,
   });
-  if (senseError?.message?.includes("'note' column")) {
+  if (senseError?.code === 'PGRST204' || senseError?.message?.includes("'note' column")) {
     ({ error: senseError } = await supabase.from('term_senses').insert(sensePayloadBase));
   }
   if (senseError) throw new Error(`Không lưu được nghĩa: ${senseError.message}`);
@@ -246,7 +247,7 @@ export async function lookupOrTranslate(
       ...scrumPayload,
       note: null,
     });
-    if (scrumErr?.message?.includes("'note' column")) {
+    if (scrumErr?.code === 'PGRST204' || scrumErr?.message?.includes("'note' column")) {
       ({ error: scrumErr } = await supabase.from('term_senses').insert(scrumPayload));
     }
     // Scrum sense failure is non-fatal — general sense already saved.
@@ -300,7 +301,7 @@ async function enrichScrumSense(
     ...scrumPayload,
     note: null,
   });
-  if (scrumErr?.message?.includes("'note' column")) {
+  if (scrumErr?.code === 'PGRST204' || scrumErr?.message?.includes("'note' column")) {
     ({ error: scrumErr } = await supabase.from('term_senses').insert(scrumPayload));
   }
 
