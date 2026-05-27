@@ -1,9 +1,39 @@
 {
+  "name": "kfr",
+  "version": "0.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "test": "node spec/support/jasmine.mjs"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "jasmine": "^5.9.0"
+    "@sveltejs/adapter-static": "^3.0.1",
+    "@sveltejs/kit": "^2.5.0",
+    "@sveltejs/vite-plugin-svelte": "^3.1.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.0",
+    "@typescript-eslint/parser": "^7.7.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-svelte": "^2.38.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-svelte": "^3.2.2",
+    "svelte": "^4.2.15",
+    "svelte-check": "^3.7.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10",
+    "vite-plugin-pwa": "^0.20.0",
+    "vitest": "^1.6.0",
+    "workbox-window": "^7.1.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.4",
+    "dexie": "^3.2.4",
+    "jszip": "^3.10.1",
+    "pdfjs-dist": "^5.7.284"
   }
 }
