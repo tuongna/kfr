@@ -1,0 +1,20 @@
+[
+  {
+    "id": "scrum-guide-2020-us",
+    "title": "The Scrum Guide 2020",
+    "author": "Ken Schwaber & Jeff Sutherland",
+    "year": 2020,
+    "file": "scrum-guide-2020-us.pdf",
+    "tags": ["scrum", "psm", "pspo", "official"],
+    "description": "Tài liệu chính thức định nghĩa Scrum Framework (bản US, tháng 11/2020)."
+  },
+  {
+    "id": "go-with-domain",
+    "title": "Building Modern Business Software in Go",
+    "author": "Robert Laszczak & Miłosz Smółka",
+    "year": 2023,
+    "file": "go-with-domain.epub",
+    "tags": ["go", "ddd", "software-engineering"],
+    "description": "Domain-Driven Design và Clean Architecture trong Go — Three Dots Labs."
+  }
+]
