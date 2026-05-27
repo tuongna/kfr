@@ -39,6 +39,25 @@ describe('improveProgress', () => {
     expect(p.level).toBe(MAX_LEVEL);
   });
 
+  it('re-schedules nextReview at MAX_LEVEL on correct answer', () => {
+    // Regression: previously the function returned base unchanged at max
+    // level, so an overdue item kept its past nextReview and reappeared in
+    // every session even after being answered correctly.
+    const pastReview = new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString();
+    const base = {
+      itemType: 'question' as const,
+      itemId: 'x',
+      level: MAX_LEVEL,
+      xp: 440,
+      nextReview: pastReview,
+    };
+    const p = improveProgress(base, 'question', 'x', false);
+    expect(p.level).toBe(MAX_LEVEL);
+    expect(p.xp).toBe(440);
+    expect(new Date(p.nextReview!).getTime()).toBeGreaterThan(Date.now());
+    expect(canPractice(p)).toBe(false);
+  });
+
   it('does not change level on wrong answer, adds incentive XP', () => {
     const base = { itemType: 'term' as const, itemId: 'x', level: 1, xp: 40, nextReview: null };
     const p = improveProgress(base, 'term', 'x', true);
