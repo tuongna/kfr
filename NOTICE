@@ -12,3 +12,19 @@ Kaldi
 See AUTHORS file and original repository for contributor details.
 Licensed under the Apache License, Version 2.0
 https://github.com/kaldi-asr/kaldi
+
+────────────────────────────────────────────────────────────────────────
+Bundled third-party content (static/books/)
+────────────────────────────────────────────────────────────────────────
+
+The Scrum Guide 2020 (scrum-guide-2020-us.pdf)
+Copyright 2020 Ken Schwaber & Jeff Sutherland
+Licensed under Creative Commons Attribution-ShareAlike 4.0 International
+(CC BY-SA 4.0)
+https://scrumguides.org/
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Other titles referenced from the in-app library are NOT bundled in this
+repository. Links in static/books/catalog.json point to the publisher's
+official download page; readers must obtain those files directly from
+the rightful copyright holders under the terms each publisher provides.
