@@ -41,7 +41,13 @@ export function improveProgress(
     };
   }
 
-  return base;
+  // At max level: keep level/xp but still re-schedule, otherwise an overdue
+  // item would stay overdue forever (canPractice keeps returning true and the
+  // same question reappears every session).
+  return {
+    ...base,
+    nextReview: new Date(Date.now() + SRS_INTERVALS[MAX_LEVEL]).toISOString(),
+  };
 }
 
 export function getBadge(level: number): string {
