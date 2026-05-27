@@ -11,12 +11,16 @@
   import NgramPopup from '$lib/components/NgramPopup.svelte';
 
   // ── Book catalog ──────────────────────────────────────────────────────────
+  // Either `file` (in-app reader) or `externalUrl` (link to publisher) — at least one required.
   interface BookEntry {
     id: string;
     title: string;
     author: string;
     year: number;
-    file: string;
+    file?: string;
+    externalUrl?: string;
+    license?: string;
+    sourceUrl?: string;
     tags: string[];
     description: string;
   }
@@ -66,6 +70,10 @@
 
   // ── Open book ─────────────────────────────────────────────────────────────
   async function openBook(book: BookEntry) {
+    if (!book.file) {
+      if (book.externalUrl) window.open(book.externalUrl, '_blank', 'noopener');
+      return;
+    }
     selectedBook = book;
     sections = [];
     totalSections = 0;
@@ -165,15 +173,25 @@
   {:else}
     <div class="books-grid">
       {#each catalog as book}
-        {@const ext = book.file.split('.').pop()?.toUpperCase()}
+        {@const ext = book.file?.split('.').pop()?.toUpperCase() ?? 'LINK'}
+        {@const isExternal = !book.file && !!book.externalUrl}
         <button class="book-card" on:click={() => openBook(book)}>
-          <div class="book-cover">{ext === 'EPUB' ? '📘' : '📄'}</div>
+          <div class="book-cover">
+            {isExternal ? '🔗' : ext === 'EPUB' ? '📘' : '📄'}
+          </div>
           <div class="book-info">
             <div class="book-title">{book.title}</div>
             <div class="book-author text-secondary">{book.author} · {book.year}</div>
             <div class="book-desc text-secondary">{book.description}</div>
             <div class="tags" style="margin-top:0.5rem">
-              <span class="tag format-badge" style="cursor:default">{ext}</span>
+              <span class="tag format-badge" style="cursor:default">
+                {isExternal ? 'TRANG GỐC ↗' : ext}
+              </span>
+              {#if book.license}
+                <span class="tag" style="cursor:default" title={book.sourceUrl ?? ''}>
+                  {book.license}
+                </span>
+              {/if}
               {#each book.tags as tag}
                 <span class="tag" style="cursor:default">{tag}</span>
               {/each}
