@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)
 ![Version](https://img.shields.io/badge/version-0.1.0-lightgrey.svg)
 
-🔗 Live App: [https://tuongna.github.io](https://tuongna.github.io)
+🔗 Live App: [https://tuongna.github.io/kfr](https://tuongna.github.io/kfr)
 
 ## About
 
