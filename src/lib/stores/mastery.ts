@@ -6,6 +6,8 @@ import { supabase } from '$lib/supabase';
 import { authUser } from '$lib/stores/auth';
 
 export const progressMap = writable<Map<string, LocalProgress>>(new Map());
+/** True once loadMastery() has finished populating progressMap for the current user. */
+export const masteryReady = writable(false);
 
 export function progressKey(itemType: 'term' | 'question', itemId: string): string {
   return `${itemType}:${itemId}`;
@@ -23,10 +25,12 @@ export async function loadMastery(userId: string): Promise<void> {
   const all = await db.progressV2.where('userId').equals(userId).toArray();
   const map = new Map(all.map((p) => [progressKey(p.itemType, p.itemId), p]));
   progressMap.set(map);
+  masteryReady.set(true);
 }
 
 export function clearMastery(): void {
   progressMap.set(new Map());
+  masteryReady.set(false);
 }
 
 export async function saveProgress(progress: ProgressInput): Promise<void> {

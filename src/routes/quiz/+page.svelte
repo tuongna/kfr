@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { get } from 'svelte/store';
   import { db } from '$lib/db';
-  import { progressMap, getProgress, saveProgress } from '$lib/stores/mastery';
+  import { progressMap, masteryReady, getProgress, saveProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, shuffleByIndex, getBadge } from '$lib/srs';
   import { sessionLookups } from '$lib/stores/session';
   import { authUser } from '$lib/stores/auth';
@@ -15,6 +16,9 @@
 
   let allQuestions: Question[] = [];
   let examFilter: ExamFilter = 'all';
+  // Guards to avoid double-init when both onMount and $masteryReady fire
+  let questionsLoaded = false;
+  let sessionInit = false;
 
   // Session snapshot — linear flow, not an infinite loop
   let sessionQuestions: Question[] = [];
@@ -71,13 +75,29 @@
 
   $: if (currentQ) loadQuestion(currentQ);
 
+  // Start session only after BOTH questions are loaded AND progressMap is ready.
+  // On a fresh page load the layout's loadMastery() (which involves network
+  // sync) finishes AFTER this onMount, so we must wait for masteryReady.
+  // On subsequent in-app navigations masteryReady is already true, so we init
+  // immediately inside onMount.
   onMount(async () => {
     [allQuestions, allTermsForTokenize] = await Promise.all([
       db.questions.toArray(),
       db.terms.toArray(),
     ]);
-    initSession();
+    questionsLoaded = true;
+    if (get(masteryReady)) {
+      sessionInit = true;
+      initSession();
+    }
+    // Otherwise the $masteryReady reactive block below will fire once mastery loads.
   });
+
+  // Fires when the layout's loadMastery() completes (may be after onMount).
+  $: if ($masteryReady && questionsLoaded && !sessionInit) {
+    sessionInit = true;
+    initSession();
+  }
 
   function buildPool(filter: ExamFilter): Question[] {
     const filtered = allQuestions.filter((q) => filter === 'all' || q.exam === filter);
