@@ -3,7 +3,7 @@
   import { base } from '$app/paths';
   import { onMount } from 'svelte';
 
-  onMount(() => goto(`${base}/learn`));
+  onMount(() => goto(`${base}/quiz`));
 </script>
 
 <div class="auth-wall">

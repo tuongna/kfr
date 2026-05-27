@@ -2,23 +2,30 @@ import { supabase } from './supabase';
 import { db } from './db';
 import type { Term, TermSense, Question, QuestionOption } from './types';
 
-const CACHE_KEY = 'content_cached_at';
 const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
-export async function syncContent(force = false): Promise<void> {
-  const cachedAt = localStorage.getItem(CACHE_KEY);
+function cacheKey(userId?: string): string {
+  return userId ? `content_cached_at_${userId}` : 'content_cached_at';
+}
+
+export async function syncContent(force = false, userId?: string): Promise<void> {
+  const key = cacheKey(userId);
+  const cachedAt = localStorage.getItem(key);
   const isStale = !cachedAt || Date.now() - parseInt(cachedAt) > CACHE_TTL_MS;
   if (!force && !isStale) return;
 
   await Promise.all([syncTerms(), syncQuestions()]);
-  localStorage.setItem(CACHE_KEY, Date.now().toString());
+  localStorage.setItem(key, Date.now().toString());
 }
 
 async function syncTerms(): Promise<void> {
   const { data, error } = await supabase.from('terms').select('*, term_senses(*)');
 
   if (error) throw error;
-  if (!data) return;
+  // Guard: never wipe local cache when server returns empty (e.g. expired token
+  // causes RLS to return [] instead of error — clearing Dexie would erase all
+  // user-translated terms that are safely stored in the DB).
+  if (!data?.length) return;
 
   const terms: Term[] = data.map((t) => ({
     id: t.id,
@@ -55,7 +62,8 @@ async function syncQuestions(): Promise<void> {
   const { data, error } = await supabase.from('questions').select('*, question_options(*)');
 
   if (error) throw error;
-  if (!data) return;
+  // Same guard as syncTerms: don't clear local questions for an empty server response.
+  if (!data?.length) return;
 
   const questions: Question[] = data.map((q) => ({
     id: q.id,
