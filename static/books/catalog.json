@@ -1,11 +1,11 @@
 [
   {
-    "id": "scrum-guide-sample",
-    "title": "The Scrum Guide (Sample)",
+    "id": "scrum-guide-2020-us",
+    "title": "The Scrum Guide 2020",
     "author": "Ken Schwaber & Jeff Sutherland",
     "year": 2020,
-    "file": "scrum-guide-sample.pdf",
-    "tags": ["scrum", "agile", "psm"],
-    "description": "Tài liệu tham khảo Scrum Framework."
+    "file": "scrum-guide-2020-us.pdf",
+    "tags": ["scrum", "psm", "pspo", "official"],
+    "description": "Tài liệu chính thức định nghĩa Scrum Framework (bản US, tháng 11/2020)."
   }
 ]
