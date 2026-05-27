@@ -13,7 +13,7 @@
     "title": "Building Modern Business Software in Go",
     "author": "Robert Laszczak & Miłosz Smółka",
     "year": 2023,
-    "file": "go-with-domain.pdf",
+    "file": "go-with-domain.epub",
     "tags": ["go", "ddd", "software-engineering"],
     "description": "Domain-Driven Design và Clean Architecture trong Go — Three Dots Labs."
   }
