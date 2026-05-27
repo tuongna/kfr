@@ -11,6 +11,13 @@
   import { BADGES } from '$lib/srs';
 
   async function initSession() {
+    // Use getSession() for the initial page-load check, then listen for
+    // explicit sign-in / sign-out events.  We deliberately ignore:
+    //   • INITIAL_SESSION — Supabase fires this right after onAuthStateChange
+    //     is registered with the same session getSession() already returned,
+    //     which would trigger a second onUserReady() call on every page load.
+    //   • TOKEN_REFRESHED — the access token is silently refreshed every hour;
+    //     there is no need to re-sync progress or content on each refresh.
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -28,18 +35,22 @@
     authLoading.set(false);
 
     supabase.auth.onAuthStateChange(async (event, sess) => {
-      if (sess?.user) {
-        authUser.set({
-          id: sess.user.id,
-          email: sess.user.email!,
-          name: sess.user.user_metadata?.full_name,
-          avatarUrl: sess.user.user_metadata?.avatar_url,
-        });
-        await onUserReady(sess.user.id);
-      } else {
+      if (event === 'SIGNED_IN') {
+        // A fresh OAuth login — run the full sync sequence.
+        if (sess?.user) {
+          authUser.set({
+            id: sess.user.id,
+            email: sess.user.email!,
+            name: sess.user.user_metadata?.full_name,
+            avatarUrl: sess.user.user_metadata?.avatar_url,
+          });
+          await onUserReady(sess.user.id);
+        }
+      } else if (event === 'SIGNED_OUT') {
         authUser.set(null);
         clearMastery();
       }
+      // INITIAL_SESSION and TOKEN_REFRESHED are intentionally ignored here.
     });
   }
 
@@ -51,7 +62,7 @@
     //  4. populate the in-memory map (scoped by userId)
     await claimLegacyProgress(userId);
     await syncProgressUp(userId);
-    await Promise.all([syncContent(), syncProgressDown(userId)]);
+    await Promise.all([syncContent(false, userId), syncProgressDown(userId)]);
     await loadMastery(userId);
   }
 
