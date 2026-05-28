@@ -5,9 +5,14 @@
  * actually visits /books — never on quiz or vocab pages.
  */
 
+export interface PdfBlock {
+  text: string;
+  heading: boolean;
+}
+
 export interface PdfPage {
   pageNum: number;
-  paragraphs: string[];
+  blocks: PdfBlock[];
 }
 
 export interface PdfMeta {
@@ -16,22 +21,28 @@ export interface PdfMeta {
 }
 
 /**
- * Joins raw PDF text items from a single page into readable paragraphs.
+ * Joins raw PDF text items from a single page into readable blocks, tagging
+ * lines whose font is noticeably larger than the body text as headings.
  *
  * PDF text items are positioned absolutely — there is no semantic notion of
- * "line" or "paragraph". This heuristic merges items that share the same
- * approximate Y coordinate (same line) and inserts paragraph breaks when
- * the Y gap is larger than a line-height threshold.
+ * "line", "paragraph", or "heading". Line/paragraph grouping is inferred from
+ * Y/X coordinates; heading detection compares each line's font height against
+ * the page's dominant (body) font height.
  *
  * Known limitations (acceptable for PoC):
  *   - Multi-column layouts produce interleaved text.
  *   - Hyphenated line-breaks are not re-joined.
  *   - Headers / footers appear inline unless filtered by caller.
+ *   - Heading detection is font-size based only (bold-only headings are missed).
  */
-export function itemsToParagraphs(
+export function itemsToBlocks(
   items: { str: string; transform: number[] }[]
-): string[] {
+): PdfBlock[] {
   if (!items.length) return [];
+
+  // Glyph height from the text-item transform [a, b, c, d, e, f]; hypot of the
+  // skew/scale-Y terms stays correct for rotated/skewed text.
+  const fontHeight = (t: number[]) => Math.hypot(t[2], t[3]) || Math.abs(t[3]);
 
   // Sort by Y desc (PDF Y grows upward), then X asc
   const sorted = [...items].sort((a, b) => {
@@ -42,10 +53,13 @@ export function itemsToParagraphs(
 
   const SAME_LINE_THRESHOLD = 4;    // px difference → same line
   const PARA_GAP_THRESHOLD  = 14;   // px gap → paragraph break
+  const HEADING_RATIO       = 1.18; // line font ≥ body × ratio → heading
 
-  const linesRaw: { y: number; text: string }[] = [];
+  // Build lines, tracking the largest font height on each.
+  const linesRaw: { y: number; text: string; size: number }[] = [];
   let currentY = sorted[0].transform[5];
   let currentText = sorted[0].str;
+  let currentSize = fontHeight(sorted[0].transform);
 
   for (let i = 1; i < sorted.length; i++) {
     const item = sorted[i];
@@ -54,38 +68,60 @@ export function itemsToParagraphs(
       // Same line — append with space if there's a gap
       const needsSpace = currentText.length > 0 && !currentText.endsWith(' ') && item.str.length > 0 && !item.str.startsWith(' ');
       currentText += (needsSpace ? ' ' : '') + item.str;
+      currentSize = Math.max(currentSize, fontHeight(item.transform));
     } else {
-      linesRaw.push({ y: currentY, text: currentText.trim() });
+      linesRaw.push({ y: currentY, text: currentText.trim(), size: currentSize });
       currentY = y;
       currentText = item.str;
+      currentSize = fontHeight(item.transform);
     }
   }
-  linesRaw.push({ y: currentY, text: currentText.trim() });
+  linesRaw.push({ y: currentY, text: currentText.trim(), size: currentSize });
 
-  // Merge lines into paragraphs based on Y gap
-  const paragraphs: string[] = [];
+  // Dominant (body) font height: bucket sizes to 0.5px and weight each by the
+  // text length on it, so plentiful body text outweighs the rare large heading.
+  const weight = new Map<number, number>();
+  for (const line of linesRaw) {
+    if (!line.text) continue;
+    const bucket = Math.round(line.size * 2) / 2;
+    weight.set(bucket, (weight.get(bucket) ?? 0) + line.text.length);
+  }
+  let bodySize = 0;
+  let bestWeight = -1;
+  for (const [size, w] of weight) {
+    if (w > bestWeight) { bestWeight = w; bodySize = size; }
+  }
+
+  // Merge lines into blocks; a line whose font clears the heading ratio is
+  // emitted as its own standalone heading block.
+  const blocks: PdfBlock[] = [];
   let para = '';
+  const flush = () => { if (para) { blocks.push({ text: para, heading: false }); para = ''; } };
 
   for (let i = 0; i < linesRaw.length; i++) {
     const line = linesRaw[i];
-    if (!line.text) {
-      if (para) { paragraphs.push(para); para = ''; }
+    if (!line.text) { flush(); continue; }
+
+    if (bodySize > 0 && line.size >= bodySize * HEADING_RATIO) {
+      flush();
+      blocks.push({ text: line.text, heading: true });
       continue;
     }
-    if (i === 0) { para = line.text; continue; }
+
+    if (!para) { para = line.text; continue; }
 
     const prevY = linesRaw[i - 1].y;
     const gap = prevY - line.y;
 
     if (gap > PARA_GAP_THRESHOLD) {
-      if (para) paragraphs.push(para);
+      flush();
       para = line.text;
     } else {
       // Heuristic: if previous line ends with sentence-boundary, start new para
       const endsWithBreak = /[.!?]$/.test(para.trimEnd());
       const nextStartsCapital = /^[A-Z]/.test(line.text);
       if (gap > PARA_GAP_THRESHOLD * 0.8 && endsWithBreak && nextStartsCapital) {
-        if (para) paragraphs.push(para);
+        flush();
         para = line.text;
       } else {
         // Continuation of same paragraph — join with space
@@ -93,9 +129,9 @@ export function itemsToParagraphs(
       }
     }
   }
-  if (para) paragraphs.push(para);
+  flush();
 
-  return paragraphs.filter((p) => p.trim().length > 1);
+  return blocks.filter((b) => b.text.trim().length > 1);
 }
 
 /**
@@ -139,8 +175,8 @@ export async function loadPdf(
         'str' in item && Array.isArray((item as { transform?: unknown }).transform)
       );
 
-    const paragraphs = itemsToParagraphs(items);
-    onPage({ pageNum, paragraphs });
+    const blocks = itemsToBlocks(items);
+    onPage({ pageNum, blocks });
   }
 
   return { totalPages: pdf.numPages, title };

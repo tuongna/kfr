@@ -4,7 +4,7 @@
   import { db } from '$lib/db';
   import { authUser } from '$lib/stores/auth';
   import { tokenizeStem } from '$lib/translate';
-  import { loadPdf, type PdfPage } from '$lib/pdfReader';
+  import { loadPdf, type PdfPage, type PdfBlock } from '$lib/pdfReader';
   import { loadEpub, type EpubChapter } from '$lib/epubReader';
   import type { Term } from '$lib/types';
   import TermPopup from '$lib/components/TermPopup.svelte';
@@ -30,9 +30,10 @@
 
   // ── Reader state (unified PDF + EPUB) ────────────────────────────────────
   // A "section" is either a PDF page or an EPUB chapter — same shape for UI.
+  // Each block is one paragraph or heading (PDF only flags headings).
   interface Section {
     label: string;     // "Page 3" or chapter title
-    paragraphs: string[];
+    blocks: PdfBlock[];
   }
 
   type FileType = 'pdf' | 'epub';
@@ -71,8 +72,8 @@
 
   $: currentUserId = $authUser?.id;
   $: current = sections[currentIdx] ?? null;
-  $: tokenizedParagraphs = current
-    ? current.paragraphs.map((p) => tokenizeStem(p, allTerms))
+  $: tokenizedBlocks = current
+    ? current.blocks.map((b) => ({ heading: b.heading, text: b.text, html: tokenizeStem(b.text, allTerms) }))
     : [];
   $: isEpub = fileType === 'epub';
 
@@ -117,12 +118,15 @@
     try {
       if (fileType === 'epub') {
         await loadEpub(url, (chapter: EpubChapter) => {
-          sections = [...sections, { label: chapter.title, paragraphs: chapter.paragraphs }];
+          sections = [...sections, {
+            label: chapter.title,
+            blocks: chapter.paragraphs.map((text) => ({ text, heading: false }))
+          }];
           totalSections = sections.length;
         });
       } else {
         const meta = await loadPdf(url, (page: PdfPage) => {
-          sections = [...sections, { label: `Trang ${page.pageNum}`, paragraphs: page.paragraphs }];
+          sections = [...sections, { label: `Trang ${page.pageNum}`, blocks: page.blocks }];
         });
         totalSections = meta.totalPages;
       }
@@ -333,20 +337,20 @@
 
       <p class="glossary-hint-label">💡 Click từ bất kỳ để tra nghĩa hoặc chọn cụm từ</p>
 
-      {#each tokenizedParagraphs as html, i}
+      {#each tokenizedBlocks as block}
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <p
-          class="reader-para"
-          data-sentence={current.paragraphs[i]}
+          class="reader-para {block.heading ? 'reader-heading' : ''}"
+          data-sentence={block.text}
           on:click={handleTextInteraction}
           on:keydown={handleTextInteraction}
           role="presentation"
         >
-          {@html html}
+          {@html block.html}
         </p>
       {/each}
 
-      {#if tokenizedParagraphs.length === 0}
+      {#if tokenizedBlocks.length === 0}
         <p class="text-secondary" style="font-style:italic">
           (Mục này không có nội dung văn bản.)
         </p>
@@ -552,4 +556,12 @@
   }
   .reader-para { margin: 0 0 0.85em; line-height: 1.75; }
   .reader-para:last-child { margin-bottom: 0; }
+  .reader-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 1.1em 0 0.5em;
+    color: var(--text, inherit);
+  }
+  .reader-heading:first-child { margin-top: 0; }
 </style>
