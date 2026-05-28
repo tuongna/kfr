@@ -254,3 +254,56 @@ Sau khi AI trả block, làm 6 việc (đều tính trên BLOCK MỚI):
 - **Dịch cả "Scrum"/"Sprint"**: Prompt phụ: "Keep Scrum terminology in English."
 - **Bỏ sót dedup**: AI chèn lại câu đã có. Prompt phụ: "Q{N} stem already exists in
   the current seed — drop it from the INSERT."
+
+---
+
+## Migrate (tùy chọn): master monolithic → chuỗi block scoped
+
+Master hiện tại (75 câu) đang ở **dạng monolithic**: một `DELETE … WHERE source`
+toàn bảng ở đầu file, rồi một block `DO $$ … END $$;` chèn lại tất cả. Bạn **không
+bắt buộc** phải đổi — append block scoped mới vào cuối vẫn chạy tốt (xem mục
+"Tương thích với master cũ"). Nhưng nếu muốn cả file đồng nhất một kiểu, làm
+**3 sửa đổi nhỏ** sau, biến block hiện tại thành block scoped đầu tiên.
+
+> Đây là thao tác thủ công trên file master **local** (gitignored). Không cần AI.
+> Sao lưu file trước khi sửa.
+
+**1. Xoá dòng global DELETE ở đầu file** (ngoài block `DO`):
+
+    -- BỎ dòng này:
+    DELETE FROM public.questions
+    WHERE source = 'Scrum Open Assessment'
+      AND owner_id IS NULL;
+
+**2. Thêm scoped DELETE thành câu lệnh đầu tiên trong `BEGIN`** (ngay sau `BEGIN`,
+liệt kê đúng các UUID đã khai trong `DECLARE` — hiện tại là q1…q75):
+
+    BEGIN
+      -- Scoped cleanup: chỉ các UUID của block này (options cascade).
+      DELETE FROM public.questions WHERE id IN (
+        q1, q2, q3, /* … */ q75
+      );
+
+      -- ────── Questions ──────
+      INSERT INTO public.questions …
+
+**3. Cập nhật comment header** cho khớp cơ chế mới:
+
+    -- Scrum Open Assessment — pool 1-4 (75 questions, PSM-I)
+    -- Incremental block: scoped DELETE+INSERT by UUID. Re-running is safe.
+    -- Existing questions are never touched → SRS progress preserved.
+    -- ⚠️  Personal study use only — access restricted by RLS to owner account.
+
+Sau migrate, file master = **một chuỗi block scoped** (block 1-4, rồi block pool-5,
+pool-6, …). Mỗi pool về sau chỉ việc append như mục "Quy trình" mô tả.
+
+### Lưu ý khi bỏ global DELETE
+
+- **Không tách câu trùng-nhiều-pool**: giữ nguyên 75 UUID trong **một** block đầu
+  tiên. Đừng cố chẻ thành 4 block theo pool-1…pool-4 — câu xuất hiện ở nhiều pool
+  (tags gộp) sẽ không thuộc rõ block nào và dễ chèn trùng id.
+- **Xoá câu khỏi seed không còn tự động xoá khỏi DB**: global DELETE cũ quét theo
+  `source`; scoped DELETE chỉ đụng UUID được liệt kê. Nếu sau này gỡ một câu khỏi
+  seed, phải tự chạy `DELETE FROM public.questions WHERE id = '…';` trên DB.
+- **Idempotent vẫn được đảm bảo**: chạy lại cả file hay từng block đều an toàn,
+  và SRS progress được giữ vì UUID tĩnh không đổi.
