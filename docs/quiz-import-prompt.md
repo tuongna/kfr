@@ -20,6 +20,13 @@ Nguyên tắc nhận diện trùng vẫn theo **stem** (nội dung câu hỏi) �
 > nhưng chỉ **xuất ra một block nhỏ gồm các câu MỚI đã loại trùng** — không in lại
 > toàn bộ câu cũ. Output ngắn hơn rất nhiều.
 
+> **⚠️ Bản quyền — file seed KHÔNG nằm trong repo.** Nội dung là tài liệu
+> Scrum Open Assessment có bản quyền, nên `.gitignore` đã loại `supabase/seed*.sql`.
+> Bạn **giữ file master ở máy local**, không commit. Đường dẫn
+> `supabase/seed_scrum_open_master.sql` ở đây chỉ là quy ước vị trí local.
+>
+> Trạng thái hiện tại: master có **75 câu** (pools 1–4). Pool kế tiếp là **pool-5**.
+
 ## Quy trình thêm câu hỏi mới (2 bước)
 
 **Bước 1 — Chuẩn bị input cho AI:**
@@ -41,6 +48,12 @@ Nguyên tắc nhận diện trùng vẫn theo **stem** (nội dung câu hỏi) �
 
 > **Lần đầu tiên** (chưa có master seed): bỏ qua PHẦN 1, chỉ paste PHẦN 2.
 > AI sẽ tạo block đầu tiên — đó cũng chính là nội dung file master mới.
+
+> **Tương thích với master cũ (monolithic):** master hiện tại bắt đầu bằng một
+> `DELETE … WHERE source = 'Scrum Open Assessment'` rồi chèn lại toàn bộ 75 câu
+> trong một block. Block scoped mới chỉ cần **append vào cuối** và vẫn an toàn:
+> chạy riêng block mới → chỉ đụng UUID mới; chạy lại cả file → global DELETE xoá
+> sạch, block cũ chèn 1–75, block mới chèn phần còn lại. Không cần sửa master cũ.
 
 ---
 
@@ -115,7 +128,7 @@ no global DELETE of the whole table.
 
 ## Pool tag for new questions
 
-Ask the user: "Which pool tag for the new questions? (e.g., scrum-open-pool-4)"
+Ask the user: "Which pool tag for the new questions? (e.g., scrum-open-pool-5)"
 Every NEW question must have that tag as the LAST element of its `tags` array.
 
 ## Translation rules
@@ -137,7 +150,7 @@ Every NEW question must have that tag as the LAST element of its `tags` array.
 ## Tags
 
 Per question: 2-4 topic tags + the pool tag as LAST element. e.g.:
-  ARRAY['sprint-planning', 'timebox', 'scrum-open-pool-4']
+  ARRAY['sprint-planning', 'timebox', 'scrum-open-pool-5']
 Use kebab-case. Include 'multi-select' for choose-2/3 and 'true-false' for T/F.
 
 ## SQL escaping
@@ -164,6 +177,7 @@ Use kebab-case. Include 'multi-select' for choose-2/3 and 'true-false' for T/F.
       -- Scoped cleanup: ONLY the new UUIDs (options cascade). Existing rows untouched.
       DELETE FROM public.questions WHERE id IN (q1, q2, ..., q{{N}});
 
+      -- ────── Questions ──────
       INSERT INTO public.questions
         (id, exam, stem, explanation_en, explanation_vi, tags, term_refs, source, quality)
       VALUES
@@ -173,7 +187,8 @@ Use kebab-case. Include 'multi-select' for choose-2/3 and 'true-false' for T/F.
 
         -- ... (last row ends with `);` not `,`)
 
-      -- Q1: <short label>
+      -- ────── Options ──────
+      -- Q1
       INSERT INTO public.question_options (id, question_id, text, correct, sort_order) VALUES
         (gen_random_uuid(), q1, '{{OPT_A}}', {{true|false}}, 0),
         (gen_random_uuid(), q1, '{{OPT_B}}', {{true|false}}, 1),
