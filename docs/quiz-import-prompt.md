@@ -1,35 +1,46 @@
 # Quiz Import Prompt — tích lũy câu hỏi Scrum Open
 
-## Chiến lược: 1 file seed tích lũy
+## Chiến lược: master seed = chuỗi block theo pool, AI chỉ phát ra phần MỚI
 
 Dự án duy trì **một file seed master** (`supabase/seed_scrum_open_master.sql`)
 chứa TẤT CẢ câu hỏi Scrum Open Assessment duy nhất (không trùng lặp).
 
-- Mỗi câu hỏi được nhận diện bởi **stem** (nội dung câu hỏi) — đây là khoá tự nhiên.
-- Câu hỏi xuất hiện ở nhiều phiên crawl → chỉ giữ **1 bản**, tags gộp cả hai pool.
-- Mỗi câu hỏi có UUID tĩnh cố định — đảm bảo SRS progress không bị mất khi chạy lại seed.
-- File seed master: idempotent — chạy lại bất cứ lúc nào đều an toàn.
+File master là **chuỗi các block độc lập** — mỗi lần crawl/pool thêm vào một block
+`DO $$ … END $$;` riêng. Mỗi block:
+
+- Chỉ thao tác trên **UUID của câu mới trong pool đó** (scoped DELETE rồi INSERT) —
+  **không bao giờ động tới câu hỏi cũ**.
+- Idempotent: chạy lại cả file hay chạy lại một block đều an toàn.
+- Vì `progress.item_id` không phải khoá ngoại tới `questions`, xoá-rồi-chèn-lại với
+  **cùng UUID tĩnh** không làm mất SRS progress.
+
+Nguyên tắc nhận diện trùng vẫn theo **stem** (nội dung câu hỏi) — khoá tự nhiên.
+
+> **Điểm tối ưu chính:** AI **đọc** toàn bộ seed hiện tại (để biết stem nào đã có),
+> nhưng chỉ **xuất ra một block nhỏ gồm các câu MỚI đã loại trùng** — không in lại
+> toàn bộ câu cũ. Output ngắn hơn rất nhiều.
 
 ## Quy trình thêm câu hỏi mới (2 bước)
 
 **Bước 1 — Chuẩn bị input cho AI:**
 
 ```
-[PHẦN 1] Nội dung file seed hiện tại (supabase/seed_scrum_open_master.sql)
+[PHẦN 1] Nội dung file seed hiện tại (supabase/seed_scrum_open_master.sql) — để dedup
 [PHẦN 2] Dữ liệu crawl mới (markdown từ Scrum.org)
 ```
 
-**Bước 2 — Paste vào AI, nhận về file seed mới:**
+**Bước 2 — Paste vào AI, nhận về MỘT block SQL của câu mới:**
 
 1. Mở session AI mới (Claude/GPT/Gemini).
 2. Paste **toàn bộ prompt template** bên dưới.
 3. Paste nội dung **file seed hiện tại** vào sau `<<CURRENT_SEED_START>>`.
 4. Paste **markdown crawl mới** vào sau `<<NEW_CRAWL_START>>`.
-5. AI trả về file SQL. Lưu đè lên `supabase/seed_scrum_open_master.sql`.
-6. Paste vào Supabase SQL Editor → chạy.
+5. AI trả về **một block SQL chỉ gồm câu mới** (đã loại trùng). **Append** block đó
+   vào CUỐI `supabase/seed_scrum_open_master.sql`.
+6. Paste **block đó** vào Supabase SQL Editor → chạy (chỉ cần chạy block mới).
 
 > **Lần đầu tiên** (chưa có master seed): bỏ qua PHẦN 1, chỉ paste PHẦN 2.
-> AI sẽ tạo file master mới hoàn toàn.
+> AI sẽ tạo block đầu tiên — đó cũng chính là nội dung file master mới.
 
 ---
 
@@ -37,28 +48,31 @@ chứa TẤT CẢ câu hỏi Scrum Open Assessment duy nhất (không trùng l�
 
 ```
 You are maintaining a cumulative PostgreSQL seed file for the KfR Scrum
-learning app. Your task:
+learning app. The seed file is a sequence of independent, idempotent blocks
+(one per crawl pool). Your task is to EMIT ONLY ONE NEW BLOCK containing the
+genuinely-new questions from the new crawl — do NOT re-emit existing questions.
 
 1. Parse the CURRENT SEED (between <<CURRENT_SEED_START>> and <<CURRENT_SEED_END>>)
-   to extract all existing questions — each with its UUID, stem, and tags.
-2. Parse the NEW CRAWL DATA (between <<NEW_CRAWL_START>> and <<NEW_CRAWL_END>>)
-   to extract new questions.
-3. Merge: if a new question's stem already exists in the current seed, SKIP the
-   new question (keep the existing record, possibly adding the new pool tag to it).
-   If the stem is genuinely new, add it with a freshly generated static UUID.
-4. Output a single NEW ACCUMULATED SEED FILE that contains all unique questions
-   (old + new), following the template below exactly.
+   to learn which stems ALREADY EXIST and their UUIDs/tags. You read this only
+   to deduplicate — you will NOT output any of these existing questions again.
+2. Parse the NEW CRAWL DATA (between <<NEW_CRAWL_START>> and <<NEW_CRAWL_END>>).
+3. Deduplicate: for each crawl question whose stem already exists in the current
+   seed, SKIP it (do not insert). For each genuinely NEW stem, include it.
+4. Output a SINGLE new SQL block containing ONLY the new (deduplicated)
+   questions, following the block template below exactly.
 
 # DEDUPLICATION RULE
 Stems are compared case-insensitively after stripping leading/trailing whitespace.
-If the crawl produces a question with the exact same or near-identical stem as an
-existing one, keep the EXISTING UUID and merge the tags (union both tag sets).
+A crawl question whose stem matches (exactly or near-identically) an existing one
+is a DUPLICATE → do NOT insert it. Optionally emit a one-line tag-merge UPDATE for
+it (see template) so the existing record also carries the new pool tag.
 
 # UUID RULE
-- PRESERVE all UUIDs from the current seed unchanged.
-- For each NEW question (not in current seed), generate ONE static UUID using:
+- For each NEW question, generate ONE static UUID using:
     python3 -c "import uuid; print(uuid.uuid4())"
   Hardcode the result — never use gen_random_uuid() for question IDs.
+- Do NOT reuse or restate UUIDs of existing questions (except in an optional
+  tag-merge UPDATE that references an existing UUID).
 - question_options may still use gen_random_uuid().
 
 # INPUT FORMAT (NEW CRAWL DATA)
@@ -83,9 +97,10 @@ The markdown contains 20-30 numbered questions. Each question looks like:
 
 # OUTPUT REQUIREMENTS
 
-Produce a single SQL file. Do NOT include markdown fences.
-The file MUST start with `-- Scrum Open Assessment — master seed` and end with
-`END $$;`.
+Produce a SINGLE SQL block (one `DO $$ … END $$;`). Do NOT include markdown fences.
+The block MUST start with `-- Scrum Open Assessment — pool` and end with `END $$;`.
+It MUST contain ONLY the new (deduplicated) questions — no existing questions,
+no global DELETE of the whole table.
 
 ## Schema constraints
 
@@ -101,9 +116,7 @@ The file MUST start with `-- Scrum Open Assessment — master seed` and end with
 ## Pool tag for new questions
 
 Ask the user: "Which pool tag for the new questions? (e.g., scrum-open-pool-4)"
-Every NEW question must have that tag in its `tags` array.
-Existing questions keep their existing tags (and gain the new pool tag if the
-stem matched a duplicate).
+Every NEW question must have that tag as the LAST element of its `tags` array.
 
 ## Translation rules
 
@@ -133,30 +146,29 @@ Use kebab-case. Include 'multi-select' for choose-2/3 and 'true-false' for T/F.
 - Empty term_refs: `'{}'::uuid[]`.
 - Tag arrays: `ARRAY['a', 'b']` syntax.
 
-## File template (FILL IN THE BLANKS)
+## Block template (FILL IN THE BLANKS — emit ONLY the new questions)
 
-    -- Scrum Open Assessment — master seed ({{TOTAL}} questions, PSM-I)
-    -- Accumulated from pools: {{POOL_LIST}}
-    -- Idempotent: DELETE then INSERT. Re-running is safe.
+    -- Scrum Open Assessment — pool {{POOL_TAG}} ({{NEW_COUNT}} new questions, PSM-I)
+    -- Incremental block: scoped DELETE+INSERT by UUID. Re-running is safe.
+    -- Existing questions are never touched → SRS progress preserved.
     -- ⚠️  Personal study use only — access restricted by RLS to owner account.
 
-    DELETE FROM public.questions
-      WHERE source = 'Scrum Open Assessment'
-        AND owner_id IS NULL;
-
     DO $$ DECLARE
-      -- Static UUIDs — preserved from previous runs so SRS progress is not lost.
+      -- Static UUIDs for the NEW questions in this pool only.
       q1   uuid := '{{UUID_1}}';
       q2   uuid := '{{UUID_2}}';
       ...
       q{{N}} uuid := '{{UUID_N}}';
     BEGIN
 
+      -- Scoped cleanup: ONLY the new UUIDs (options cascade). Existing rows untouched.
+      DELETE FROM public.questions WHERE id IN (q1, q2, ..., q{{N}});
+
       INSERT INTO public.questions
         (id, exam, stem, explanation_en, explanation_vi, tags, term_refs, source, quality)
       VALUES
         (q1, 'PSM-I', '{{STEM_1}}', '{{EN_1}}', '{{VI_1}}',
-         ARRAY[{{TOPIC_TAGS_1}}, '{{POOL_TAG_1}}'], '{}'::uuid[],
+         ARRAY[{{TOPIC_TAGS_1}}, '{{POOL_TAG}}'], '{}'::uuid[],
          'Scrum Open Assessment', 'trusted'),
 
         -- ... (last row ends with `);` not `,`)
@@ -169,16 +181,22 @@ Use kebab-case. Include 'multi-select' for choose-2/3 and 'true-false' for T/F.
 
       -- Q2 ... and so on
 
+      -- OPTIONAL — duplicates (skipped above): merge the pool tag into the existing
+      -- record. One line per duplicate; idempotent. Omit if there are no duplicates.
+      UPDATE public.questions SET tags = array_append(tags, '{{POOL_TAG}}')
+        WHERE id = '{{EXISTING_UUID}}' AND NOT ('{{POOL_TAG}}' = ANY(tags));
+
     END $$;
 
 # YOUR TASK
 
 Below you will find:
-  PART 1 — the current accumulated seed (may be empty on first run)
-  PART 2 — the new crawl data to merge in
+  PART 1 — the current accumulated seed (may be empty on first run; read only to dedup)
+  PART 2 — the new crawl data
 
-Merge them into one new accumulated seed following ALL rules above.
-Return ONLY the SQL — no explanation, no markdown fences, no preamble.
+Emit ONE new block containing ONLY the new (deduplicated) questions, following ALL
+rules above. Return ONLY that SQL block — no explanation, no markdown fences, no
+preamble, and no existing questions.
 
 <<CURRENT_SEED_START>>
 [PASTE CONTENT OF supabase/seed_scrum_open_master.sql HERE]
@@ -193,23 +211,31 @@ Return ONLY the SQL — no explanation, no markdown fences, no preamble.
 
 ## Post-generation checklist
 
-Sau khi AI trả file, làm 5 việc:
+Sau khi AI trả block, làm 6 việc (đều tính trên BLOCK MỚI):
 
-1. **Đếm câu**: số `(q1,` `(q2,` … phải = số `q{N} uuid := ` trong DECLARE.
-2. **Đếm correct**: tổng `, true,` = (single) × 1 + (multi-2) × 2 + (multi-3) × 3.
-3. **Multi-select sanity**: câu "choose N answers" → đúng N `true` trong options block.
-4. **T/F sanity**: T/F → 2 options (`True`/`False`), 1 correct.
-5. **UUID sanity**: không có `gen_random_uuid()` trong phần questions INSERT
-   (chỉ cho phép ở question_options).
+1. **Không lặp lại câu cũ**: block chỉ chứa stem MỚI; không có stem nào đã có trong
+   seed hiện tại (trừ dòng UPDATE tag-merge tùy chọn).
+2. **Đếm câu**: số `(q1,` `(q2,` … phải = số `q{N} uuid := ` trong DECLARE
+   và = số UUID trong `DELETE … WHERE id IN (…)`.
+3. **Đếm correct**: tổng `, true,` = (single) × 1 + (multi-2) × 2 + (multi-3) × 3.
+4. **Multi-select sanity**: câu "choose N answers" → đúng N `true` trong options block.
+5. **T/F sanity**: T/F → 2 options (`True`/`False`), 1 correct.
+6. **UUID sanity**: không có `gen_random_uuid()` trong phần questions INSERT
+   (chỉ cho phép ở question_options); không có global DELETE toàn bảng.
 
 ## Common failure modes
 
+- **In lại toàn bộ câu cũ**: AI xuất cả seed thay vì chỉ block mới.
+  Prompt phụ: "Output ONLY the new deduplicated questions as one block — do not
+  re-emit any existing question."
+- **Global DELETE**: AI thêm `DELETE … WHERE source = …` xoá cả bảng.
+  Prompt phụ: "Delete only the new UUIDs via `WHERE id IN (…)`; never delete by source."
 - **Quote không escape**: AI quên double single quote → SQL parse error.
   Prompt phụ: "Re-emit, ensuring all single quotes inside strings are doubled."
 - **Multi-select đếm sai**: AI chọn 3 cho câu choose-2.
   Prompt phụ: "Re-check Q{N}: header says choose {N} but you marked {M} correct."
 - **Quên tag pool**: Prompt phụ: "Every NEW question must have '{{POOL_TAG}}' as
-  last tag. Existing questions keep their existing tags."
+  last tag."
 - **Dịch cả "Scrum"/"Sprint"**: Prompt phụ: "Keep Scrum terminology in English."
-- **Mất UUID cũ**: AI generate UUID mới thay vì giữ nguyên.
-  Prompt phụ: "Preserve all UUIDs from the CURRENT SEED exactly as-is."
+- **Bỏ sót dedup**: AI chèn lại câu đã có. Prompt phụ: "Q{N} stem already exists in
+  the current seed — drop it from the INSERT."
