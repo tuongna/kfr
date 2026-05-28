@@ -110,12 +110,16 @@ export async function loadPdf(
   onPage: (page: PdfPage) => void
 ): Promise<PdfMeta> {
   // Dynamic import — keeps pdfjs-dist out of the main bundle.
-  const pdfjsLib = await import('pdfjs-dist');
+  // The *legacy* build is transpiled and polyfilled (notably Promise.withResolvers)
+  // for older browsers. The modern build calls Promise.withResolvers() directly,
+  // which is absent on Safari < 17.4 (iOS 16/early 17) and throws
+  // "undefined is not a function" during getDocument().
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
 
-  // Point the worker at the pre-built worker file served from /books/
-  // (copied via vite config below).  Falls back to the main thread (slow but works).
+  // The worker has its own global scope, so it must use the matching legacy build
+  // to get the same polyfills. Vite resolves this to an emitted asset URL.
   pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
+    'pdfjs-dist/legacy/build/pdf.worker.min.mjs',
     import.meta.url
   ).href;
 
