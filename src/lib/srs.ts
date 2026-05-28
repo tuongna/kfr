@@ -52,7 +52,7 @@ export function improveProgress(
 
 export function getBadge(level: number): string {
   if (level < 0) return '';
-  return BADGES.slice(0, level + 1).join('');
+  return BADGES[level] ?? '';
 }
 
 export function getTotalXP(progresses: ProgressInput[]): number {
