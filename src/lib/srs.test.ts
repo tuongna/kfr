@@ -114,8 +114,8 @@ describe('getBadge', () => {
     expect(getBadge(0)).toBe('🥉');
   });
 
-  it('returns cumulative badges', () => {
-    expect(getBadge(2)).toBe('🥉🥈🥇');
+  it('returns only the highest badge', () => {
+    expect(getBadge(2)).toBe('🥇');
   });
 });
 
