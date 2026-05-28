@@ -62,8 +62,21 @@ async function syncQuestions(): Promise<void> {
   const { data, error } = await supabase.from('questions').select('*, question_options(*)');
 
   if (error) throw error;
-  // Same guard as syncTerms: don't clear local questions for an empty server response.
-  if (!data?.length) return;
+  if (!data?.length) {
+    // Only clear local cache when the session is confirmed valid.
+    // An expired/invalid token can silently cause RLS to return [] — in that
+    // case keep local data rather than erasing it.
+    // A valid session returning [] means RLS correctly blocked this user,
+    // so stale cached questions must be evicted.
+    const { data: authData } = await supabase.auth.getUser();
+    if (authData?.user) {
+      await db.transaction('rw', db.questions, db.questionOptions, async () => {
+        await db.questions.clear();
+        await db.questionOptions.clear();
+      });
+    }
+    return;
+  }
 
   const questions: Question[] = data.map((q) => ({
     id: q.id,
