@@ -211,7 +211,7 @@
     phase = 'list';
   }
 
-  function notchIndexFromX(clientX: number): number | null {
+  function notchIndexFromPoint(clientX: number, clientY: number): number | null {
     if (!sliderEl) return null;
     const notches = sliderEl.querySelectorAll<HTMLElement>('.ngram-notch');
     let bestIdx = -1;
@@ -221,7 +221,8 @@
       if (idx < 0 || words[idx]?.segment !== initialSegment) continue;
       const r = notches[i].getBoundingClientRect();
       const cx = r.left + r.width / 2;
-      const dist = Math.abs(clientX - cx);
+      const cy = r.top + r.height / 2;
+      const dist = Math.hypot(clientX - cx, clientY - cy);
       if (dist < bestDist) {
         bestDist = dist;
         bestIdx = idx;
@@ -231,7 +232,7 @@
   }
 
   function onPointerDown(e: PointerEvent) {
-    const idx = notchIndexFromX(e.clientX);
+    const idx = notchIndexFromPoint(e.clientX, e.clientY);
     if (idx === null) return;
     e.preventDefault();
     dragOrigin = idx;
@@ -245,18 +246,17 @@
 
   function onPointerMove(e: PointerEvent) {
     if (dragOrigin === null) return;
-    // Auto-scroll when the user drags near the slider edges so off-screen
-    // notches on small screens become reachable while pointer is captured.
+    // Auto-scroll vertically when dragging near top/bottom of the slider.
     if (sliderEl) {
       const rect = sliderEl.getBoundingClientRect();
       const edge = 40;
-      if (e.clientX < rect.left + edge) {
-        sliderEl.scrollLeft -= Math.max(6, (rect.left + edge - e.clientX) / 3);
-      } else if (e.clientX > rect.right - edge) {
-        sliderEl.scrollLeft += Math.max(6, (e.clientX - (rect.right - edge)) / 3);
+      if (e.clientY < rect.top + edge) {
+        sliderEl.scrollTop -= Math.max(6, (rect.top + edge - e.clientY) / 3);
+      } else if (e.clientY > rect.bottom - edge) {
+        sliderEl.scrollTop += Math.max(6, (e.clientY - (rect.bottom - edge)) / 3);
       }
     }
-    const idx = notchIndexFromX(e.clientX);
+    const idx = notchIndexFromPoint(e.clientX, e.clientY);
     if (idx === null) return;
     leftIdx = Math.min(dragOrigin, idx);
     rightIdx = Math.max(dragOrigin, idx);
@@ -473,8 +473,7 @@
   {:else}
     <h3 style="margin:0 0 0.25rem;font-size:1rem">Kéo để chọn cụm</h3>
     <p class="text-secondary" style="font-size:0.78rem;margin-bottom:0.6rem">
-      Mỗi từ là một điểm; không vượt qua dấu câu. Bàn phím: ←/→ chỉnh đầu phải, Shift+←/→ chỉnh đầu
-      trái, Enter để dịch.
+      Kéo để chọn cụm từ — không thể chọn qua dấu câu.
     </p>
 
     <div
