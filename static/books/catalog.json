@@ -9,14 +9,5 @@
     "sourceUrl": "https://scrumguides.org/",
     "tags": ["scrum", "psm", "pspo", "official"],
     "description": "Tài liệu chính thức định nghĩa Scrum Framework (bản US, tháng 11/2020). Phát hành dưới giấy phép Creative Commons BY-SA 4.0."
-  },
-  {
-    "id": "go-with-domain",
-    "title": "Building Modern Business Software in Go",
-    "author": "Robert Laszczak & Miłosz Smółka",
-    "year": 2023,
-    "externalUrl": "https://threedots.tech/go-with-the-domain/",
-    "tags": ["go", "ddd", "software-engineering"],
-    "description": "Domain-Driven Design và Clean Architecture trong Go — Three Dots Labs. Tải miễn phí từ trang chính thức của tác giả."
   }
 ]
