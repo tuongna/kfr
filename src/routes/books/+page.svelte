@@ -44,6 +44,23 @@
   let loadPhase: 'idle' | 'loading' | 'done' = 'idle';
   let showToc = false;         // EPUB: sidebar chapter list
 
+  // ── Reading position persistence ─────────────────────────────────────────
+  const STORAGE_KEY = 'kfr:book-reader';
+
+  function saveReadingState() {
+    if (!selectedBook) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ bookId: selectedBook.id, sectionIdx: currentIdx }));
+    } catch {}
+  }
+
+  function loadReadingState(): { bookId: string; sectionIdx: number } | null {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
   // ── Translate (identical to quiz) ────────────────────────────────────────
   let allTerms: Term[] = [];
   let selectedTermId: string | null = null;
@@ -66,6 +83,13 @@
       const res = await fetch(`${base}/books/catalog.json`);
       if (res.ok) catalog = await res.json();
     } catch { /* catalog optional */ }
+
+    // Restore last reading state
+    const saved = loadReadingState();
+    if (saved && catalog.length > 0) {
+      const lastBook = catalog.find((b) => b.id === saved.bookId && b.file);
+      if (lastBook) await openBook(lastBook);
+    }
   });
 
   // ── Open book ─────────────────────────────────────────────────────────────
@@ -74,6 +98,10 @@
       if (book.externalUrl) window.open(book.externalUrl, '_blank', 'noopener');
       return;
     }
+    // Restore saved position for this book, if any
+    const saved = loadReadingState();
+    const restoreIdx = saved?.bookId === book.id ? saved.sectionIdx : 0;
+
     selectedBook = book;
     sections = [];
     totalSections = 0;
@@ -99,6 +127,8 @@
         totalSections = meta.totalPages;
       }
       loadPhase = 'done';
+      currentIdx = Math.max(0, Math.min(restoreIdx, sections.length - 1));
+      saveReadingState();
     } catch (err) {
       loadError = err instanceof Error ? err.message : String(err);
       loadPhase = 'idle';
@@ -107,9 +137,9 @@
     allTerms = await db.terms.toArray();
   }
 
-  function prev() { if (currentIdx > 0) { currentIdx--; showToc = false; } }
-  function next() { if (currentIdx < sections.length - 1) { currentIdx++; showToc = false; } }
-  function goTo(i: number) { currentIdx = Math.max(0, Math.min(i, sections.length - 1)); showToc = false; }
+  function prev() { if (currentIdx > 0) { currentIdx--; showToc = false; saveReadingState(); } }
+  function next() { if (currentIdx < sections.length - 1) { currentIdx++; showToc = false; saveReadingState(); } }
+  function goTo(i: number) { currentIdx = Math.max(0, Math.min(i, sections.length - 1)); showToc = false; saveReadingState(); }
 
   // ── Tap-to-gloss (mirrors quiz) ───────────────────────────────────────────
   function handleTextInteraction(e: MouseEvent | KeyboardEvent) {
@@ -159,7 +189,7 @@
 <!-- ── SHELF ──────────────────────────────────────────────────────────────── -->
 {#if !selectedBook}
   <div class="books-shelf-header">
-    <h2 class="books-shelf-title">📖 Thư viện tài liệu</h2>
+    <h2 class="books-shelf-title">Thư viện tài liệu</h2>
     <p class="text-secondary" style="font-size:0.88rem;margin:0">
       Click từ bất kỳ để tra nghĩa — giống hệt chức năng trong Quiz.
     </p>
@@ -232,8 +262,13 @@
 
   <!-- Error -->
   {#if loadError}
-    <div class="card" style="border-color:var(--danger);padding:1rem">
-      <p style="color:var(--danger);margin:0">⚠️ Không tải được: {loadError}</p>
+    <div class="card" style="border-color:var(--danger);padding:1rem;display:flex;flex-direction:column;gap:0.5rem">
+      <p style="color:var(--danger);margin:0">Không tải được: {loadError}</p>
+      {#if selectedBook?.sourceUrl}
+        <a href={selectedBook.sourceUrl} target="_blank" rel="noopener" style="font-size:0.85rem;color:var(--primary,#a78bfa)">
+          Mở trang gốc: {selectedBook.sourceUrl}
+        </a>
+      {/if}
     </div>
   {/if}
 
