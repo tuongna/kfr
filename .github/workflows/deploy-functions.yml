@@ -3,7 +3,7 @@ name: Deploy Supabase Edge Functions
 on:
   # Auto-deploy when the function code changes on main
   push:
-    branches: [master, main]
+    branches: [main]
     paths:
       - 'supabase/functions/**'
       - '.github/workflows/deploy-functions.yml'
