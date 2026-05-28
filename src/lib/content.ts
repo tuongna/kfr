@@ -2,20 +2,17 @@ import { supabase } from './supabase';
 import { db } from './db';
 import type { Term, TermSense, Question, QuestionOption } from './types';
 
-const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
-
-function cacheKey(userId?: string): string {
-  return userId ? `content_cached_at_${userId}` : 'content_cached_at';
-}
-
-export async function syncContent(force = false, userId?: string): Promise<void> {
-  const key = cacheKey(userId);
-  const cachedAt = localStorage.getItem(key);
-  const isStale = !cachedAt || Date.now() - parseInt(cachedAt) > CACHE_TTL_MS;
-  if (!force && !isStale) return;
-
-  await Promise.all([syncTerms(), syncQuestions()]);
-  localStorage.setItem(key, Date.now().toString());
+// Network-first: always fetch from Supabase so new content is picked up
+// immediately. Falls back to the existing Dexie cache when offline.
+export async function syncContent(): Promise<void> {
+  try {
+    await Promise.all([syncTerms(), syncQuestions()]);
+  } catch {
+    // Offline or transient network error — use cached data silently.
+    // Throw only if there is no local cache at all (first-time load offline).
+    const hasCache = (await db.questions.count()) > 0 || (await db.terms.count()) > 0;
+    if (!hasCache) throw new Error('No internet connection and no local cache available.');
+  }
 }
 
 async function syncTerms(): Promise<void> {

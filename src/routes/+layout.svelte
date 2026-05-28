@@ -62,7 +62,7 @@
     //  4. populate the in-memory map (scoped by userId)
     await claimLegacyProgress(userId);
     await syncProgressUp(userId);
-    await Promise.all([syncContent(false, userId), syncProgressDown(userId)]);
+    await Promise.all([syncContent(), syncProgressDown(userId)]);
     await loadMastery(userId);
   }
 
