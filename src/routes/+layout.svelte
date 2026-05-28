@@ -84,8 +84,8 @@
   $: currentPath = $page.url.pathname;
 
   const navLinks = [
-    { href: `${base}/books`, label: '📖 Sách' },
-    { href: `${base}/vocab`, label: '📚 Từ đã tra' },
+    { href: `${base}/books`, label: 'Sách' },
+    { href: `${base}/vocab`, label: 'Từ đã tra' },
     { href: `${base}/quiz`, label: 'Kiểm tra' },
   ];
 </script>
@@ -93,7 +93,7 @@
 <div class="app-container">
   <!-- Nav -->
   <nav class="navbar">
-    <a href="{base}/" class="navbar-brand">KfR 📚</a>
+    <a href="{base}/" class="navbar-brand">KfR</a>
     <div class="navbar-links">
       {#each navLinks as link}
         <a href={link.href} class:active={currentPath === link.href || currentPath.startsWith(link.href + '/')}>{link.label}</a>
@@ -138,7 +138,7 @@
       <div class="auth-wall">
         <h2>KfR — Scrum Learning</h2>
         <p class="text-secondary">Học tiếng Anh chuyên ngành Scrum · Luyện thi PSM I &amp; PSPO I</p>
-        <button class="btn btn-primary" on:click={signIn}>🔑 Đăng nhập với Google</button>
+        <button class="btn btn-primary" on:click={signIn}>Đăng nhập với Google</button>
         <p class="text-secondary" style="font-size:0.8rem">Chỉ tài khoản được uỷ quyền mới truy cập được nội dung.</p>
       </div>
     {:else}
