@@ -117,6 +117,18 @@ body {
   font-size: 0.85rem;
 }
 
+.net-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f87171;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.net-dot--online {
+  background: #4ade80;
+}
+
 .navbar-avatar {
   width: 28px;
   height: 28px;

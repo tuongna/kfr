@@ -9,6 +9,7 @@
   import { syncContent } from '$lib/content';
   import { syncProgressDown, syncProgressUp, claimLegacyProgress } from '$lib/sync';
   import { BADGES } from '$lib/srs';
+  import { online } from '$lib/stores/network';
 
   async function initSession() {
     // Use getSession() for the initial page-load check, then listen for
@@ -79,7 +80,19 @@
     clearMastery();
   }
 
-  onMount(initSession);
+  async function handleReconnect() {
+    const user = $authUser;
+    if (!user) return;
+    await syncProgressUp(user.id);
+    await Promise.all([syncContent(), syncProgressDown(user.id)]);
+    await loadMastery(user.id);
+  }
+
+  onMount(() => {
+    initSession();
+    window.addEventListener('online', handleReconnect);
+    return () => window.removeEventListener('online', handleReconnect);
+  });
 
   $: currentPath = $page.url.pathname;
 
@@ -100,6 +113,11 @@
       {/each}
     </div>
     <div class="navbar-user">
+      <span
+        class="net-dot"
+        class:net-dot--online={$online}
+        title={$online ? 'Online' : 'Offline — dùng cache'}
+      ></span>
       {#if $authLoading}
         <div class="loading-spinner" style="width:20px;height:20px;border-width:2px"></div>
       {:else if $authUser}
