@@ -29,6 +29,9 @@
   let sessionQuestions: Question[] = [];
   let sessionIndex = 0;
   let sessionCorrect = 0;
+  // Questions the user actually answered (skipped ones are excluded), so the
+  // score reflects effort instead of being diluted by skips.
+  let answeredCount = 0;
   let sessionDone = false;
   let lookedUpTermsData: Term[] = [];
 
@@ -65,8 +68,9 @@
   $: poolTotal = sessionPool.length;
   $: progressPct = poolTotal ? Math.round((sessionIndex / poolTotal) * 100) : 0;
 
-  // Results derived
-  $: scorePercent = poolTotal ? Math.round((sessionCorrect / poolTotal) * 100) : 0;
+  // Results derived — denominator is answered count, not the pool, so skipped
+  // questions don't count against the score.
+  $: scorePercent = answeredCount ? Math.round((sessionCorrect / answeredCount) * 100) : 0;
   $: adjustedReadiness = Math.max(0, scorePercent - (vocabCount > 4 ? 15 : 0));
   $: readinessVariant =
     adjustedReadiness >= 85 ? 'ready' : adjustedReadiness >= 60 ? 'warn' : 'danger';
@@ -115,6 +119,7 @@
     sessionQuestions = sessionPool.slice(0, loadedCount);
     sessionIndex = 0;
     sessionCorrect = 0;
+    answeredCount = 0;
     sessionDone = false;
     lookedUpTermsData = [];
     answered = false;
@@ -225,6 +230,7 @@
 
   async function submitAnswer() {
     answered = true;
+    answeredCount++;
     const allCorrect =
       selectedIds.size === correctCount && [...selectedIds].every((id) => correctIds.has(id));
     if (allCorrect) sessionCorrect++;
@@ -241,7 +247,8 @@
     loadedCount += next.length;
   }
 
-  async function nextQuestion() {
+  /** Advances to the next question, lazily loading the next page or finishing. */
+  async function advance() {
     showHintPopover = false;
     showExplanationSheet = false;
     if (sessionIndex >= sessionQuestions.length - 1) {
@@ -258,6 +265,15 @@
       // Prefetch the next page a few questions early so advancing never blocks.
       if (sessionIndex >= sessionQuestions.length - 5) loadMoreQuestions();
     }
+  }
+
+  async function nextQuestion() {
+    await advance();
+  }
+
+  /** Skip the current question without answering — not counted toward the score. */
+  async function skipQuestion() {
+    await advance();
   }
 
   async function finishSession() {
@@ -323,8 +339,8 @@
 
     <div class="result-grid">
       <div class="result-stat">
-        <div class="result-stat-value">{sessionCorrect}/{poolTotal}</div>
-        <div class="result-stat-label">Kết quả</div>
+        <div class="result-stat-value">{sessionCorrect}/{answeredCount}</div>
+        <div class="result-stat-label">Đã trả lời</div>
       </div>
       <div class="result-stat">
         <div class="result-stat-value" style="color:var(--success)">{scorePercent}%</div>
@@ -483,21 +499,26 @@
     {/if}
   </div>
 
-  <!-- Hint button + popover (pre-answer only) -->
-  {#if currentQ.explanationVi && !answered}
-    <div class="hint-trigger-wrap">
-      <button
-        class="hint-trigger-btn"
-        on:click={() => (showHintPopover = !showHintPopover)}
-        aria-expanded={showHintPopover}
-      >
-        {showHintPopover ? '▲ Ẩn gợi ý' : '💡 Gợi ý tư duy'}
-      </button>
-      {#if showHintPopover}
-        <div class="hint-popover" role="tooltip">
-          {currentQ.explanationVi}
+  <!-- Pre-answer controls: hint (optional) + skip (always available) -->
+  {#if !answered}
+    <div class="pre-answer-controls">
+      {#if currentQ.explanationVi}
+        <div class="hint-trigger-wrap">
+          <button
+            class="hint-trigger-btn"
+            on:click={() => (showHintPopover = !showHintPopover)}
+            aria-expanded={showHintPopover}
+          >
+            {showHintPopover ? '▲ Ẩn gợi ý' : '💡 Gợi ý tư duy'}
+          </button>
+          {#if showHintPopover}
+            <div class="hint-popover" role="tooltip">
+              {currentQ.explanationVi}
+            </div>
+          {/if}
         </div>
       {/if}
+      <button class="btn btn-ghost btn-sm skip-btn" on:click={skipQuestion}> Bỏ qua ⏭ </button>
     </div>
   {/if}
 
@@ -507,7 +528,7 @@
       <div class="action-bar-status action-bar-status-{isCorrect ? 'correct' : 'incorrect'}">
         <span class="answer-feedback-icon">{isCorrect ? '✓' : '✗'}</span>
         <span>{isCorrect ? 'Chính xác' : 'Chưa đúng'}</span>
-        <span class="session-live-score">{sessionCorrect}/{sessionIndex + 1}</span>
+        <span class="session-live-score">{sessionCorrect}/{answeredCount}</span>
       </div>
       {#if currentQ.explanationVi || currentQ.explanationEn || termRefs.length}
         <button

@@ -99,6 +99,9 @@ export interface AuditResult {
     suggestedVi: string;
     reason: string;
   }[];
+  missingGeneralSense: boolean;
+  suggestedGeneralEn: string;
+  suggestedGeneralVi: string;
   missingScrumSense: boolean;
   suggestedScrumEn: string;
   suggestedScrumVi: string;
@@ -123,10 +126,16 @@ Respond with JSON ONLY — no markdown fences, no extra keys:
       "reason": "<brief explanation of issues, or empty string if both ok>"
     }
   ],
+  "missingGeneralSense": true | false,
+  "suggestedGeneralEn": "<General-context English definition if missingGeneralSense, else empty string>",
+  "suggestedGeneralVi": "<General-context Vietnamese definition if missingGeneralSense, else empty string>",
   "missingScrumSense": true | false,
   "suggestedScrumEn": "<Scrum-specific English definition if missingScrumSense, else empty string>",
   "suggestedScrumVi": "<Scrum-specific Vietnamese definition if missingScrumSense, else empty string>"
 }
+
+Set missingGeneralSense=true only when NO general-register sense was provided in the input.
+Set missingScrumSense=true only when NO scrum-register sense was provided AND the term is a Scrum/Agile term.
 
 CRITICAL RULE — empty or blank fields:
 If any "en" or "vi" field in the input senses is an empty string or contains only whitespace,
@@ -144,7 +153,7 @@ that sense is BROKEN and UNUSABLE. You MUST:
 export async function auditTermSenses(
   termText: string,
   senses: { register: string; en: string; vi: string }[],
-  onAttempt?: OnAttempt,
+  onAttempt?: OnAttempt
 ): Promise<AuditResult> {
   const errors: string[] = [];
   const userMessage = JSON.stringify({ term: termText, senses });
@@ -197,6 +206,9 @@ export async function auditTermSenses(
       return {
         quality: (parsed.quality as AuditResult['quality']) ?? 'fair',
         senseReviews: parsed.senseReviews ?? [],
+        missingGeneralSense: Boolean(parsed.missingGeneralSense),
+        suggestedGeneralEn: String(parsed.suggestedGeneralEn ?? ''),
+        suggestedGeneralVi: String(parsed.suggestedGeneralVi ?? ''),
         missingScrumSense: Boolean(parsed.missingScrumSense),
         suggestedScrumEn: String(parsed.suggestedScrumEn ?? ''),
         suggestedScrumVi: String(parsed.suggestedScrumVi ?? ''),
@@ -226,7 +238,7 @@ export interface TranslateOutcome {
  */
 export async function translateTerm(
   word: string,
-  onAttempt?: OnAttempt,
+  onAttempt?: OnAttempt
 ): Promise<TranslateOutcome> {
   const errors: string[] = [];
 

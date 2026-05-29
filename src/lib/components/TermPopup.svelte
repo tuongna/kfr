@@ -46,6 +46,10 @@
   }> = [];
   let saving: boolean = false;
   let saveError: string = '';
+  /** Active register tab in the edit form. */
+  let editTab: 'general' | 'scrum' = 'scrum';
+  /** Active register tab in the audit results panel. */
+  let auditTab: 'general' | 'scrum' = 'scrum';
 
   // Audit state
   let auditing: boolean = false;
@@ -149,6 +153,12 @@
   /** A sense is usable only when BOTH its English and Vietnamese text are present. */
   function hasUsableMeaning(list: TermSense[]): boolean {
     return list.some((s) => s.en?.trim() && s.vi?.trim());
+  }
+
+  /** Manual fallback: re-run the AI fetch when no usable meaning is shown. */
+  function manualRefetchMeaning(): void {
+    if (!term || autoFilling) return;
+    autoFillEmptySenses(term.id);
   }
 
   /** Writes a sense to Dexie (always) and Supabase (best-effort; ignores RLS/offline). */
@@ -318,6 +328,8 @@
       sortOrder: s.sortOrder,
     }));
     saveError = '';
+    // Open on the tab matching the current learning context.
+    editTab = context === 'scrum' ? 'scrum' : 'general';
     editMode = true;
   }
 
@@ -339,14 +351,14 @@
     editSenses = editSenses.filter((_, idx) => idx !== i);
   }
 
-  function addScrumSense() {
+  function addSense(register: 'general' | 'scrum') {
     if (!term) return;
     editSenses = [
       ...editSenses,
       {
         id: 'new-' + Date.now(),
         termId: term.id,
-        register: 'scrum',
+        register,
         en: '',
         vi: '',
         note: '',
@@ -444,6 +456,7 @@
     auditError = '';
     auditResult = null;
     auditAttempts = [];
+    auditTab = context === 'scrum' ? 'scrum' : 'general';
     startAuditTimer();
     try {
       const result = await auditTermSenses(
@@ -566,21 +579,28 @@
 
   function applyAuditSuggestion(register: 'general' | 'scrum', field: 'en' | 'vi', value: string) {
     enterEditMode();
+    editTab = register;
     const idx = editSenses.findIndex((s) => s.register === register);
     if (idx !== -1) {
       editSenses[idx] = { ...editSenses[idx], [field]: value };
     }
   }
 
-  function applyMissingScrumSense(suggestedEn: string, suggestedVi: string) {
+  /** Adds a suggested missing sense (general or scrum) and jumps to its tab. */
+  function applyMissingSense(
+    register: 'general' | 'scrum',
+    suggestedEn: string,
+    suggestedVi: string
+  ) {
     enterEditMode();
     if (!term) return;
+    editTab = register;
     editSenses = [
       ...editSenses,
       {
         id: 'new-' + Date.now(),
         termId: term.id,
-        register: 'scrum',
+        register,
         en: suggestedEn,
         vi: suggestedVi,
         note: '',
@@ -589,7 +609,10 @@
     ];
   }
 
+  $: hasGeneralSense = editSenses.some((s) => s.register === 'general');
   $: hasScrumSense = editSenses.some((s) => s.register === 'scrum');
+  /** Whether the currently active edit tab already has a sense to edit. */
+  $: activeTabHasSense = editTab === 'scrum' ? hasScrumSense : hasGeneralSense;
 
   /** True when at least one sense has an empty en or vi — triggers the ❌ banner */
   $: hasEmptySenses = senses.some((s) => !s.en.trim() || !s.vi.trim());
@@ -614,42 +637,61 @@
 
       {#if editMode}
         <!-- Edit mode UI -->
+        <div class="sense-tabs" role="tablist">
+          <button
+            class="sense-tab"
+            class:sense-tab--active={editTab === 'general'}
+            role="tab"
+            aria-selected={editTab === 'general'}
+            on:click={() => (editTab = 'general')}
+            type="button">📖 General</button
+          >
+          <button
+            class="sense-tab"
+            class:sense-tab--active={editTab === 'scrum'}
+            role="tab"
+            aria-selected={editTab === 'scrum'}
+            on:click={() => (editTab = 'scrum')}
+            type="button">📋 Scrum</button
+          >
+        </div>
         <div class="edit-senses mt-2">
           {#each editSenses as sense, i}
-            <div class="edit-sense-block">
-              <div
-                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem"
-              >
-                <span class="sense-register-badge register-badge-{sense.register}">
-                  {sense.register === 'scrum' ? '📋 Scrum' : '📖 General'}
-                </span>
-                <button
-                  style="background:none;border:none;color:var(--error);cursor:pointer;font-size:0.8rem;font-family:inherit;padding:0.1rem 0.3rem"
-                  on:click={() => deleteSense(i)}
-                  type="button">✕ Xoá</button
+            {#if sense.register === editTab}
+              <div class="edit-sense-block">
+                <div
+                  style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:0.4rem"
                 >
+                  <button
+                    style="background:none;border:none;color:var(--error);cursor:pointer;font-size:0.8rem;font-family:inherit;padding:0.1rem 0.3rem"
+                    on:click={() => deleteSense(i)}
+                    type="button">✕ Xoá</button
+                  >
+                </div>
+                <label class="edit-field-label" for="edit-en-{i}">EN</label>
+                <textarea id="edit-en-{i}" class="edit-textarea" rows="2" bind:value={sense.en}
+                ></textarea>
+                <label class="edit-field-label" for="edit-vi-{i}" style="margin-top:0.4rem"
+                  >VI</label
+                >
+                <textarea id="edit-vi-{i}" class="edit-textarea" rows="2" bind:value={sense.vi}
+                ></textarea>
+                <label class="edit-field-label" for="edit-note-{i}" style="margin-top:0.4rem"
+                  >Ghi chú</label
+                >
+                <input id="edit-note-{i}" class="edit-input" type="text" bind:value={sense.note} />
               </div>
-              <label class="edit-field-label" for="edit-en-{i}">EN</label>
-              <textarea id="edit-en-{i}" class="edit-textarea" rows="2" bind:value={sense.en}
-              ></textarea>
-              <label class="edit-field-label" for="edit-vi-{i}" style="margin-top:0.4rem">VI</label>
-              <textarea id="edit-vi-{i}" class="edit-textarea" rows="2" bind:value={sense.vi}
-              ></textarea>
-              <label class="edit-field-label" for="edit-note-{i}" style="margin-top:0.4rem"
-                >Ghi chú</label
-              >
-              <input id="edit-note-{i}" class="edit-input" type="text" bind:value={sense.note} />
-            </div>
+            {/if}
           {/each}
 
-          {#if !hasScrumSense}
+          {#if !activeTabHasSense}
             <button
               class="btn btn-ghost btn-sm"
-              on:click={addScrumSense}
+              on:click={() => addSense(editTab)}
               type="button"
               style="margin-bottom:0.5rem"
             >
-              + Thêm nghĩa Scrum
+              + Thêm nghĩa {editTab === 'scrum' ? 'Scrum' : 'General'}
             </button>
           {/if}
 
@@ -687,9 +729,12 @@
             <span class="autofill-spinner" aria-hidden="true"></span>
             Đang lấy nghĩa cho từ này…
           </div>
-        {:else if autoFillError && !hasUsableMeaning(senses)}
+        {:else if !hasUsableMeaning(senses)}
           <div class="autofill-note autofill-note--error">
-            ⚠️ Chưa lấy được nghĩa tự động. Hãy thử mở lại từ này.
+            <span>⚠️ {autoFillError ? 'Dịch tự động thất bại.' : 'Chưa có nghĩa cho từ này.'}</span>
+            <button class="autofill-retry-btn" on:click={manualRefetchMeaning} type="button">
+              🔄 Dịch lại
+            </button>
           </div>
         {/if}
 
@@ -879,6 +924,13 @@
           {/if}
 
           {#if auditResult}
+            {@const tabReviews = auditResult.senseReviews.filter(
+              (r) => r.register === auditTab && (!r.enOk || !r.viOk)
+            )}
+            {@const tabMissing =
+              auditTab === 'general'
+                ? auditResult.missingGeneralSense && !!auditResult.suggestedGeneralEn
+                : auditResult.missingScrumSense && !!auditResult.suggestedScrumEn}
             <div class="audit-panel">
               <!-- Quality indicator -->
               <span
@@ -895,55 +947,89 @@
                     : '❌ Cần sửa'}
               </span>
 
-              <!-- Sense reviews with issues -->
-              {#each auditResult.senseReviews as review}
-                {#if !review.enOk || !review.viOk}
-                  <div class="audit-suggestion">
-                    <span
-                      class="sense-register-badge register-badge-{review.register}"
-                      style="margin-bottom:0.25rem"
-                    >
-                      {review.register === 'scrum' ? '📋 Scrum' : '📖 General'}
-                    </span>
-                    {#if review.reason}
-                      <p class="audit-reason">{review.reason}</p>
-                    {/if}
-                    {#if !review.enOk && review.suggestedEn}
-                      <div class="audit-diff-row">
-                        <span class="audit-diff-current"
-                          >{senses.find((s) => s.register === review.register)?.en ?? ''}</span
-                        >
-                        <span class="audit-diff-arrow">→</span>
-                        <span class="audit-diff-suggested">{review.suggestedEn}</span>
-                        <button
-                          class="audit-apply-btn"
-                          on:click={() =>
-                            applyAuditSuggestion(review.register, 'en', review.suggestedEn)}
-                          type="button">✓ Áp dụng</button
-                        >
-                      </div>
-                    {/if}
-                    {#if !review.viOk && review.suggestedVi}
-                      <div class="audit-diff-row">
-                        <span class="audit-diff-current"
-                          >{senses.find((s) => s.register === review.register)?.vi ?? ''}</span
-                        >
-                        <span class="audit-diff-arrow">→</span>
-                        <span class="audit-diff-suggested">{review.suggestedVi}</span>
-                        <button
-                          class="audit-apply-btn"
-                          on:click={() =>
-                            applyAuditSuggestion(review.register, 'vi', review.suggestedVi)}
-                          type="button">✓ Áp dụng</button
-                        >
-                      </div>
-                    {/if}
-                  </div>
-                {/if}
+              <!-- Register tabs: review General and Scrum separately -->
+              <div class="sense-tabs" role="tablist">
+                <button
+                  class="sense-tab"
+                  class:sense-tab--active={auditTab === 'general'}
+                  role="tab"
+                  aria-selected={auditTab === 'general'}
+                  on:click={() => (auditTab = 'general')}
+                  type="button">📖 General</button
+                >
+                <button
+                  class="sense-tab"
+                  class:sense-tab--active={auditTab === 'scrum'}
+                  role="tab"
+                  aria-selected={auditTab === 'scrum'}
+                  on:click={() => (auditTab = 'scrum')}
+                  type="button">📋 Scrum</button
+                >
+              </div>
+
+              <!-- Sense reviews with issues (active tab only) -->
+              {#each tabReviews as review}
+                <div class="audit-suggestion">
+                  {#if review.reason}
+                    <p class="audit-reason">{review.reason}</p>
+                  {/if}
+                  {#if !review.enOk && review.suggestedEn}
+                    <div class="audit-diff-row">
+                      <span class="audit-diff-current"
+                        >{senses.find((s) => s.register === review.register)?.en ?? ''}</span
+                      >
+                      <span class="audit-diff-arrow">→</span>
+                      <span class="audit-diff-suggested">{review.suggestedEn}</span>
+                      <button
+                        class="audit-apply-btn"
+                        on:click={() =>
+                          applyAuditSuggestion(review.register, 'en', review.suggestedEn)}
+                        type="button">✓ Áp dụng</button
+                      >
+                    </div>
+                  {/if}
+                  {#if !review.viOk && review.suggestedVi}
+                    <div class="audit-diff-row">
+                      <span class="audit-diff-current"
+                        >{senses.find((s) => s.register === review.register)?.vi ?? ''}</span
+                      >
+                      <span class="audit-diff-arrow">→</span>
+                      <span class="audit-diff-suggested">{review.suggestedVi}</span>
+                      <button
+                        class="audit-apply-btn"
+                        on:click={() =>
+                          applyAuditSuggestion(review.register, 'vi', review.suggestedVi)}
+                        type="button">✓ Áp dụng</button
+                      >
+                    </div>
+                  {/if}
+                </div>
               {/each}
 
-              <!-- Missing Scrum sense -->
-              {#if auditResult.missingScrumSense && auditResult.suggestedScrumEn}
+              <!-- Missing sense for the active register -->
+              {#if auditTab === 'general' && auditResult.missingGeneralSense && auditResult.suggestedGeneralEn}
+                <div class="audit-missing-scrum">
+                  <p style="font-size:0.82rem;font-weight:600;margin-bottom:0.3rem">
+                    ➕ Thiếu nghĩa General
+                  </p>
+                  <p style="font-size:0.82rem">{auditResult.suggestedGeneralEn}</p>
+                  <p style="font-size:0.82rem;color:var(--text-secondary);font-style:italic">
+                    {auditResult.suggestedGeneralVi}
+                  </p>
+                  <div class="audit-action-row">
+                    <button
+                      class="audit-apply-btn"
+                      on:click={() =>
+                        applyMissingSense(
+                          'general',
+                          auditResult?.suggestedGeneralEn ?? '',
+                          auditResult?.suggestedGeneralVi ?? ''
+                        )}
+                      type="button">➕ Thêm nghĩa này</button
+                    >
+                  </div>
+                </div>
+              {:else if auditTab === 'scrum' && auditResult.missingScrumSense && auditResult.suggestedScrumEn}
                 <div class="audit-missing-scrum">
                   <p style="font-size:0.82rem;font-weight:600;margin-bottom:0.3rem">
                     ➕ Thiếu nghĩa Scrum
@@ -956,7 +1042,8 @@
                     <button
                       class="audit-apply-btn"
                       on:click={() =>
-                        applyMissingScrumSense(
+                        applyMissingSense(
+                          'scrum',
                           auditResult?.suggestedScrumEn ?? '',
                           auditResult?.suggestedScrumVi ?? ''
                         )}
@@ -964,6 +1051,13 @@
                     >
                   </div>
                 </div>
+              {/if}
+
+              <!-- Nothing flagged for this register -->
+              {#if tabReviews.length === 0 && !tabMissing}
+                <p class="audit-reason" style="font-style:italic">
+                  ✅ Không có vấn đề ở nghĩa {auditTab === 'scrum' ? 'Scrum' : 'General'}.
+                </p>
               {/if}
             </div>
           {/if}
@@ -1031,6 +1125,32 @@
     font-style: italic;
   }
 
+  /* General | Scrum tab switcher (edit + audit) ─────────────────────────────── */
+  .sense-tabs {
+    display: flex;
+    gap: 0.3rem;
+    margin-top: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sense-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    margin-bottom: -1px;
+  }
+
+  .sense-tab--active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+
   /* Auto-fill (fetching a meaning for a blank term) ─────────────────────────── */
   .autofill-note {
     display: flex;
@@ -1050,6 +1170,25 @@
     color: var(--error);
     border-color: var(--error);
     background: rgba(220, 38, 38, 0.07);
+    justify-content: space-between;
+  }
+
+  .autofill-retry-btn {
+    flex-shrink: 0;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+
+  .autofill-retry-btn:hover {
+    filter: brightness(0.95);
   }
 
   .autofill-spinner {
