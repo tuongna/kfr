@@ -20,7 +20,12 @@
   let questionsLoaded = false;
   let sessionInit = false;
 
-  // Session snapshot — linear flow, not an infinite loop
+  // Session snapshot — linear flow, not an infinite loop.
+  // The full pool is computed up front but materialized into `sessionQuestions`
+  // lazily, 30 at a time, so we never build/iterate a huge array in one shot.
+  const SESSION_PAGE_SIZE = 30;
+  let sessionPool: Question[] = [];
+  let loadedCount = 0;
   let sessionQuestions: Question[] = [];
   let sessionIndex = 0;
   let sessionCorrect = 0;
@@ -55,14 +60,13 @@
     selectedIds.size === correctCount &&
     [...selectedIds].every((id) => correctIds.has(id));
   $: vocabCount = $sessionLookups.size;
-  $: progressPct = sessionQuestions.length
-    ? Math.round((sessionIndex / sessionQuestions.length) * 100)
-    : 0;
+  // Total questions in the session = the full pool, even though we only load it
+  // 30 at a time. The progress bar / counters should reflect the real total.
+  $: poolTotal = sessionPool.length;
+  $: progressPct = poolTotal ? Math.round((sessionIndex / poolTotal) * 100) : 0;
 
   // Results derived
-  $: scorePercent = sessionQuestions.length
-    ? Math.round((sessionCorrect / sessionQuestions.length) * 100)
-    : 0;
+  $: scorePercent = poolTotal ? Math.round((sessionCorrect / poolTotal) * 100) : 0;
   $: adjustedReadiness = Math.max(0, scorePercent - (vocabCount > 4 ? 15 : 0));
   $: readinessVariant =
     adjustedReadiness >= 85 ? 'ready' : adjustedReadiness >= 60 ? 'warn' : 'danger';
@@ -106,7 +110,9 @@
   }
 
   function initSession() {
-    sessionQuestions = buildPool(examFilter);
+    sessionPool = buildPool(examFilter);
+    loadedCount = Math.min(SESSION_PAGE_SIZE, sessionPool.length);
+    sessionQuestions = sessionPool.slice(0, loadedCount);
     sessionIndex = 0;
     sessionCorrect = 0;
     sessionDone = false;
@@ -227,13 +233,30 @@
     }
   }
 
+  /** Pulls the next page of questions from the pool into the active session. */
+  function loadMoreQuestions() {
+    if (loadedCount >= sessionPool.length) return;
+    const next = sessionPool.slice(loadedCount, loadedCount + SESSION_PAGE_SIZE);
+    sessionQuestions = [...sessionQuestions, ...next];
+    loadedCount += next.length;
+  }
+
   async function nextQuestion() {
     showHintPopover = false;
     showExplanationSheet = false;
     if (sessionIndex >= sessionQuestions.length - 1) {
-      await finishSession();
+      // Reached the end of what's loaded: pull the next page, or finish if the
+      // whole pool has been consumed.
+      if (loadedCount < sessionPool.length) {
+        loadMoreQuestions();
+        sessionIndex++;
+      } else {
+        await finishSession();
+      }
     } else {
       sessionIndex++;
+      // Prefetch the next page a few questions early so advancing never blocks.
+      if (sessionIndex >= sessionQuestions.length - 5) loadMoreQuestions();
     }
   }
 
@@ -282,7 +305,7 @@
       <span class="vocab-counter-badge">📖 {vocabCount} từ</span>
     {/if}
     {#if !sessionDone}
-      <span class="counter-badge">{sessionQuestions.length} câu</span>
+      <span class="counter-badge">{poolTotal} câu</span>
     {/if}
   </div>
 </div>
@@ -300,7 +323,7 @@
 
     <div class="result-grid">
       <div class="result-stat">
-        <div class="result-stat-value">{sessionCorrect}/{sessionQuestions.length}</div>
+        <div class="result-stat-value">{sessionCorrect}/{poolTotal}</div>
         <div class="result-stat-label">Kết quả</div>
       </div>
       <div class="result-stat">
@@ -358,7 +381,7 @@
   </div>
 
   <!-- ── EMPTY STATE ── -->
-{:else if sessionQuestions.length === 0}
+{:else if poolTotal === 0}
   <div class="empty-state">
     {#if allQuestions.length === 0}
       <p>Chưa có câu hỏi nào. Hãy thêm qua Supabase Studio.</p>
@@ -373,7 +396,7 @@
   <div class="quiz-progress-section">
     <div class="quiz-progress-meta">
       <span class="text-secondary" style="font-size:0.82rem">
-        Câu {sessionIndex + 1} / {sessionQuestions.length}
+        Câu {sessionIndex + 1} / {poolTotal}
       </span>
       <div class="flex items-center gap-1">
         <span class="tag" style="cursor:default">{currentQ.exam}</span>
@@ -496,7 +519,7 @@
         </button>
       {/if}
       <button class="btn btn-primary btn-sm action-bar-next" on:click={nextQuestion}>
-        {sessionIndex < sessionQuestions.length - 1 ? 'Câu tiếp ▶' : '🎓 Xem kết quả'}
+        {sessionIndex < poolTotal - 1 ? 'Câu tiếp ▶' : '🎓 Xem kết quả'}
       </button>
     </div>
   {/if}

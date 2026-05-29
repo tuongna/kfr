@@ -7,7 +7,14 @@
   import { saveProgress } from '$lib/stores/mastery';
   import { progressMap, getProgress } from '$lib/stores/mastery';
   import { improveProgress, canPractice, getBadge } from '$lib/srs';
-  import { auditTermSenses, translateTerm, MODELS, MODEL_DISPLAY, type AuditResult, type ModelAttempt } from '$lib/ai';
+  import {
+    auditTermSenses,
+    translateTerm,
+    MODELS,
+    MODEL_DISPLAY,
+    type AuditResult,
+    type ModelAttempt,
+  } from '$lib/ai';
 
   export let termId: string | null = null;
   /** When true, show a "Chọn cụm khác…" link that lets the parent open the slider. */
@@ -49,6 +56,14 @@
   let auditFinalElapsed = 0;
   let auditElapsedInterval: ReturnType<typeof setInterval> | null = null;
 
+  // Auto-fill state: when a term opens with empty/blank meaning, we fetch a
+  // translation from AI and display it inline — for ALL users, including the
+  // quiz view where allowEdit is false (so the user never sees a blank popup).
+  let autoFilling: boolean = false;
+  let autoFillError: string = '';
+  /** Guards against re-triggering auto-fill for the same term in one open. */
+  let autoFilledFor: string | null = null;
+
   // Retranslate state (for fixing empty/broken senses)
   let retranslating: boolean = false;
   let retranslateError: string = '';
@@ -62,12 +77,21 @@
   }
 
   function friendlyModel(id: string): string {
-    return MODEL_DISPLAY[id] ?? id.replace(/:free$/, '').split('/').pop() ?? id;
+    return (
+      MODEL_DISPLAY[id] ??
+      id
+        .replace(/:free$/, '')
+        .split('/')
+        .pop() ??
+      id
+    );
   }
 
   function startAuditTimer() {
     auditElapsed = 0;
-    auditElapsedInterval = setInterval(() => { auditElapsed += 1; }, 1000);
+    auditElapsedInterval = setInterval(() => {
+      auditElapsed += 1;
+    }, 1000);
   }
 
   function stopAuditTimer() {
@@ -79,7 +103,9 @@
 
   function startRetranslateTimer() {
     retranslateElapsed = 0;
-    retranslateElapsedInterval = setInterval(() => { retranslateElapsed += 1; }, 1000);
+    retranslateElapsedInterval = setInterval(() => {
+      retranslateElapsed += 1;
+    }, 1000);
   }
 
   function stopRetranslateTimer() {
@@ -94,6 +120,7 @@
   async function loadTerm(id: string) {
     loading = true;
     editMode = false;
+    autoFillError = '';
     resetAuditState();
     resetRetranslateState();
     [term, senses] = await Promise.all([
@@ -111,12 +138,116 @@
     });
 
     loading = false;
+
+    // No usable meaning cached → fetch one from AI so the popup is never blank.
+    if (term && autoFilledFor !== id && !hasUsableMeaning(senses)) {
+      autoFilledFor = id;
+      autoFillEmptySenses(id);
+    }
+  }
+
+  /** A sense is usable only when BOTH its English and Vietnamese text are present. */
+  function hasUsableMeaning(list: TermSense[]): boolean {
+    return list.some((s) => s.en?.trim() && s.vi?.trim());
+  }
+
+  /** Writes a sense to Dexie (always) and Supabase (best-effort; ignores RLS/offline). */
+  async function persistSense(s: TermSense): Promise<void> {
+    await db.termSenses.put(s);
+    try {
+      const payload = {
+        id: s.id,
+        term_id: s.termId,
+        register: s.register,
+        en: s.en,
+        vi: s.vi,
+        sort_order: s.sortOrder,
+      };
+      let { error } = await supabase
+        .from('term_senses')
+        .upsert({ ...payload, note: s.note ?? null });
+      if (error?.code === 'PGRST204' || error?.message?.includes("'note' column")) {
+        ({ error } = await supabase.from('term_senses').upsert(payload));
+      }
+      // Any remaining error (e.g. RLS for a non-owner) is non-fatal: the local
+      // Dexie copy already makes the meaning visible and cached.
+    } catch {
+      // Offline — local cache is enough.
+    }
+  }
+
+  /**
+   * Fetches a translation for the current term and fills any empty/blank senses,
+   * then reloads the senses for display. Runs for every user (no edit gate).
+   */
+  async function autoFillEmptySenses(startedId: string): Promise<void> {
+    if (!term) return;
+    autoFilling = true;
+    autoFillError = '';
+    try {
+      const { result } = await translateTerm(term.text);
+      if (!term || term.id !== startedId) return;
+
+      const general = senses.find((s) => s.register === 'general');
+      if (general) {
+        await persistSense({
+          ...general,
+          en: general.en?.trim() ? general.en : result.en,
+          vi: general.vi?.trim() ? general.vi : result.vi,
+          note: general.note?.trim() ? general.note : result.note || undefined,
+        });
+      } else {
+        await persistSense({
+          id: crypto.randomUUID(),
+          termId: startedId,
+          register: 'general',
+          en: result.en,
+          vi: result.vi,
+          note: result.note || undefined,
+          sortOrder: 0,
+        });
+      }
+
+      // Add/fill a Scrum sense when the AI identifies this as a Scrum term.
+      if (result.isScrumTerm && result.scrumEn) {
+        const scrum = senses.find((s) => s.register === 'scrum');
+        if (!scrum) {
+          await persistSense({
+            id: crypto.randomUUID(),
+            termId: startedId,
+            register: 'scrum',
+            en: result.scrumEn,
+            vi: result.scrumVi ?? '',
+            sortOrder: 1,
+          });
+        } else if (!scrum.en?.trim() || !scrum.vi?.trim()) {
+          await persistSense({
+            ...scrum,
+            en: scrum.en?.trim() ? scrum.en : result.scrumEn,
+            vi: scrum.vi?.trim() ? scrum.vi : (result.scrumVi ?? ''),
+          });
+        }
+      }
+
+      if (term && term.id === startedId) {
+        senses = await db.termSenses.where('termId').equals(startedId).sortBy('sortOrder');
+      }
+    } catch (e) {
+      if (term && term.id === startedId) {
+        autoFillError = e instanceof Error ? e.message : String(e);
+      }
+    } finally {
+      if (term && term.id === startedId) autoFilling = false;
+    }
   }
 
   function close() {
     term = null;
     senses = [];
     editMode = false;
+    autoFilling = false;
+    autoFillError = '';
+    autoFilledFor = null;
     resetAuditState();
     resetRetranslateState();
     dispatch('close');
@@ -230,7 +361,9 @@
     saveError = '';
     try {
       const originalIds = new Set(senses.map((s) => s.id));
-      const editedIds = new Set(editSenses.filter((s) => !s.id.startsWith('new-')).map((s) => s.id));
+      const editedIds = new Set(
+        editSenses.filter((s) => !s.id.startsWith('new-')).map((s) => s.id)
+      );
 
       // Update existing senses
       for (const sense of editSenses) {
@@ -393,7 +526,10 @@
       // Fill or add Scrum sense if AI identified this as a Scrum term
       if (result.isScrumTerm && result.scrumEn && result.scrumVi) {
         const scrumIdx = editSenses.findIndex((s) => s.register === 'scrum');
-        if (scrumIdx !== -1 && (!editSenses[scrumIdx].en.trim() || !editSenses[scrumIdx].vi.trim())) {
+        if (
+          scrumIdx !== -1 &&
+          (!editSenses[scrumIdx].en.trim() || !editSenses[scrumIdx].vi.trim())
+        ) {
           // Overwrite only if the existing scrum sense is also empty
           editSenses[scrumIdx] = {
             ...editSenses[scrumIdx],
@@ -481,42 +617,38 @@
         <div class="edit-senses mt-2">
           {#each editSenses as sense, i}
             <div class="edit-sense-block">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem">
+              <div
+                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem"
+              >
                 <span class="sense-register-badge register-badge-{sense.register}">
                   {sense.register === 'scrum' ? '📋 Scrum' : '📖 General'}
                 </span>
                 <button
                   style="background:none;border:none;color:var(--error);cursor:pointer;font-size:0.8rem;font-family:inherit;padding:0.1rem 0.3rem"
                   on:click={() => deleteSense(i)}
-                  type="button"
-                >✕ Xoá</button>
+                  type="button">✕ Xoá</button
+                >
               </div>
               <label class="edit-field-label" for="edit-en-{i}">EN</label>
-              <textarea
-                id="edit-en-{i}"
-                class="edit-textarea"
-                rows="2"
-                bind:value={sense.en}
+              <textarea id="edit-en-{i}" class="edit-textarea" rows="2" bind:value={sense.en}
               ></textarea>
               <label class="edit-field-label" for="edit-vi-{i}" style="margin-top:0.4rem">VI</label>
-              <textarea
-                id="edit-vi-{i}"
-                class="edit-textarea"
-                rows="2"
-                bind:value={sense.vi}
+              <textarea id="edit-vi-{i}" class="edit-textarea" rows="2" bind:value={sense.vi}
               ></textarea>
-              <label class="edit-field-label" for="edit-note-{i}" style="margin-top:0.4rem">Ghi chú</label>
-              <input
-                id="edit-note-{i}"
-                class="edit-input"
-                type="text"
-                bind:value={sense.note}
-              />
+              <label class="edit-field-label" for="edit-note-{i}" style="margin-top:0.4rem"
+                >Ghi chú</label
+              >
+              <input id="edit-note-{i}" class="edit-input" type="text" bind:value={sense.note} />
             </div>
           {/each}
 
           {#if !hasScrumSense}
-            <button class="btn btn-ghost btn-sm" on:click={addScrumSense} type="button" style="margin-bottom:0.5rem">
+            <button
+              class="btn btn-ghost btn-sm"
+              on:click={addScrumSense}
+              type="button"
+              style="margin-bottom:0.5rem"
+            >
               + Thêm nghĩa Scrum
             </button>
           {/if}
@@ -549,13 +681,22 @@
           </p>
         {/if}
 
+        <!-- Auto-fill status: shown while fetching a meaning for a blank term -->
+        {#if autoFilling}
+          <div class="autofill-note">
+            <span class="autofill-spinner" aria-hidden="true"></span>
+            Đang lấy nghĩa cho từ này…
+          </div>
+        {:else if autoFillError && !hasUsableMeaning(senses)}
+          <div class="autofill-note autofill-note--error">
+            ⚠️ Chưa lấy được nghĩa tự động. Hãy thử mở lại từ này.
+          </div>
+        {/if}
+
         <!-- All senses, ordered by context priority -->
         <div class="senses mt-2">
           {#each sortedSenses as sense, i}
-            <div
-              class="sense register-{sense.register}"
-              class:sense-primary={i === 0}
-            >
+            <div class="sense register-{sense.register}" class:sense-primary={i === 0}>
               <div class="sense-register-badge register-badge-{sense.register}">
                 {sense.register === 'scrum' ? '📋 Scrum' : '📖 General'}
                 {#if i === 0 && sortedSenses.length > 1}
@@ -574,7 +715,7 @@
         <!-- Edit / Audit buttons -->
         {#if allowEdit}
           <!-- ❌ Empty-sense major warning — shown when any sense has blank en or vi -->
-          {#if hasEmptySenses && !editMode}
+          {#if hasEmptySenses && !editMode && !autoFilling}
             <div class="empty-sense-banner">
               <span class="empty-sense-icon">❌</span>
               <div class="empty-sense-text">
@@ -598,7 +739,10 @@
 
           <!-- Retranslate model-progress panel -->
           {#if retranslating || (retranslateAttempts.length && !editMode)}
-            <div class="audit-progress" class:audit-progress--done={!retranslating && retranslateAttempts.length > 0}>
+            <div
+              class="audit-progress"
+              class:audit-progress--done={!retranslating && retranslateAttempts.length > 0}
+            >
               <div class="ap-header">
                 <span class="ap-status">
                   {#if retranslating}
@@ -610,15 +754,22 @@
                   {/if}
                 </span>
                 {#if retranslating && retranslateElapsed >= 1}
-                  <span class="ap-elapsed" class:ap-elapsed--slow={retranslateElapsed >= 8}>⏱ {retranslateElapsed}s</span>
+                  <span class="ap-elapsed" class:ap-elapsed--slow={retranslateElapsed >= 8}
+                    >⏱ {retranslateElapsed}s</span
+                  >
                 {:else if !retranslating && retranslateFinalElapsed >= 1}
                   <span class="ap-elapsed" style="opacity:0.5">⏱ {retranslateFinalElapsed}s</span>
                 {/if}
               </div>
               <div class="ap-track">
                 {#each MODELS as m, i}
-                  {@const st = i < retranslateAttempts.length ? retranslateAttempts[i].status : 'pending'}
-                  <div class="ap-dot ap-dot--{st}" class:ap-dot--free={isFreeModel(m)} title="{friendlyModel(m)}"></div>
+                  {@const st =
+                    i < retranslateAttempts.length ? retranslateAttempts[i].status : 'pending'}
+                  <div
+                    class="ap-dot ap-dot--{st}"
+                    class:ap-dot--free={isFreeModel(m)}
+                    title={friendlyModel(m)}
+                  ></div>
                 {/each}
                 <span class="ap-fraction">{retranslateAttempts.length}/{MODELS.length}</span>
               </div>
@@ -668,7 +819,10 @@
 
           <!-- Audit model-progress panel (mirrors NgramPopup translate progress) -->
           {#if auditing || auditAttempts.length}
-            <div class="audit-progress" class:audit-progress--done={!auditing && auditAttempts.length > 0}>
+            <div
+              class="audit-progress"
+              class:audit-progress--done={!auditing && auditAttempts.length > 0}
+            >
               <div class="ap-header">
                 <span class="ap-status">
                   {#if auditing}
@@ -680,7 +834,9 @@
                   {/if}
                 </span>
                 {#if auditing && auditElapsed >= 1}
-                  <span class="ap-elapsed" class:ap-elapsed--slow={auditElapsed >= 8}>⏱ {auditElapsed}s</span>
+                  <span class="ap-elapsed" class:ap-elapsed--slow={auditElapsed >= 8}
+                    >⏱ {auditElapsed}s</span
+                  >
                 {:else if !auditing && auditFinalElapsed >= 1}
                   <span class="ap-elapsed" style="opacity:0.5">⏱ {auditFinalElapsed}s</span>
                 {/if}
@@ -688,7 +844,11 @@
               <div class="ap-track">
                 {#each MODELS as m, i}
                   {@const st = i < auditAttempts.length ? auditAttempts[i].status : 'pending'}
-                  <div class="ap-dot ap-dot--{st}" class:ap-dot--free={isFreeModel(m)} title="{friendlyModel(m)}"></div>
+                  <div
+                    class="ap-dot ap-dot--{st}"
+                    class:ap-dot--free={isFreeModel(m)}
+                    title={friendlyModel(m)}
+                  ></div>
                 {/each}
                 <span class="ap-fraction">{auditAttempts.length}/{MODELS.length}</span>
               </div>
@@ -721,15 +881,28 @@
           {#if auditResult}
             <div class="audit-panel">
               <!-- Quality indicator -->
-              <span class="audit-quality-badge {auditResult.quality === 'good' ? 'audit-quality-good' : auditResult.quality === 'fair' ? 'audit-quality-fair' : 'audit-quality-poor'}">
-                {auditResult.quality === 'good' ? '✅ Tốt' : auditResult.quality === 'fair' ? '⚠️ Khá' : '❌ Cần sửa'}
+              <span
+                class="audit-quality-badge {auditResult.quality === 'good'
+                  ? 'audit-quality-good'
+                  : auditResult.quality === 'fair'
+                    ? 'audit-quality-fair'
+                    : 'audit-quality-poor'}"
+              >
+                {auditResult.quality === 'good'
+                  ? '✅ Tốt'
+                  : auditResult.quality === 'fair'
+                    ? '⚠️ Khá'
+                    : '❌ Cần sửa'}
               </span>
 
               <!-- Sense reviews with issues -->
               {#each auditResult.senseReviews as review}
                 {#if !review.enOk || !review.viOk}
                   <div class="audit-suggestion">
-                    <span class="sense-register-badge register-badge-{review.register}" style="margin-bottom:0.25rem">
+                    <span
+                      class="sense-register-badge register-badge-{review.register}"
+                      style="margin-bottom:0.25rem"
+                    >
                       {review.register === 'scrum' ? '📋 Scrum' : '📖 General'}
                     </span>
                     {#if review.reason}
@@ -737,26 +910,32 @@
                     {/if}
                     {#if !review.enOk && review.suggestedEn}
                       <div class="audit-diff-row">
-                        <span class="audit-diff-current">{senses.find(s => s.register === review.register)?.en ?? ''}</span>
+                        <span class="audit-diff-current"
+                          >{senses.find((s) => s.register === review.register)?.en ?? ''}</span
+                        >
                         <span class="audit-diff-arrow">→</span>
                         <span class="audit-diff-suggested">{review.suggestedEn}</span>
                         <button
                           class="audit-apply-btn"
-                          on:click={() => applyAuditSuggestion(review.register, 'en', review.suggestedEn)}
-                          type="button"
-                        >✓ Áp dụng</button>
+                          on:click={() =>
+                            applyAuditSuggestion(review.register, 'en', review.suggestedEn)}
+                          type="button">✓ Áp dụng</button
+                        >
                       </div>
                     {/if}
                     {#if !review.viOk && review.suggestedVi}
                       <div class="audit-diff-row">
-                        <span class="audit-diff-current">{senses.find(s => s.register === review.register)?.vi ?? ''}</span>
+                        <span class="audit-diff-current"
+                          >{senses.find((s) => s.register === review.register)?.vi ?? ''}</span
+                        >
                         <span class="audit-diff-arrow">→</span>
                         <span class="audit-diff-suggested">{review.suggestedVi}</span>
                         <button
                           class="audit-apply-btn"
-                          on:click={() => applyAuditSuggestion(review.register, 'vi', review.suggestedVi)}
-                          type="button"
-                        >✓ Áp dụng</button>
+                          on:click={() =>
+                            applyAuditSuggestion(review.register, 'vi', review.suggestedVi)}
+                          type="button">✓ Áp dụng</button
+                        >
                       </div>
                     {/if}
                   </div>
@@ -766,15 +945,23 @@
               <!-- Missing Scrum sense -->
               {#if auditResult.missingScrumSense && auditResult.suggestedScrumEn}
                 <div class="audit-missing-scrum">
-                  <p style="font-size:0.82rem;font-weight:600;margin-bottom:0.3rem">➕ Thiếu nghĩa Scrum</p>
+                  <p style="font-size:0.82rem;font-weight:600;margin-bottom:0.3rem">
+                    ➕ Thiếu nghĩa Scrum
+                  </p>
                   <p style="font-size:0.82rem">{auditResult.suggestedScrumEn}</p>
-                  <p style="font-size:0.82rem;color:var(--text-secondary);font-style:italic">{auditResult.suggestedScrumVi}</p>
+                  <p style="font-size:0.82rem;color:var(--text-secondary);font-style:italic">
+                    {auditResult.suggestedScrumVi}
+                  </p>
                   <div class="audit-action-row">
                     <button
                       class="audit-apply-btn"
-                      on:click={() => applyMissingScrumSense(auditResult?.suggestedScrumEn ?? '', auditResult?.suggestedScrumVi ?? '')}
-                      type="button"
-                    >➕ Thêm nghĩa này</button>
+                      on:click={() =>
+                        applyMissingScrumSense(
+                          auditResult?.suggestedScrumEn ?? '',
+                          auditResult?.suggestedScrumVi ?? ''
+                        )}
+                      type="button">➕ Thêm nghĩa này</button
+                    >
                   </div>
                 </div>
               {/if}
@@ -842,6 +1029,44 @@
     color: var(--text-secondary);
     margin-top: 0.35rem;
     font-style: italic;
+  }
+
+  /* Auto-fill (fetching a meaning for a blank term) ─────────────────────────── */
+  .autofill-note {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: 0.6rem;
+    padding: 0.45rem 0.6rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .autofill-note--error {
+    color: var(--error);
+    border-color: var(--error);
+    background: rgba(220, 38, 38, 0.07);
+  }
+
+  .autofill-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: autofill-spin 0.75s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes autofill-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   /* Override global .sense styles with more prominent register badge */
@@ -916,7 +1141,9 @@
     color: var(--primary);
     cursor: pointer;
     font-family: inherit;
-    transition: background 0.15s, border-color 0.15s;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
   }
 
   .phrase-word-chip:hover {
@@ -1011,7 +1238,9 @@
   }
 
   @keyframes ap-spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .ap-elapsed {
@@ -1042,7 +1271,9 @@
     transition: background 0.2s;
   }
 
-  .ap-dot--pending { opacity: 0.3; }
+  .ap-dot--pending {
+    opacity: 0.3;
+  }
 
   .ap-dot--trying {
     background: var(--primary);
@@ -1051,8 +1282,15 @@
   }
 
   @keyframes ap-dot-pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.4); opacity: 0.65; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.4);
+      opacity: 0.65;
+    }
   }
 
   .ap-dot--failed {
@@ -1090,9 +1328,16 @@
     line-height: 1.5;
   }
 
-  .ap-icon { width: 0.9rem; text-align: center; flex-shrink: 0; }
+  .ap-icon {
+    width: 0.9rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
 
-  .ap-spin { display: inline-block; animation: ap-spin 0.9s linear infinite; }
+  .ap-spin {
+    display: inline-block;
+    animation: ap-spin 0.9s linear infinite;
+  }
 
   .ap-badge {
     font-size: 0.58rem;
@@ -1121,14 +1366,37 @@
     white-space: nowrap;
   }
 
-  .ap-running { font-size: 0.7rem; color: var(--primary); font-style: italic; }
-  .ap-err     { font-size: 0.7rem; color: var(--text-secondary); font-style: italic; }
+  .ap-running {
+    font-size: 0.7rem;
+    color: var(--primary);
+    font-style: italic;
+  }
+  .ap-err {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
 
-  .ap-row--trying .ap-model { border-color: var(--primary); color: var(--primary); }
-  .ap-row--failed { color: var(--text-secondary); }
-  .ap-row--failed .ap-model { text-decoration: line-through; opacity: 0.6; }
-  .ap-row--succeeded { color: var(--success); font-weight: 600; }
-  .ap-row--succeeded .ap-model { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .ap-row--trying .ap-model {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .ap-row--failed {
+    color: var(--text-secondary);
+  }
+  .ap-row--failed .ap-model {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+  .ap-row--succeeded {
+    color: var(--success);
+    font-weight: 600;
+  }
+  .ap-row--succeeded .ap-model {
+    border-color: var(--success);
+    background: var(--success-light);
+    color: var(--success);
+  }
 
   .ap-slow {
     font-size: 0.74rem;
