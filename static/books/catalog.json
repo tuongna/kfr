@@ -9,5 +9,16 @@
     "sourceUrl": "https://scrumguides.org/",
     "tags": ["scrum", "psm", "pspo", "official"],
     "description": "Tài liệu chính thức định nghĩa Scrum Framework (bản US, tháng 11/2020). Phát hành dưới giấy phép Creative Commons BY-SA 4.0."
+  },
+  {
+    "id": "javascript-info",
+    "title": "The Modern JavaScript Tutorial",
+    "author": "Ilya Kantor",
+    "year": 2024,
+    "file": "javascript-info.jsinfo",
+    "license": "CC BY-NC 4.0",
+    "sourceUrl": "https://javascript.info",
+    "tags": ["javascript", "web", "dom", "async", "tutorial"],
+    "description": "Hướng dẫn JavaScript hiện đại từ cơ bản đến nâng cao — cú pháp, DOM, sự kiện, Promise, Fetch và hơn thế nữa."
   }
 ]
