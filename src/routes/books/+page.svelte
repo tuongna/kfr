@@ -6,6 +6,7 @@
   import { tokenizeStem } from '$lib/translate';
   import { loadPdf, type PdfPage, type PdfBlock } from '$lib/pdfReader';
   import { loadEpub, type EpubChapter } from '$lib/epubReader';
+  import { flattenToc, fetchJsInfoArticle, articleWebUrl } from '$lib/jsInfoReader';
   import type { Term } from '$lib/types';
   import TermPopup from '$lib/components/TermPopup.svelte';
   import NgramPopup from '$lib/components/NgramPopup.svelte';
@@ -28,16 +29,19 @@
   let catalog: BookEntry[] = [];
   let selectedBook: BookEntry | null = null;
 
-  // ── Reader state (unified PDF + EPUB) ────────────────────────────────────
-  // A "section" is either a PDF page or an EPUB chapter — same shape for UI.
-  // Each block is one paragraph or heading (PDF only flags headings).
+  // ── Reader state (unified PDF + EPUB + jsinfo) ───────────────────────────
+  // A "section" is a PDF page, EPUB chapter, or javascript.info article.
+  // `path` is set only for jsinfo sections; blocks are loaded lazily on demand.
   interface Section {
-    label: string;     // "Page 3" or chapter title
+    label: string;
     blocks: PdfBlock[];
+    path?: string; // jsinfo article path, e.g. "1-js/02-first-steps/04-variables"
   }
 
-  type FileType = 'pdf' | 'epub';
+  type FileType = 'pdf' | 'epub' | 'jsinfo';
   let fileType: FileType = 'pdf';
+  let sectionLoading = false;
+  let sectionError = '';
   let sections: Section[] = [];
   let totalSections = 0;       // known total (PDF: numPages; EPUB: grows as loaded)
   let currentIdx = 0;
@@ -76,6 +80,28 @@
     ? current.blocks.map((b) => ({ heading: b.heading, text: b.text, html: tokenizeStem(b.text, allTerms) }))
     : [];
   $: isEpub = fileType === 'epub';
+  $: isJsInfo = fileType === 'jsinfo';
+  $: isChapterBased = isEpub || isJsInfo;
+
+  // Lazy-load jsinfo article content when navigating to an unloaded section.
+  $: if (isJsInfo && current && current.blocks.length === 0 && !sectionLoading && loadPhase === 'done') {
+    void loadCurrentSection();
+  }
+
+  async function loadCurrentSection() {
+    const sec = sections[currentIdx];
+    if (!sec?.path) return;
+    sectionLoading = true;
+    sectionError = '';
+    try {
+      const blocks = await fetchJsInfoArticle(sec.path);
+      sections = sections.map((s, i) => i === currentIdx ? { ...s, blocks } : s);
+    } catch (err) {
+      sectionError = err instanceof Error ? err.message : String(err);
+    } finally {
+      sectionLoading = false;
+    }
+  }
 
   // ── Init ─────────────────────────────────────────────────────────────────
   onMount(async () => {
@@ -112,11 +138,22 @@
     showToc = false;
 
     const ext = book.file.split('.').pop()?.toLowerCase();
-    fileType = ext === 'epub' ? 'epub' : 'pdf';
+    fileType = ext === 'epub' ? 'epub' : ext === 'jsinfo' ? 'jsinfo' : 'pdf';
     const url = `${base}/books/${book.file}`;
 
+    sectionLoading = false;
+    sectionError = '';
+
     try {
-      if (fileType === 'epub') {
+      if (fileType === 'jsinfo') {
+        // Pre-populate TOC; article content loads lazily when navigating.
+        const articles = flattenToc();
+        sections = articles.map((a) => ({ label: a.title, blocks: [], path: a.path }));
+        totalSections = sections.length;
+        loadPhase = 'done';
+        currentIdx = Math.max(0, Math.min(restoreIdx, sections.length - 1));
+        saveReadingState();
+      } else if (fileType === 'epub') {
         await loadEpub(url, (chapter: EpubChapter) => {
           sections = [...sections, {
             label: chapter.title,
@@ -124,15 +161,18 @@
           }];
           totalSections = sections.length;
         });
+        loadPhase = 'done';
+        currentIdx = Math.max(0, Math.min(restoreIdx, sections.length - 1));
+        saveReadingState();
       } else {
         const meta = await loadPdf(url, (page: PdfPage) => {
           sections = [...sections, { label: `Trang ${page.pageNum}`, blocks: page.blocks }];
         });
         totalSections = meta.totalPages;
+        loadPhase = 'done';
+        currentIdx = Math.max(0, Math.min(restoreIdx, sections.length - 1));
+        saveReadingState();
       }
-      loadPhase = 'done';
-      currentIdx = Math.max(0, Math.min(restoreIdx, sections.length - 1));
-      saveReadingState();
     } catch (err) {
       loadError = err instanceof Error ? err.message : String(err);
       loadPhase = 'idle';
@@ -211,7 +251,7 @@
         {@const isExternal = !book.file && !!book.externalUrl}
         <button class="book-card" on:click={() => openBook(book)}>
           <div class="book-cover">
-            {isExternal ? '🔗' : ext === 'EPUB' ? '📘' : '📄'}
+            {isExternal ? '🔗' : ext === 'EPUB' ? '📘' : ext === 'JSINFO' ? '📗' : '📄'}
           </div>
           <div class="book-info">
             <div class="book-title">{book.title}</div>
@@ -251,10 +291,10 @@
         </span>
       {:else if loadPhase === 'done'}
         <span class="text-secondary" style="font-size:0.8rem">
-          {totalSections} {isEpub ? 'chương' : 'trang'}
+          {totalSections} {isEpub ? 'chương' : isJsInfo ? 'bài' : 'trang'}
         </span>
       {/if}
-      {#if isEpub && sections.length > 0}
+      {#if isChapterBased && sections.length > 0}
         <button
           class="btn btn-ghost btn-sm"
           on:click={() => (showToc = !showToc)}
@@ -320,6 +360,8 @@
       <span class="reader-page-indicator">
         {#if isEpub}
           Chương {currentIdx + 1} / {totalSections || sections.length}
+        {:else if isJsInfo}
+          Bài {currentIdx + 1} / {totalSections || sections.length}
         {:else}
           Trang {currentIdx + 1} / {totalSections || sections.length}
         {/if}
@@ -330,12 +372,36 @@
     </div>
 
     <div class="card reader-content">
-      <!-- Chapter / page title -->
-      {#if isEpub}
+      <!-- Chapter / article title -->
+      {#if isChapterBased}
         <h3 class="reader-chapter-title">{current.label}</h3>
       {/if}
 
+      <!-- javascript.info attribution (CC BY-NC 4.0 requirement) -->
+      {#if isJsInfo}
+        <p class="jsinfo-attribution">
+          Nguồn: <a href={articleWebUrl(current.path ?? '')} target="_blank" rel="noopener">javascript.info</a>
+          — Ilya Kantor, <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>.
+          Phi thương mại.
+        </p>
+      {/if}
+
       <p class="glossary-hint-label">💡 Click từ bất kỳ để tra nghĩa hoặc chọn cụm từ</p>
+
+      <!-- jsinfo lazy-load states -->
+      {#if isJsInfo && sectionLoading}
+        <div class="reader-loading" style="padding:1.5rem 0">
+          <div class="loading-spinner"></div>
+          <p class="text-secondary" style="margin:0">Đang tải bài…</p>
+        </div>
+      {:else if isJsInfo && sectionError}
+        <div style="color:var(--danger);font-size:0.88rem;padding:0.5rem 0">
+          Không tải được bài này ({sectionError}).
+          <a href={articleWebUrl(current.path ?? '')} target="_blank" rel="noopener" style="color:var(--primary,#a78bfa)">
+            Đọc trên javascript.info ↗
+          </a>
+        </div>
+      {/if}
 
       {#each tokenizedBlocks as block}
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
@@ -359,9 +425,9 @@
 
     <div class="reader-page-nav reader-page-nav-bottom">
       <button class="btn btn-ghost btn-sm" on:click={prev} disabled={currentIdx === 0}>
-        ← {isEpub ? 'Chương trước' : 'Trang trước'}
+        ← {isEpub ? 'Chương trước' : isJsInfo ? 'Bài trước' : 'Trang trước'}
       </button>
-      {#if !isEpub}
+      {#if !isChapterBased}
         <div class="reader-jump">
           <span class="text-secondary" style="font-size:0.82rem">Đến trang:</span>
           <input
@@ -377,7 +443,7 @@
         <span class="reader-page-indicator" style="font-size:0.8rem">{current.label}</span>
       {/if}
       <button class="btn btn-ghost btn-sm" on:click={next} disabled={currentIdx >= sections.length - 1}>
-        {isEpub ? 'Chương sau' : 'Trang sau'} →
+        {isEpub ? 'Chương sau' : isJsInfo ? 'Bài sau' : 'Trang sau'} →
       </button>
     </div>
   {:else if loadPhase === 'done' && sections.length === 0}
@@ -546,6 +612,15 @@
     font-size: 0.85rem;
     text-align: center;
   }
+  .jsinfo-attribution {
+    font-size: 0.78rem;
+    color: var(--text-secondary, #9ca3af);
+    margin: 0 0 0.75rem;
+    padding: 0.4rem 0.6rem;
+    border-left: 2px solid var(--border, rgba(255,255,255,0.12));
+  }
+  .jsinfo-attribution a { color: var(--primary, #a78bfa); text-decoration: none; }
+  .jsinfo-attribution a:hover { text-decoration: underline; }
   .reader-content { line-height: 1.7; font-size: 0.95rem; }
   .reader-chapter-title {
     font-size: 1.1rem;

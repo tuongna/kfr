@@ -36,7 +36,7 @@ export interface PdfMeta {
  *   - Heading detection is font-size based only (bold-only headings are missed).
  */
 export function itemsToBlocks(
-  items: { str: string; transform: number[] }[]
+  items: { str: string; transform: number[]; width?: number }[]
 ): PdfBlock[] {
   if (!items.length) return [];
 
@@ -54,26 +54,37 @@ export function itemsToBlocks(
   const SAME_LINE_THRESHOLD = 4;    // px difference → same line
   const PARA_GAP_THRESHOLD  = 14;   // px gap → paragraph break
   const HEADING_RATIO       = 1.18; // line font ≥ body × ratio → heading
+  // Gap ≥ 20% of font height is a real word boundary; smaller gaps are word
+  // fragments split across multiple PDF text items (e.g. "functio" + "ns").
+  const WORD_GAP_RATIO      = 0.2;
 
   // Build lines, tracking the largest font height on each.
   const linesRaw: { y: number; text: string; size: number }[] = [];
-  let currentY = sorted[0].transform[5];
+  let currentY    = sorted[0].transform[5];
   let currentText = sorted[0].str;
   let currentSize = fontHeight(sorted[0].transform);
+  let currentEndX = sorted[0].transform[4] + (sorted[0].width ?? 0);
 
   for (let i = 1; i < sorted.length; i++) {
     const item = sorted[i];
     const y = item.transform[5];
     if (Math.abs(y - currentY) <= SAME_LINE_THRESHOLD) {
-      // Same line — append with space if there's a gap
-      const needsSpace = currentText.length > 0 && !currentText.endsWith(' ') && item.str.length > 0 && !item.str.startsWith(' ');
+      // Same line — decide whether to insert a space based on the pixel gap
+      // between the end of the previous item and the start of this one.
+      const gap = item.transform[4] - currentEndX;
+      const isWordBoundary = gap >= currentSize * WORD_GAP_RATIO
+        || item.str.startsWith(' ')
+        || currentText.endsWith(' ');
+      const needsSpace = isWordBoundary && currentText.length > 0 && item.str.length > 0;
       currentText += (needsSpace ? ' ' : '') + item.str;
-      currentSize = Math.max(currentSize, fontHeight(item.transform));
+      currentSize  = Math.max(currentSize, fontHeight(item.transform));
+      currentEndX  = item.transform[4] + (item.width ?? 0);
     } else {
       linesRaw.push({ y: currentY, text: currentText.trim(), size: currentSize });
-      currentY = y;
+      currentY    = y;
       currentText = item.str;
       currentSize = fontHeight(item.transform);
+      currentEndX = item.transform[4] + (item.width ?? 0);
     }
   }
   linesRaw.push({ y: currentY, text: currentText.trim(), size: currentSize });
@@ -169,9 +180,9 @@ export async function loadPdf(
     const pdfPage = await pdf.getPage(pageNum);
     const textContent = await pdfPage.getTextContent();
 
-    // pdfjs 4+ item shape: { str, transform, ... }
+    // pdfjs 4+ item shape: { str, transform, width, ... }
     const items = textContent.items
-      .filter((item): item is typeof item & { str: string; transform: number[] } =>
+      .filter((item): item is typeof item & { str: string; transform: number[]; width?: number } =>
         'str' in item && Array.isArray((item as { transform?: unknown }).transform)
       );
 
