@@ -55,11 +55,20 @@ async function syncTerms(): Promise<void> {
   });
 }
 
-async function syncQuestions(): Promise<void> {
-  const { data, error } = await supabase.from('questions').select('*, question_options(*)');
+/** How many question rows to pull per network request. */
+const QUESTIONS_PAGE_SIZE = 30;
 
-  if (error) throw error;
-  if (!data?.length) {
+async function syncQuestions(): Promise<void> {
+  // Ask the server for the grand total first. This is a cheap head request and
+  // gives us the real number of questions (used to drive pagination); it is the
+  // total across ALL pages, never just one patch.
+  const { count, error: countError } = await supabase
+    .from('questions')
+    .select('id', { count: 'exact', head: true });
+
+  if (countError) throw countError;
+
+  if (!count) {
     // Only clear local cache when the session is confirmed valid.
     // An expired/invalid token can silently cause RLS to return [] — in that
     // case keep local data rather than erasing it.
@@ -75,29 +84,48 @@ async function syncQuestions(): Promise<void> {
     return;
   }
 
-  const questions: Question[] = data.map((q) => ({
-    id: q.id,
-    exam: q.exam,
-    stem: q.stem,
-    explanationEn: q.explanation_en ?? undefined,
-    explanationVi: q.explanation_vi ?? undefined,
-    tags: q.tags ?? [],
-    termRefs: q.term_refs ?? [],
-    ownerId: q.owner_id,
-    source: q.source ?? undefined,
-    quality: q.quality === 'trusted' ? 'trusted' : 'reference',
-  }));
+  // Pull the rows in fixed-size patches so no single request has to carry the
+  // whole table (lighter on the network and avoids timeouts on large datasets).
+  // We accumulate every patch, then commit once so the local cache is replaced
+  // atomically — a mid-sync failure leaves the previous cache intact.
+  const questions: Question[] = [];
+  const options: QuestionOption[] = [];
 
-  const options: QuestionOption[] = data.flatMap((q) =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ((q.question_options as any[]) ?? []).map((o) => ({
-      id: o.id,
-      questionId: o.question_id,
-      text: o.text,
-      correct: o.correct,
-      sortOrder: o.sort_order ?? 0,
-    }))
-  );
+  for (let offset = 0; offset < count; offset += QUESTIONS_PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from('questions')
+      .select('*, question_options(*)')
+      .order('id', { ascending: true })
+      .range(offset, offset + QUESTIONS_PAGE_SIZE - 1);
+
+    if (error) throw error;
+    if (!data?.length) break;
+
+    for (const q of data) {
+      questions.push({
+        id: q.id,
+        exam: q.exam,
+        stem: q.stem,
+        explanationEn: q.explanation_en ?? undefined,
+        explanationVi: q.explanation_vi ?? undefined,
+        tags: q.tags ?? [],
+        termRefs: q.term_refs ?? [],
+        ownerId: q.owner_id,
+        source: q.source ?? undefined,
+        quality: q.quality === 'trusted' ? 'trusted' : 'reference',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const o of (q.question_options as any[]) ?? []) {
+        options.push({
+          id: o.id,
+          questionId: o.question_id,
+          text: o.text,
+          correct: o.correct,
+          sortOrder: o.sort_order ?? 0,
+        });
+      }
+    }
+  }
 
   await db.transaction('rw', db.questions, db.questionOptions, async () => {
     await db.questions.clear();

@@ -20,10 +20,18 @@
   let questionsLoaded = false;
   let sessionInit = false;
 
-  // Session snapshot — linear flow, not an infinite loop
+  // Session snapshot — linear flow, not an infinite loop.
+  // The full pool is computed up front but materialized into `sessionQuestions`
+  // lazily, 30 at a time, so we never build/iterate a huge array in one shot.
+  const SESSION_PAGE_SIZE = 30;
+  let sessionPool: Question[] = [];
+  let loadedCount = 0;
   let sessionQuestions: Question[] = [];
   let sessionIndex = 0;
   let sessionCorrect = 0;
+  // Questions the user actually answered (skipped ones are excluded), so the
+  // score reflects effort instead of being diluted by skips.
+  let answeredCount = 0;
   let sessionDone = false;
   let lookedUpTermsData: Term[] = [];
 
@@ -55,14 +63,14 @@
     selectedIds.size === correctCount &&
     [...selectedIds].every((id) => correctIds.has(id));
   $: vocabCount = $sessionLookups.size;
-  $: progressPct = sessionQuestions.length
-    ? Math.round((sessionIndex / sessionQuestions.length) * 100)
-    : 0;
+  // Total questions in the session = the full pool, even though we only load it
+  // 30 at a time. The progress bar / counters should reflect the real total.
+  $: poolTotal = sessionPool.length;
+  $: progressPct = poolTotal ? Math.round((sessionIndex / poolTotal) * 100) : 0;
 
-  // Results derived
-  $: scorePercent = sessionQuestions.length
-    ? Math.round((sessionCorrect / sessionQuestions.length) * 100)
-    : 0;
+  // Results derived — denominator is answered count, not the pool, so skipped
+  // questions don't count against the score.
+  $: scorePercent = answeredCount ? Math.round((sessionCorrect / answeredCount) * 100) : 0;
   $: adjustedReadiness = Math.max(0, scorePercent - (vocabCount > 4 ? 15 : 0));
   $: readinessVariant =
     adjustedReadiness >= 85 ? 'ready' : adjustedReadiness >= 60 ? 'warn' : 'danger';
@@ -106,9 +114,12 @@
   }
 
   function initSession() {
-    sessionQuestions = buildPool(examFilter);
+    sessionPool = buildPool(examFilter);
+    loadedCount = Math.min(SESSION_PAGE_SIZE, sessionPool.length);
+    sessionQuestions = sessionPool.slice(0, loadedCount);
     sessionIndex = 0;
     sessionCorrect = 0;
+    answeredCount = 0;
     sessionDone = false;
     lookedUpTermsData = [];
     answered = false;
@@ -219,6 +230,7 @@
 
   async function submitAnswer() {
     answered = true;
+    answeredCount++;
     const allCorrect =
       selectedIds.size === correctCount && [...selectedIds].every((id) => correctIds.has(id));
     if (allCorrect) sessionCorrect++;
@@ -227,14 +239,41 @@
     }
   }
 
-  async function nextQuestion() {
+  /** Pulls the next page of questions from the pool into the active session. */
+  function loadMoreQuestions() {
+    if (loadedCount >= sessionPool.length) return;
+    const next = sessionPool.slice(loadedCount, loadedCount + SESSION_PAGE_SIZE);
+    sessionQuestions = [...sessionQuestions, ...next];
+    loadedCount += next.length;
+  }
+
+  /** Advances to the next question, lazily loading the next page or finishing. */
+  async function advance() {
     showHintPopover = false;
     showExplanationSheet = false;
     if (sessionIndex >= sessionQuestions.length - 1) {
-      await finishSession();
+      // Reached the end of what's loaded: pull the next page, or finish if the
+      // whole pool has been consumed.
+      if (loadedCount < sessionPool.length) {
+        loadMoreQuestions();
+        sessionIndex++;
+      } else {
+        await finishSession();
+      }
     } else {
       sessionIndex++;
+      // Prefetch the next page a few questions early so advancing never blocks.
+      if (sessionIndex >= sessionQuestions.length - 5) loadMoreQuestions();
     }
+  }
+
+  async function nextQuestion() {
+    await advance();
+  }
+
+  /** Skip the current question without answering — not counted toward the score. */
+  async function skipQuestion() {
+    await advance();
   }
 
   async function finishSession() {
@@ -282,7 +321,7 @@
       <span class="vocab-counter-badge">📖 {vocabCount} từ</span>
     {/if}
     {#if !sessionDone}
-      <span class="counter-badge">{sessionQuestions.length} câu</span>
+      <span class="counter-badge">{poolTotal} câu</span>
     {/if}
   </div>
 </div>
@@ -300,8 +339,8 @@
 
     <div class="result-grid">
       <div class="result-stat">
-        <div class="result-stat-value">{sessionCorrect}/{sessionQuestions.length}</div>
-        <div class="result-stat-label">Kết quả</div>
+        <div class="result-stat-value">{sessionCorrect}/{answeredCount}</div>
+        <div class="result-stat-label">Đã trả lời</div>
       </div>
       <div class="result-stat">
         <div class="result-stat-value" style="color:var(--success)">{scorePercent}%</div>
@@ -358,7 +397,7 @@
   </div>
 
   <!-- ── EMPTY STATE ── -->
-{:else if sessionQuestions.length === 0}
+{:else if poolTotal === 0}
   <div class="empty-state">
     {#if allQuestions.length === 0}
       <p>Chưa có câu hỏi nào. Hãy thêm qua Supabase Studio.</p>
@@ -373,7 +412,7 @@
   <div class="quiz-progress-section">
     <div class="quiz-progress-meta">
       <span class="text-secondary" style="font-size:0.82rem">
-        Câu {sessionIndex + 1} / {sessionQuestions.length}
+        Câu {sessionIndex + 1} / {poolTotal}
       </span>
       <div class="flex items-center gap-1">
         <span class="tag" style="cursor:default">{currentQ.exam}</span>
@@ -460,21 +499,26 @@
     {/if}
   </div>
 
-  <!-- Hint button + popover (pre-answer only) -->
-  {#if currentQ.explanationVi && !answered}
-    <div class="hint-trigger-wrap">
-      <button
-        class="hint-trigger-btn"
-        on:click={() => (showHintPopover = !showHintPopover)}
-        aria-expanded={showHintPopover}
-      >
-        {showHintPopover ? '▲ Ẩn gợi ý' : '💡 Gợi ý tư duy'}
-      </button>
-      {#if showHintPopover}
-        <div class="hint-popover" role="tooltip">
-          {currentQ.explanationVi}
+  <!-- Pre-answer controls: hint (optional) + skip (always available) -->
+  {#if !answered}
+    <div class="pre-answer-controls">
+      {#if currentQ.explanationVi}
+        <div class="hint-trigger-wrap">
+          <button
+            class="hint-trigger-btn"
+            on:click={() => (showHintPopover = !showHintPopover)}
+            aria-expanded={showHintPopover}
+          >
+            {showHintPopover ? '▲ Ẩn gợi ý' : '💡 Gợi ý tư duy'}
+          </button>
+          {#if showHintPopover}
+            <div class="hint-popover" role="tooltip">
+              {currentQ.explanationVi}
+            </div>
+          {/if}
         </div>
       {/if}
+      <button class="btn btn-ghost btn-sm skip-btn" on:click={skipQuestion}> Bỏ qua ⏭ </button>
     </div>
   {/if}
 
@@ -484,7 +528,7 @@
       <div class="action-bar-status action-bar-status-{isCorrect ? 'correct' : 'incorrect'}">
         <span class="answer-feedback-icon">{isCorrect ? '✓' : '✗'}</span>
         <span>{isCorrect ? 'Chính xác' : 'Chưa đúng'}</span>
-        <span class="session-live-score">{sessionCorrect}/{sessionIndex + 1}</span>
+        <span class="session-live-score">{sessionCorrect}/{answeredCount}</span>
       </div>
       {#if currentQ.explanationVi || currentQ.explanationEn || termRefs.length}
         <button
@@ -496,7 +540,7 @@
         </button>
       {/if}
       <button class="btn btn-primary btn-sm action-bar-next" on:click={nextQuestion}>
-        {sessionIndex < sessionQuestions.length - 1 ? 'Câu tiếp ▶' : '🎓 Xem kết quả'}
+        {sessionIndex < poolTotal - 1 ? 'Câu tiếp ▶' : '🎓 Xem kết quả'}
       </button>
     </div>
   {/if}
